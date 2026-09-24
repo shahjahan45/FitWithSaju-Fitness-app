@@ -21,10 +21,11 @@ class PrimaryButton extends StatelessWidget {
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.black,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          elevation: 0,
           textStyle: const TextStyle(
             fontWeight: FontWeight.w800,
             fontSize: 16,

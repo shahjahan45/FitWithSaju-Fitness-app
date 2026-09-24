@@ -10,7 +10,7 @@ class FitWithSajuApp extends StatelessWidget {
     return MaterialApp(
       title: 'FitWithSaju',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
       home: const SplashScreen(),
     );
   }

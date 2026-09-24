@@ -55,7 +55,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         Container(width: 86, height: 86, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [AppColors.primary, AppColors.secondary])), child: const Icon(Icons.check_rounded, color: Colors.white, size: 46)),
         const SizedBox(height: 18), const Text('Workout complete!', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
         const SizedBox(height: 8), Text('$completedSets sets completed • $duration min', style: const TextStyle(color: AppColors.muted)),
-        const SizedBox(height: 22), SizedBox(width: double.infinity, child: FilledButton(style: FilledButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.black), onPressed: () { Navigator.pop(context); Navigator.pop(context); }, child: const Text('Done', style: TextStyle(fontWeight: FontWeight.w900))))
+        const SizedBox(height: 22), SizedBox(width: double.infinity, child: FilledButton(style: FilledButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white), onPressed: () { Navigator.pop(context); Navigator.pop(context); }, child: const Text('Done', style: TextStyle(fontWeight: FontWeight.w900))))
       ])));
   }
 
@@ -75,7 +75,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
           const SizedBox(height: 12),
           Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.border)), child: Row(children: [Text('Set $setIndex of ${e.sets}', style: const TextStyle(fontWeight: FontWeight.w900)), const Spacer(), Text('${e.reps} target', style: const TextStyle(color: AppColors.muted))])),
           const SizedBox(height: 18),
-          SizedBox(height: 58, child: FilledButton.icon(style: FilledButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), onPressed: _completeSet, icon: const Icon(Icons.check_rounded), label: const Text('Complete Set', style: TextStyle(fontWeight: FontWeight.w900))))
+          SizedBox(height: 58, child: FilledButton.icon(style: FilledButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), onPressed: _completeSet, icon: const Icon(Icons.check_rounded), label: const Text('Complete Set', style: TextStyle(fontWeight: FontWeight.w900))))
         ]
       ]),
     );

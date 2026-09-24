@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../home/home_screen.dart';
-import '../workout/workout_screen.dart';
 import '../explore/explore_screen.dart';
-import '../progress/progress_screen.dart';
+import '../home/home_screen.dart';
 import '../more/more_screen.dart';
+import '../progress/progress_screen.dart';
+import '../workout/workout_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -35,16 +35,43 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: index, children: pages),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 320),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeOutCubic,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.02, 0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey(index),
+          child: pages[index],
+        ),
+      ),
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
-          margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: AppColors.border),
+            color: Colors.white.withValues(alpha: .96),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0F172A).withValues(alpha: .08),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
           ),
           child: Row(
             children: List.generate(destinations.length, (i) {
@@ -52,16 +79,20 @@ class _MainShellState extends State<MainShell> {
               final item = destinations[i];
               return Expanded(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(20),
                   onTap: () => setState(() => index = i),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 240),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: selected
-                          ? AppColors.primary.withValues(alpha: .12)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(18),
+                      gradient: selected
+                          ? const LinearGradient(
+                              colors: [Color(0xFFFFF1E4), Color(0xFFEAF6FF)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : null,
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -71,9 +102,7 @@ class _MainShellState extends State<MainShell> {
                           duration: const Duration(milliseconds: 220),
                           child: Icon(
                             item.$1,
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.muted,
+                            color: selected ? AppColors.primary : AppColors.muted,
                           ),
                         ),
                         const SizedBox(height: 3),
@@ -81,12 +110,9 @@ class _MainShellState extends State<MainShell> {
                           item.$2,
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: selected
-                                ? FontWeight.w800
-                                : FontWeight.w600,
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.muted,
+                            fontWeight:
+                                selected ? FontWeight.w800 : FontWeight.w600,
+                            color: selected ? AppColors.text : AppColors.muted,
                           ),
                         ),
                       ],
