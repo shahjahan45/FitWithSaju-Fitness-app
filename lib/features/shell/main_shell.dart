@@ -24,31 +24,37 @@ class _MainShellState extends State<MainShell> {
     MoreScreen(),
   ];
 
-  final destinations = const [
-    (Icons.home_rounded, 'Home'),
-    (Icons.fitness_center_rounded, 'Workout'),
-    (Icons.explore_rounded, 'Explore'),
-    (Icons.insights_rounded, 'Progress'),
-    (Icons.grid_view_rounded, 'More'),
+  final items = const [
+    _NavItemData(Icons.home_rounded, 'Home'),
+    _NavItemData(Icons.fitness_center_rounded, 'Workout'),
+    _NavItemData(Icons.explore_rounded, 'Explore'),
+    _NavItemData(Icons.auto_graph_rounded, 'Progress'),
+    _NavItemData(Icons.grid_view_rounded, 'More'),
   ];
+
+  void _go(int value) {
+    if (value == index) return;
+    setState(() => index = value);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 320),
+        duration: const Duration(milliseconds: 300),
+        reverseDuration: const Duration(milliseconds: 220),
         switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
         transitionBuilder: (child, animation) {
+          final slide = Tween<Offset>(
+            begin: const Offset(.018, 0),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+          );
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.02, 0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            ),
+            child: SlideTransition(position: slide, child: child),
           );
         },
         child: KeyedSubtree(
@@ -58,72 +64,103 @@ class _MainShellState extends State<MainShell> {
       ),
       bottomNavigationBar: SafeArea(
         top: false,
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: .96),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF0F172A).withValues(alpha: .08),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
-              ),
-            ],
-          ),
-          child: Row(
-            children: List.generate(destinations.length, (i) {
-              final selected = i == index;
-              final item = destinations[i];
-              return Expanded(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  onTap: () => setState(() => index = i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 240),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      gradient: selected
-                          ? const LinearGradient(
-                              colors: [Color(0xFFFFF1E4), Color(0xFFEAF6FF)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )
-                          : null,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedScale(
-                          scale: selected ? 1.12 : 1,
-                          duration: const Duration(milliseconds: 220),
-                          child: Icon(
-                            item.$1,
-                            color: selected ? AppColors.primary : AppColors.muted,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          item.$2,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight:
-                                selected ? FontWeight.w800 : FontWeight.w600,
-                            color: selected ? AppColors.text : AppColors.muted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
+        minimum: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+        child: _SimpleBottomBar(
+          selectedIndex: index,
+          items: items,
+          onTap: _go,
         ),
       ),
     );
   }
+}
+
+class _SimpleBottomBar extends StatelessWidget {
+  final int selectedIndex;
+  final List<_NavItemData> items;
+  final ValueChanged<int> onTap;
+
+  const _SimpleBottomBar({
+    required this.selectedIndex,
+    required this.items,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 76,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(27),
+        border: Border.all(color: const Color(0xFFE7EDF3)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0B1420).withOpacity(.08),
+            blurRadius: 22,
+            offset: const Offset(0, 9),
+          ),
+        ],
+      ),
+      child: Row(
+        children: List.generate(items.length, (i) {
+          final selected = selectedIndex == i;
+          return Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(21),
+              onTap: () => onTap(i),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 260),
+                curve: Curves.easeOutCubic,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? AppColors.primarySoft.withOpacity(.82)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(21),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedScale(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutBack,
+                      scale: selected ? 1.10 : 1,
+                      child: Icon(
+                        items[i].icon,
+                        size: 23,
+                        color: selected ? AppColors.primary : AppColors.muted,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 220),
+                      style: TextStyle(
+                        fontSize: 10,
+                        height: 1,
+                        fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                        color: selected ? AppColors.text : AppColors.muted,
+                      ),
+                      child: Text(
+                        items[i].label,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _NavItemData {
+  final IconData icon;
+  final String label;
+  const _NavItemData(this.icon, this.label);
 }

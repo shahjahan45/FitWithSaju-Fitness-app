@@ -13,7 +13,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fade;
   late final Animation<double> _scale;
@@ -24,12 +24,12 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2200),
+      duration: const Duration(milliseconds: 1900),
     )..forward();
 
     _fade = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.05, 0.68, curve: Curves.easeOut),
+      curve: const Interval(0, .70, curve: Curves.easeOut),
     );
     _scale = Tween<double>(begin: .90, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
@@ -38,16 +38,18 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
 
-    Timer(const Duration(milliseconds: 2800), _finish);
+    Timer(const Duration(milliseconds: 2450), _finish);
   }
 
   Future<void> _finish() async {
     final done = await LocalStore.onboardingComplete();
     if (!mounted) return;
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 650),
-        pageBuilder: (_, __, ___) => done ? const MainShell() : const OnboardingScreen(),
+        transitionDuration: const Duration(milliseconds: 520),
+        pageBuilder: (_, __, ___) =>
+            done ? const MainShell() : const OnboardingScreen(),
         transitionsBuilder: (_, animation, __, child) {
           final curved = CurvedAnimation(
             parent: animation,
@@ -57,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
             opacity: curved,
             child: SlideTransition(
               position: Tween<Offset>(
-                begin: const Offset(0, .03),
+                begin: const Offset(0, .018),
                 end: Offset.zero,
               ).animate(curved),
               child: child,
@@ -80,48 +82,36 @@ class _SplashScreenState extends State<SplashScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            decoration: const BoxDecoration(
+          const DecoratedBox(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFFF7FAFF), Color(0xFFEFF5FF)],
+                colors: [Color(0xFFFAFBFD), Color(0xFFF1F5F8)],
               ),
             ),
           ),
           Positioned(
-            left: -80,
-            top: -60,
-            child: _BlurOrb(
-              color: AppColors.secondary.withValues(alpha: .16),
-              size: 240,
+            left: -110,
+            top: -130,
+            child: Container(
+              width: 330,
+              height: 330,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withOpacity(.055),
+              ),
             ),
           ),
           Positioned(
-            right: -90,
-            top: 140,
-            child: _BlurOrb(
-              color: AppColors.primary.withValues(alpha: .16),
-              size: 260,
-            ),
-          ),
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 150,
-            child: Transform.rotate(
-              angle: -.08,
-              child: Container(
-                height: 86,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.secondary.withValues(alpha: .14),
-                      AppColors.primary.withValues(alpha: .18),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(32),
-                ),
+            right: -120,
+            bottom: -130,
+            child: Container(
+              width: 360,
+              height: 360,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.secondary.withOpacity(.045),
               ),
             ),
           ),
@@ -135,57 +125,50 @@ class _SplashScreenState extends State<SplashScreen>
                     offset: Offset(0, _lift.value),
                     child: ScaleTransition(
                       scale: _scale,
-                      child: Container(
-                        width: 330,
-                        padding: const EdgeInsets.fromLTRB(24, 26, 24, 22),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: .80),
-                          borderRadius: BorderRadius.circular(34),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: .85),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF0F172A).withValues(alpha: .08),
-                              blurRadius: 38,
-                              offset: const Offset(0, 18),
-                            ),
-                          ],
-                        ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 34),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(
-                              'assets/images/fitwithsaju_logo.png',
-                              height: 210,
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(height: 14),
-                            const Text(
-                              'Move • Train • Progress',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.muted,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
+                            Container(
+                              constraints: const BoxConstraints(maxWidth: 340),
+                              padding: const EdgeInsets.all(18),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(.80),
+                                borderRadius: BorderRadius.circular(32),
+                                border: Border.all(color: Colors.white),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF0B1420).withOpacity(.07),
+                                    blurRadius: 32,
+                                    offset: const Offset(0, 16),
+                                  ),
+                                ],
+                              ),
+                              child: Image.asset(
+                                'assets/images/fitwithsaju_logo.png',
+                                fit: BoxFit.contain,
                               ),
                             ),
-                            const SizedBox(height: 18),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                3,
-                                (i) => AnimatedContainer(
-                                  duration: Duration(milliseconds: 300 + (i * 90)),
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  width: 10,
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: i == 1
-                                        ? AppColors.secondary
-                                        : AppColors.primary.withValues(alpha: .82),
-                                  ),
+                            const SizedBox(height: 24),
+                            const Text(
+                              'Every day stronger.',
+                              style: TextStyle(
+                                color: AppColors.muted,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              width: 72,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(99),
+                                child: LinearProgressIndicator(
+                                  value: _controller.value,
+                                  minHeight: 4,
+                                  backgroundColor: AppColors.border,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ),
@@ -197,31 +180,6 @@ class _SplashScreenState extends State<SplashScreen>
                 );
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BlurOrb extends StatelessWidget {
-  final Color color;
-  final double size;
-
-  const _BlurOrb({required this.color, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: color,
-            blurRadius: 120,
-            spreadRadius: 18,
           ),
         ],
       ),

@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFF8FAFF), Color(0xFFF3F7FB)],
+          colors: [Color(0xFFF9FBF7), Color(0xFFF2F6EE)],
         ),
       ),
       child: SafeArea(
@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Train with energy',
+                        'Train every day',
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w900,
@@ -50,15 +50,23 @@ class HomeScreen extends StatelessWidget {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFF1E5), Color(0xFFE8F5FF)],
-                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: Colors.white),
+                    border: Border.all(color: AppColors.border),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF0F172A).withValues(alpha: .04),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.bolt_rounded,
-                    color: AppColors.primary,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Image.asset('assets/images/fitwithsaju_logo.png'),
+                    ),
                   ),
                 ),
               ],
@@ -68,14 +76,14 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFFF8B28), Color(0xFF1BA5FF)],
+                  colors: [Color(0xFF1A2125), Color(0xFF8BCB12)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.secondary.withValues(alpha: .12),
+                    color: AppColors.primary.withValues(alpha: .16),
                     blurRadius: 26,
                     offset: const Offset(0, 14),
                   ),
@@ -188,14 +196,12 @@ class HomeScreen extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFFF0E4), Color(0xFFE8F6FF)],
-                      ),
+                      color: AppColors.primary.withValues(alpha: .12),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
-                      color: AppColors.secondary,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -242,7 +248,6 @@ class _Metric extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.circle, size: 0),
         Icon(icon, size: 18, color: Colors.white),
         const SizedBox(width: 7),
         Text(
@@ -307,14 +312,14 @@ class _WeekStrip extends StatelessWidget {
               color: today
                   ? AppColors.primary
                   : active
-                      ? const Color(0xFFFFF4EC)
+                      ? const Color(0xFFF2F8E6)
                       : Colors.white,
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: today
                     ? AppColors.primary
                     : active
-                        ? const Color(0xFFFFDFC0)
+                        ? const Color(0xFFD7E8B8)
                         : AppColors.border,
               ),
               boxShadow: [
@@ -384,9 +389,7 @@ class _QuickCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFFF1E4), Color(0xFFEAF6FF)],
-              ),
+              color: AppColors.primary.withValues(alpha: .12),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(icon, color: AppColors.primary),
