@@ -1,34 +1,47 @@
-# FitWithSaju v14
+# FitWithSaju v15
 
-FitWithSaju is a no-login, offline-first Flutter workout tracker.
+FitWithSaju is a no-login, offline-first Flutter workout tracker with an optional Laravel-managed public exercise catalog.
 
-## v14 highlights
+## v15 highlights
 
-- Integrated the user-provided exercise catalog from `excisize.rar`
-- 30 source exercises with supplied IDs, muscles, body parts, equipment, secondary muscles, and instructions
-- 30 animated 360×360 GIF thumbnails for Explore
-- 30 animated 720×720 GIF demonstrations for Exercise Detail and Active Workout
-- Search across name, target muscle, secondary muscle, body part, and equipment
-- Animated body-part filter chips
-- Equipment filter bottom sheet
-- Professional exercise cards with real motion thumbnails
-- Hero transition from exercise thumbnail to the full exercise demonstration
-- Step-by-step instruction cards sourced from the supplied exercise metadata
-- Real exercise media shown during active workouts
-- Existing v12/v13 locally-saved workout IDs remain resolvable for backward compatibility
-- New-install weekly plan seeds now use exercises from the supplied catalog
-- Updated `TickerMode.of(context)` calls to `TickerMode.valuesOf(context).enabled`
-- All v13 motion, workout recovery, PR tracking, strength trends, and backup/restore features retained
+- Keeps the user-provided 30-exercise GIF library bundled in the mobile app
+- Adds optional Laravel exercise content synchronization
+- Remote exercise data is cached locally for offline use
+- Configured API refreshes automatically in the background after app startup
+- Network GIF/WebP media falls back to the matching bundled GIF when available
+- **More -> Exercise Content Sync** shows Live / Cached / Offline state
+- API URL can be tested and saved directly from the mobile app
+- Explore shows current catalog source status
+- Workout planner/custom workouts resolve against the active catalog
+- Existing legacy exercise IDs remain supported
+- Android local HTTP is permitted only in debug builds for LAN testing
+- Release builds remain intended for HTTPS
 
-Version: `1.6.0+10`
+## Laravel admin starter
 
-## Exercise media layout
+`backend_laravel_starter/` now includes:
+
+- session-based admin login
+- admin-only middleware
+- professional light dashboard
+- exercise CRUD
+- exercise activation/hiding
+- soft deletes
+- GIF/WebP media upload
+- thumbnail upload
+- searchable/filterable public exercise API
+- seed data for the same 30 supplied exercises
+- environment-controlled admin user seeder
+
+See `backend_laravel_starter/README.md` for setup.
+
+## Exercise assets
 
 - `assets/exercises/data/` — supplied JSON metadata
-- `assets/exercises/thumbs/` — supplied 360×360 GIFs
-- `assets/exercises/media/` — supplied 720×720 GIFs
+- `assets/exercises/thumbs/` — 360×360 bundled GIF thumbnails
+- `assets/exercises/media/` — 720×720 bundled GIF demonstrations
 
-## Run
+## Run Flutter
 
 ```bash
 flutter clean
@@ -45,4 +58,26 @@ For physical-device performance validation:
 flutter run --profile
 ```
 
-Because the full supplied GIF catalog is bundled locally, the project/app size is intentionally larger than v13.
+Version: `1.8.0+13`
+
+
+## Sprint 16 — Diet & Meal Plan (Flutter-first)
+
+The Figma-referenced Diet & Meal Plan module is implemented locally before backend wiring.
+
+Included:
+- Daily and weekly meal plans with persisted date selection
+- Planned vs consumed macro totals
+- Meal details, serving/yield controls, ingredients and instructions
+- Allergy/diet-aware meal alternatives with undo
+- Food logging with historical nutrition snapshots and duplicate protection
+- Hydration quick-add, custom/editable entries, history and undo
+- Saved meals
+- Generated shopping list with independent check state and add/edit/remove manual items
+- Nutrition preferences, user-configured macro/water targets and unit preference
+- Home shortcut + More entry
+- Existing FitWithSaju motion/navigation system
+- Four exact local nutrition illustrations exported from the supplied Figma design
+- Backup & Restore includes nutrition state
+
+The Laravel nutrition API/admin portion is intentionally deferred. Existing backend files are retained unchanged.

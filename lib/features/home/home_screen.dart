@@ -6,6 +6,7 @@ import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
+import '../nutrition/nutrition_home_shortcut.dart';
 import '../workout/active_workout_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -134,9 +135,14 @@ class _HomeContent extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+            const MotionReveal(
+              delay: Duration(milliseconds: 125),
+              child: NutritionHomeShortcut(),
+            ),
             const SizedBox(height: 26),
             MotionReveal(
-              delay: const Duration(milliseconds: 140),
+              delay: const Duration(milliseconds: 160),
               child: Row(
                 children: [
                   const Expanded(
@@ -174,12 +180,12 @@ class _HomeContent extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             MotionReveal(
-              delay: const Duration(milliseconds: 170),
+              delay: const Duration(milliseconds: 190),
               child: _WeekStrip(plan: weeklyPlan),
             ),
             const SizedBox(height: 26),
             const MotionReveal(
-              delay: Duration(milliseconds: 210),
+              delay: Duration(milliseconds: 230),
               child: Text(
                 'Quick workouts',
                 style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
@@ -192,7 +198,7 @@ class _HomeContent extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 children: const [
                   MotionReveal(
-                    delay: Duration(milliseconds: 235),
+                    delay: Duration(milliseconds: 255),
                     offsetX: 12,
                     offsetY: 0,
                     child: _QuickCard(
@@ -202,7 +208,7 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ),
                   MotionReveal(
-                    delay: Duration(milliseconds: 275),
+                    delay: Duration(milliseconds: 295),
                     offsetX: 12,
                     offsetY: 0,
                     child: _QuickCard(
@@ -212,7 +218,7 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ),
                   MotionReveal(
-                    delay: Duration(milliseconds: 315),
+                    delay: Duration(milliseconds: 335),
                     offsetX: 12,
                     offsetY: 0,
                     child: _QuickCard(
@@ -226,7 +232,7 @@ class _HomeContent extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             const MotionReveal(
-              delay: Duration(milliseconds: 340),
+              delay: Duration(milliseconds: 365),
               child: FitCard(
                 child: Row(
                   children: [

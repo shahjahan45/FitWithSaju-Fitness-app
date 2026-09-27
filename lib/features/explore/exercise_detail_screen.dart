@@ -237,9 +237,9 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
             ),
           ],
           const SizedBox(height: 24),
-          MotionReveal(
-            delay: const Duration(milliseconds: 145),
-            child: const Text(
+          const MotionReveal(
+            delay: Duration(milliseconds: 145),
+            child: Text(
               'How to perform',
               style: TextStyle(
                 fontSize: 19,

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/theme/app_colors.dart';
+import '../nutrition/nutrition_plan_screen.dart';
+import 'content_sync_screen.dart';
 import 'data_export_screen.dart';
 import 'favorites_screen.dart';
 import 'measurements_screen.dart';
@@ -44,6 +46,11 @@ class MoreScreen extends StatelessWidget {
             child: _Group(
               children: [
                 _ActionTile(
+                  icon: Icons.restaurant_menu_rounded,
+                  title: 'Diet & Meal Plan',
+                  onTap: () => _open(context, const NutritionPlanScreen()),
+                ),
+                _ActionTile(
                   icon: Icons.favorite_rounded,
                   title: 'Favorites',
                   onTap: () => _open(context, const FavoritesScreen()),
@@ -75,6 +82,11 @@ class MoreScreen extends StatelessWidget {
                   title: 'Settings',
                   onTap: () => _info(context, 'Settings',
                       'Units, haptics, sound, and appearance controls are scheduled for the settings sprint.'),
+                ),
+                _ActionTile(
+                  icon: Icons.cloud_sync_outlined,
+                  title: 'Exercise Content Sync',
+                  onTap: () => _open(context, const ContentSyncScreen()),
                 ),
                 _ActionTile(
                   icon: Icons.file_download_outlined,

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../core/motion/app_motion.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../nutrition/data/nutrition_store.dart';
 
 class DataExportScreen extends StatefulWidget {
   const DataExportScreen({super.key});
@@ -25,6 +26,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
 
   Future<String> _buildExport() async {
     final data = await LocalStore.exportData();
+    data['nutrition'] = await NutritionStore.exportData();
     return const JsonEncoder.withIndent('  ').convert(data);
   }
 
@@ -203,7 +205,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Restore this backup?'),
         content: const Text(
-          'Saved weekly plans, custom workouts, history, favorites, weight, and measurements on this device will be replaced by the backup.',
+          'Saved workout data, body metrics, and Diet & Meal Plan data on this device will be replaced by the backup.',
         ),
         actions: [
           TextButton(
@@ -228,6 +230,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
 
     try {
       await LocalStore.importData(decoded);
+      await NutritionStore.importData(decoded['nutrition']);
       if (!mounted) {
         return;
       }

@@ -5,7 +5,7 @@ import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/exercise_media.dart';
-import '../../data/demo_repository.dart';
+import '../../data/exercise_catalog.dart';
 import '../../data/models/exercise.dart';
 import '../explore/exercise_detail_screen.dart';
 
@@ -27,7 +27,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   void _reload() {
     _favorites = LocalStore.favorites().then(
-      (ids) => DemoRepository.exercises
+      (ids) => ExerciseCatalog.instance.exercises
           .where((exercise) => ids.contains(exercise.id))
           .toList(),
     );

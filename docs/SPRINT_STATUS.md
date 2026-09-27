@@ -99,3 +99,18 @@
 - [x] Real exercise media during active workout
 - [x] Backward compatibility for saved legacy exercise IDs
 - [x] TickerMode.valuesOf migration
+
+## Sprint 15 — Exercise Admin + API Sync
+- [x] Optional Laravel exercise catalog sync
+- [x] Cached remote catalog with bundled offline fallback
+- [x] Automatic background refresh when an API URL is configured
+- [x] Network exercise GIF/WebP with bundled media fallback
+- [x] Content Sync settings/status screen
+- [x] Stable exercise IDs across local and server catalogs
+- [x] Laravel admin authentication starter
+- [x] Laravel admin dashboard
+- [x] Exercise CRUD UI
+- [x] Exercise activation/hiding + soft delete
+- [x] GIF/WebP media + thumbnail upload
+- [x] 30-exercise Laravel seeder generated from the user-provided catalog
+- [x] Public exercise API search/filter/pagination

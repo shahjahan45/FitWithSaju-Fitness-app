@@ -4,7 +4,7 @@ import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/exercise_media.dart';
-import '../../data/demo_repository.dart';
+import '../../data/exercise_catalog.dart';
 import '../../data/models/exercise.dart';
 import 'exercise_detail_screen.dart';
 
@@ -31,7 +31,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   List<Exercise> get _filteredExercises {
     final query = _query.trim().toLowerCase();
 
-    return DemoRepository.exercises.where((exercise) {
+    return ExerciseCatalog.instance.exercises.where((exercise) {
       final matchesQuery = query.isEmpty ||
           exercise.searchableTerms.any(
             (value) => value.toLowerCase().contains(query),
@@ -62,7 +62,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       builder: (sheetContext) {
         final values = <String>[
           'All',
-          ...DemoRepository.availableEquipments,
+          ...ExerciseCatalog.instance.availableEquipments,
         ];
 
         return Container(
@@ -202,7 +202,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ),
                         ),
                         _CatalogBadge(
-                          count: DemoRepository.exercises.length,
+                          count: ExerciseCatalog.instance.exercises.length,
+                          source: ExerciseCatalog.instance.source.value,
                         ),
                       ],
                     ),
@@ -243,7 +244,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             selected: _bodyPart == 'All',
                             onTap: () => setState(() => _bodyPart = 'All'),
                           ),
-                          ...DemoRepository.availableBodyParts.map(
+                          ...ExerciseCatalog.instance.availableBodyParts.map(
                             (part) => _FilterChip(
                               label: _pretty(part),
                               selected: _bodyPart == part,
@@ -360,24 +361,46 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
 class _CatalogBadge extends StatelessWidget {
   final int count;
+  final ExerciseCatalogSource source;
 
-  const _CatalogBadge({required this.count});
+  const _CatalogBadge({
+    required this.count,
+    required this.source,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final label = switch (source) {
+      ExerciseCatalogSource.live => 'LIVE',
+      ExerciseCatalogSource.cached => 'CACHED',
+      ExerciseCatalogSource.bundled => 'OFFLINE',
+    };
+    final icon = switch (source) {
+      ExerciseCatalogSource.live => Icons.cloud_done_rounded,
+      ExerciseCatalogSource.cached => Icons.cloud_queue_rounded,
+      ExerciseCatalogSource.bundled => Icons.offline_bolt_rounded,
+    };
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
         color: AppColors.primarySoft,
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Text(
-        '$count GIFs',
-        style: const TextStyle(
-          color: AppColors.primary,
-          fontSize: 11,
-          fontWeight: FontWeight.w900,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: AppColors.primary),
+          const SizedBox(width: 5),
+          Text(
+            '$label • $count',
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
       ),
     );
   }

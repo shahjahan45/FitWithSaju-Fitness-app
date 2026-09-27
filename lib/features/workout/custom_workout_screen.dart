@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
-import '../../data/demo_repository.dart';
+import '../../data/exercise_catalog.dart';
 
 class CustomWorkoutScreen extends StatefulWidget {
   final Map<String, dynamic>? workout;
@@ -94,7 +94,7 @@ class _CustomWorkoutScreenState extends State<CustomWorkoutScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          ...DemoRepository.exercises.map(
+          ...ExerciseCatalog.instance.exercises.map(
             (exercise) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Material(

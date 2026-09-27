@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\WorkoutController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/exercises', [ExerciseController::class, 'index']);
-Route::get('/exercises/{exercise:slug}', [ExerciseController::class, 'show']);
+Route::get('/exercises/{exercise}', [ExerciseController::class, 'show']);
 
 Route::get('/workouts', [WorkoutController::class, 'index']);
 Route::get('/workouts/{workout:slug}', [WorkoutController::class, 'show']);

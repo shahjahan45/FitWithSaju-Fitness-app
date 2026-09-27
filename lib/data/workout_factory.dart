@@ -1,4 +1,4 @@
-import 'demo_repository.dart';
+import 'exercise_catalog.dart';
 import 'models/exercise.dart';
 import 'models/workout.dart';
 
@@ -6,7 +6,7 @@ class WorkoutFactory {
   WorkoutFactory._();
 
   static Exercise? exerciseById(String id) {
-    return DemoRepository.findExerciseById(id);
+    return ExerciseCatalog.instance.findById(id);
   }
 
   static List<Exercise> exercisesFromIds(Iterable<dynamic> ids) {
