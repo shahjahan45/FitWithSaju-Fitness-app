@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../core/motion/app_motion.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/demo_repository.dart';
 import 'exercise_detail_screen.dart';
@@ -16,13 +18,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     final exercises = DemoRepository.exercises
-        .where((e) =>
-            e.name.toLowerCase().contains(query.toLowerCase()) ||
-            e.muscle.toLowerCase().contains(query.toLowerCase()))
+        .where(
+          (e) =>
+              e.name.toLowerCase().contains(query.toLowerCase()) ||
+              e.muscle.toLowerCase().contains(query.toLowerCase()),
+        )
         .toList();
 
     return SafeArea(
       child: ListView(
+        key: const PageStorageKey('explore-scroll'),
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
         children: [
           const Text(
@@ -53,7 +58,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(22),
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
+                  FitRoutes.route(
+                    context,
+                    motion: FitRouteMotion.detail,
                     builder: (_) => ExerciseDetailScreen(exercise: e),
                   ),
                 ),
@@ -66,16 +73,22 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: .10),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: const Icon(
-                          Icons.fitness_center_rounded,
-                          color: AppColors.primary,
+                      Hero(
+                        tag: 'exercise-art-${e.id}',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: .10),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: const Icon(
+                              Icons.fitness_center_rounded,
+                              color: AppColors.primary,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 14),

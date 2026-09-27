@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
+import '../../core/motion/app_motion.dart';
 import '../../core/theme/app_colors.dart';
 import '../explore/explore_screen.dart';
 import '../home/home_screen.dart';
@@ -15,9 +17,11 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
-  final PageController _pageController = PageController();
+class _MainShellState extends State<MainShell>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _contentController;
   int index = 0;
+  int _direction = 1;
 
   final pages = const [
     HomeScreen(),
@@ -36,38 +40,92 @@ class _MainShellState extends State<MainShell> {
   ];
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _go(int value) {
-    if (value == index) return;
-
-    _pageController.animateToPage(
-      value,
-      duration: const Duration(milliseconds: 520),
-      curve: Curves.easeOutCubic,
+  void initState() {
+    super.initState();
+    _contentController = AnimationController(
+      vsync: this,
+      duration: AppMotion.mainNavigation,
+      value: 1,
     );
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _contentController.duration = AppMotion.duration(
+      context,
+      AppMotion.mainNavigation,
+    );
+  }
+
+  @override
+  void dispose() {
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  void _go(int value) {
+    if (value == index) {
+      return;
+    }
+
+    _contentController.stop();
+    _direction = value > index ? 1 : -1;
+    setState(() => index = value);
+    _contentController.forward(from: 0);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final reduceMotion = AppMotion.reducedMotion(context);
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: pages.length,
-        physics: const PageScrollPhysics(),
-        onPageChanged: (value) {
-          if (value == index) return;
-          setState(() => index = value);
-        },
-        itemBuilder: (context, pageIndex) {
-          return _AnimatedPage(
-            index: pageIndex,
-            currentIndex: index,
-            child: pages[pageIndex],
+      body: AnimatedBuilder(
+        animation: _contentController,
+        builder: (context, _) {
+          final t = AppMotion.enterCurve.transform(_contentController.value);
+          final rtlMultiplier =
+              Directionality.of(context) == TextDirection.rtl ? -1.0 : 1.0;
+          final dx = reduceMotion
+              ? 0.0
+              : (1 - t) *
+                  _direction *
+                  rtlMultiplier *
+                  AppMotion.mainNavigationSlide;
+          final opacity = reduceMotion ? 1.0 : .90 + (.10 * t);
+
+          return Opacity(
+            opacity: opacity,
+            child: Transform.translate(
+              offset: Offset(dx, 0),
+              child: IndexedStack(
+                index: index,
+                sizing: StackFit.expand,
+                children: List.generate(
+                  pages.length,
+                  (pageIndex) {
+                    final active = pageIndex == index;
+                    return KeyedSubtree(
+                      key: ValueKey('main-page-$pageIndex'),
+                      child: TickerMode(
+                        enabled: active,
+                        child: ExcludeSemantics(
+                          excluding: !active,
+                          child: ExcludeFocus(
+                            excluding: !active,
+                            child: IgnorePointer(
+                              ignoring: !active,
+                              child: pages[pageIndex],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           );
         },
       ),
@@ -80,39 +138,6 @@ class _MainShellState extends State<MainShell> {
           onTap: _go,
         ),
       ),
-    );
-  }
-}
-
-class _AnimatedPage extends StatelessWidget {
-  final int index;
-  final int currentIndex;
-  final Widget child;
-
-  const _AnimatedPage({
-    required this.index,
-    required this.currentIndex,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final distance = (index - currentIndex).abs();
-    final isCurrent = distance == 0;
-
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: .92, end: 1),
-      duration: const Duration(milliseconds: 360),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, _) {
-        return Opacity(
-          opacity: isCurrent ? value : .92,
-          child: Transform.scale(
-            scale: isCurrent ? .985 + (.015 * value) : .985,
-            child: child,
-          ),
-        );
-      },
     );
   }
 }
@@ -130,6 +155,11 @@ class _GlassBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = AppMotion.reducedMotion(context);
+    final animationDuration = reduceMotion
+        ? Duration.zero
+        : AppMotion.mainNavigation;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: BackdropFilter(
@@ -158,10 +188,10 @@ class _GlassBottomBar extends StatelessWidget {
 
               return Stack(
                 children: [
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 430),
-                    curve: Curves.easeOutBack,
-                    left: (selectedIndex * itemWidth) + 2,
+                  AnimatedPositionedDirectional(
+                    duration: animationDuration,
+                    curve: AppMotion.indicatorCurve,
+                    start: (selectedIndex * itemWidth) + 2,
                     top: 1,
                     width: itemWidth - 4,
                     height: 66,
@@ -178,9 +208,9 @@ class _GlassBottomBar extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: .28),
-                            blurRadius: 18,
-                            offset: const Offset(0, 8),
+                            color: AppColors.primary.withValues(alpha: .24),
+                            blurRadius: 16,
+                            offset: const Offset(0, 7),
                           ),
                         ],
                       ),
@@ -191,8 +221,10 @@ class _GlassBottomBar extends StatelessWidget {
                       items.length,
                       (itemIndex) => Expanded(
                         child: _NavButton(
+                          key: ValueKey('nav-${items[itemIndex].label.toLowerCase()}'),
                           data: items[itemIndex],
                           selected: selectedIndex == itemIndex,
+                          animationDuration: animationDuration,
                           onTap: () => onTap(itemIndex),
                         ),
                       ),
@@ -211,11 +243,14 @@ class _GlassBottomBar extends StatelessWidget {
 class _NavButton extends StatefulWidget {
   final _NavItemData data;
   final bool selected;
+  final Duration animationDuration;
   final VoidCallback onTap;
 
   const _NavButton({
+    super.key,
     required this.data,
     required this.selected,
+    required this.animationDuration,
     required this.onTap,
   });
 
@@ -228,6 +263,8 @@ class _NavButtonState extends State<_NavButton> {
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = AppMotion.reducedMotion(context);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapDown: (_) => setState(() => pressed = true),
@@ -237,8 +274,8 @@ class _NavButtonState extends State<_NavButton> {
         widget.onTap();
       },
       child: AnimatedScale(
-        scale: pressed ? .91 : 1,
-        duration: const Duration(milliseconds: 120),
+        scale: reduceMotion ? 1 : (pressed ? .96 : 1),
+        duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
         child: SizedBox(
           height: 68,
@@ -246,9 +283,9 @@ class _NavButtonState extends State<_NavButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedScale(
-                scale: widget.selected ? 1.08 : 1,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOutBack,
+                scale: reduceMotion ? 1 : (widget.selected ? 1.06 : 1),
+                duration: widget.animationDuration,
+                curve: AppMotion.indicatorCurve,
                 child: Icon(
                   widget.data.icon,
                   size: widget.selected ? 25 : 23,
@@ -257,12 +294,13 @@ class _NavButtonState extends State<_NavButton> {
               ),
               const SizedBox(height: 4),
               AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 260),
-                curve: Curves.easeOut,
+                duration: widget.animationDuration,
+                curve: AppMotion.indicatorCurve,
                 style: TextStyle(
                   fontSize: 10.5,
                   height: 1,
-                  fontWeight: widget.selected ? FontWeight.w800 : FontWeight.w600,
+                  fontWeight:
+                      widget.selected ? FontWeight.w800 : FontWeight.w600,
                   color: widget.selected ? Colors.white : AppColors.muted,
                 ),
                 child: Text(

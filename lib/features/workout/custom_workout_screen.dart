@@ -1,15 +1,176 @@
 import 'package:flutter/material.dart';
+
+import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/demo_repository.dart';
 
-class CustomWorkoutScreen extends StatefulWidget { const CustomWorkoutScreen({super.key}); @override State<CustomWorkoutScreen> createState()=>_CustomWorkoutScreenState(); }
-class _CustomWorkoutScreenState extends State<CustomWorkoutScreen>{
- final name=TextEditingController(text:'My Workout'); final Set<String> selected={};
- @override void dispose(){name.dispose();super.dispose();}
- @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Create Workout')),body:ListView(padding:const EdgeInsets.all(20),children:[
-   TextField(controller:name,decoration:const InputDecoration(labelText:'Workout name',prefixIcon:Icon(Icons.edit_rounded))),const SizedBox(height:22),
-   const Text('Choose exercises',style:TextStyle(fontSize:18,fontWeight:FontWeight.w900)),const SizedBox(height:12),
-   ...DemoRepository.exercises.map((e)=>CheckboxListTile(value:selected.contains(e.id),onChanged:(v)=>setState((){v==true?selected.add(e.id):selected.remove(e.id);}),activeColor:AppColors.primary,checkColor:Colors.black,secondary:const Icon(Icons.fitness_center_rounded,color:AppColors.secondary),title:Text(e.name,style:const TextStyle(fontWeight:FontWeight.w800)),subtitle:Text('${e.muscle} • ${e.equipment}',style:const TextStyle(color:AppColors.muted)),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18)),contentPadding:const EdgeInsets.symmetric(horizontal:12))),
-   const SizedBox(height:18),SizedBox(height:58,child:FilledButton.icon(style:FilledButton.styleFrom(backgroundColor:AppColors.primary,foregroundColor:Colors.black,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(20))),onPressed:selected.isEmpty?null:(){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('${name.text} created with ${selected.length} exercises. Local full persistence is the next refinement.')));},icon:const Icon(Icons.save_rounded),label:const Text('Save Workout',style:TextStyle(fontWeight:FontWeight.w900))))
- ]));
+class CustomWorkoutScreen extends StatefulWidget {
+  final Map<String, dynamic>? workout;
+
+  const CustomWorkoutScreen({
+    super.key,
+    this.workout,
+  });
+
+  @override
+  State<CustomWorkoutScreen> createState() => _CustomWorkoutScreenState();
+}
+
+class _CustomWorkoutScreenState extends State<CustomWorkoutScreen> {
+  late final TextEditingController _nameController;
+  late final Set<String> _selected;
+  bool _saving = false;
+
+  bool get isEditing => widget.workout != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: (widget.workout?['name'] ?? 'My Workout').toString(),
+    );
+    _selected = ((widget.workout?['exerciseIds'] as Iterable?) ?? const [])
+        .map((e) => e.toString())
+        .toSet();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_selected.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Choose at least one exercise.')),
+      );
+      return;
+    }
+    setState(() => _saving = true);
+    await LocalStore.saveCustomWorkout(
+      id: widget.workout?['id']?.toString(),
+      name: _nameController.text,
+      exerciseIds: _selected.toList(),
+    );
+    if (!mounted) {
+      return;
+    }
+    Navigator.of(context).pop(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isEditing ? 'Edit Workout' : 'Create Workout'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              labelText: 'Workout name',
+              prefixIcon: Icon(Icons.edit_rounded),
+            ),
+          ),
+          const SizedBox(height: 22),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Choose exercises',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                ),
+              ),
+              Text(
+                '${_selected.length} selected',
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...DemoRepository.exercises.map(
+            (exercise) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Material(
+                color: AppColors.surface,
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: _selected.contains(exercise.id)
+                        ? AppColors.primary
+                        : AppColors.border,
+                  ),
+                ),
+                child: CheckboxListTile(
+                value: _selected.contains(exercise.id),
+                activeColor: AppColors.primary,
+                checkColor: Colors.white,
+                secondary: const Icon(
+                  Icons.fitness_center_rounded,
+                  color: AppColors.primary,
+                ),
+                title: Text(
+                  exercise.name,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                subtitle: Text(
+                  '${exercise.muscle} • ${exercise.equipment}',
+                  style: const TextStyle(color: AppColors.muted),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+                onChanged: (value) {
+                  setState(() {
+                    if (value == true) {
+                      _selected.add(exercise.id);
+                    } else {
+                      _selected.remove(exercise.id);
+                    }
+                  });
+                },
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 58,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              onPressed: _saving ? null : _save,
+              icon: _saving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.save_rounded),
+              label: Text(
+                isEditing ? 'Update Workout' : 'Save Workout',
+                style: const TextStyle(fontWeight: FontWeight.w900),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

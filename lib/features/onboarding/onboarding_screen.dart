@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/motion/app_motion.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/primary_button.dart';
@@ -20,21 +21,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _next() async {
     if (_page < 3) {
-      await _controller.nextPage(
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeOutCubic,
-      );
+      if (AppMotion.reducedMotion(context)) {
+        _controller.jumpToPage(_page + 1);
+      } else {
+        await _controller.nextPage(
+          duration: AppMotion.onboarding,
+          curve: AppMotion.enterCurve,
+        );
+      }
     } else {
       await LocalStore.saveProfile(goal: goal, level: level, place: place);
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const MainShell()));
+      if (!mounted) {
+        return;
+      }
+      Navigator.of(context).pushReplacement(
+      FitRoutes.route(
+        context,
+        motion: FitRouteMotion.fadeScale,
+        builder: (_) => const MainShell(),
+      ),
+    );
     }
   }
 
   Future<void> _skip() async {
     await LocalStore.skipOnboarding();
-    if (!mounted) return;
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const MainShell()));
+    if (!mounted) {
+        return;
+      }
+    Navigator.of(context).pushReplacement(
+      FitRoutes.route(
+        context,
+        motion: FitRouteMotion.fadeScale,
+        builder: (_) => const MainShell(),
+      ),
+    );
   }
 
   @override
@@ -113,7 +134,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       children: List.generate(
                         4,
                         (i) => AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
+                          duration: AppMotion.reducedMotion(context)
+                              ? Duration.zero
+                              : AppMotion.internalTab,
                           width: i == _page ? 26 : 10,
                           height: 10,
                           margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -158,7 +181,7 @@ class _IntroPage extends StatelessWidget {
             height: 330,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.secondary.withOpacity(.08),
+              color: AppColors.secondary.withValues(alpha: .08),
             ),
           ),
         ),
@@ -170,11 +193,11 @@ class _IntroPage extends StatelessWidget {
             height: 240,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(200),
-              color: AppColors.secondary.withOpacity(.07),
+              color: AppColors.secondary.withValues(alpha: .07),
             ),
           ),
         ),
-        Positioned(
+        const Positioned(
           right: 10,
           bottom: 110,
           child: Opacity(
@@ -225,7 +248,7 @@ class _IntroPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(40),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.secondary.withOpacity(.22),
+                      color: AppColors.secondary.withValues(alpha: .22),
                       blurRadius: 24,
                       offset: const Offset(0, 12),
                     ),
@@ -350,7 +373,7 @@ class _SelectionPage extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF0F172A).withOpacity(.04),
+                      color: const Color(0xFF0F172A).withValues(alpha: .04),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),

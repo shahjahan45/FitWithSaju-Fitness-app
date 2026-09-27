@@ -33,7 +33,9 @@ class FitCard extends StatelessWidget {
       child: child,
     );
 
-    if (onTap == null) return content;
+    if (onTap == null) {
+      return content;
+    }
 
     return InkWell(
       onTap: onTap,

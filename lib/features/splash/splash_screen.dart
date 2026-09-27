@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../core/motion/app_motion.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../onboarding/onboarding_screen.dart';
@@ -43,29 +44,15 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _finish() async {
     final done = await LocalStore.onboardingComplete();
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 520),
-        pageBuilder: (_, __, ___) =>
-            done ? const MainShell() : const OnboardingScreen(),
-        transitionsBuilder: (_, animation, __, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return FadeTransition(
-            opacity: curved,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, .018),
-                end: Offset.zero,
-              ).animate(curved),
-              child: child,
-            ),
-          );
-        },
+      FitRoutes.route(
+        context,
+        motion: done ? FitRouteMotion.fadeScale : FitRouteMotion.horizontal,
+        builder: (_) => done ? const MainShell() : const OnboardingScreen(),
       ),
     );
   }
@@ -78,6 +65,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = AppMotion.reducedMotion(context);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -99,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen>
               height: 330,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary.withOpacity(.055),
+                color: AppColors.primary.withValues(alpha: .055),
               ),
             ),
           ),
@@ -111,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen>
               height: 360,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.secondary.withOpacity(.045),
+                color: AppColors.secondary.withValues(alpha: .045),
               ),
             ),
           ),
@@ -122,9 +111,9 @@ class _SplashScreenState extends State<SplashScreen>
                 return FadeTransition(
                   opacity: _fade,
                   child: Transform.translate(
-                    offset: Offset(0, _lift.value),
-                    child: ScaleTransition(
-                      scale: _scale,
+                    offset: Offset(0, reduceMotion ? 0 : _lift.value),
+                    child: Transform.scale(
+                      scale: reduceMotion ? 1 : _scale.value,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 34),
                         child: Column(
@@ -132,19 +121,7 @@ class _SplashScreenState extends State<SplashScreen>
                           children: [
                             Container(
                               constraints: const BoxConstraints(maxWidth: 340),
-                              padding: const EdgeInsets.all(18),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(.80),
-                                borderRadius: BorderRadius.circular(32),
-                                border: Border.all(color: Colors.white),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF0B1420).withOpacity(.07),
-                                    blurRadius: 32,
-                                    offset: const Offset(0, 16),
-                                  ),
-                                ],
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
                               child: Image.asset(
                                 'assets/images/fitwithsaju_logo.png',
                                 fit: BoxFit.contain,
