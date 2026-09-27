@@ -17,6 +17,10 @@ class AppMotion {
   static const Duration onboarding = Duration(milliseconds: 320);
   static const Duration success = Duration(milliseconds: 280);
   static const Duration fullScreen = Duration(milliseconds: 320);
+  static const Duration micro = Duration(milliseconds: 140);
+  static const Duration sectionReveal = Duration(milliseconds: 360);
+  static const Duration chartReveal = Duration(milliseconds: 700);
+  static const Duration ambient = Duration(milliseconds: 2200);
   static const Duration reduced = Duration(milliseconds: 120);
 
   static const Curve enterCurve = Curves.easeOutCubic;

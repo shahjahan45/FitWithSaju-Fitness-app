@@ -16,7 +16,8 @@ void main() {
     expect(AppMotion.fullScreen.inMilliseconds, inInclusiveRange(280, 350));
   });
 
-  testWidgets('bottom navigation preserves Explore field state', (tester) async {
+  testWidgets('bottom navigation preserves Explore field state',
+      (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,

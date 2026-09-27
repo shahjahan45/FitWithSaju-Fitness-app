@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
@@ -19,6 +20,7 @@ class WorkoutScreen extends StatefulWidget {
 class _WorkoutScreenState extends State<WorkoutScreen> {
   List<Map<String, dynamic>> _plan = [];
   List<Map<String, dynamic>> _custom = [];
+  Map<String, dynamic>? _activeDraft;
   bool _loading = true;
 
   @override
@@ -28,16 +30,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   }
 
   Future<void> _load() async {
-    final results = await Future.wait([
-      LocalStore.weeklyPlan(),
-      LocalStore.customWorkouts(),
-    ]);
+    final plan = await LocalStore.weeklyPlan();
+    final custom = await LocalStore.customWorkouts();
+    final activeDraft = await LocalStore.activeWorkout();
     if (!mounted) {
       return;
     }
     setState(() {
-      _plan = results[0];
-      _custom = results[1];
+      _plan = plan;
+      _custom = custom;
+      _activeDraft = activeDraft;
       _loading = false;
     });
   }
@@ -100,20 +102,53 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     }
   }
 
-  void _startMapWorkout(Map<String, dynamic> map, {bool custom = false}) {
-    final workout = custom
-        ? WorkoutFactory.fromCustom(map)
-        : WorkoutFactory.fromPlan(map);
+  Future<void> _startMapWorkout(
+    Map<String, dynamic> map, {
+    bool custom = false,
+  }) async {
+    if (_activeDraft != null) {
+      final discard = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Workout already in progress'),
+          content: Text(
+            '${_activeDraft!['title'] ?? 'A workout'} is saved for resuming. Discard it before starting another workout?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Keep it'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Discard & start'),
+            ),
+          ],
+        ),
+      );
+      if (discard != true) {
+        return;
+      }
+      await LocalStore.clearActiveWorkout();
+      if (!mounted) {
+        return;
+      }
+      _activeDraft = null;
+    }
+
+    final workout =
+        custom ? WorkoutFactory.fromCustom(map) : WorkoutFactory.fromPlan(map);
     if (workout.exercises.isEmpty) {
       return;
     }
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       FitRoutes.route(
         context,
         motion: FitRouteMotion.fullScreen,
         builder: (_) => ActiveWorkoutScreen(workout: workout),
       ),
     );
+    await _load();
   }
 
   @override
@@ -125,137 +160,187 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               key: const PageStorageKey('workout-scroll'),
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
               children: [
-                const Text(
-                  'Workout',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Plan your week. Train one day at a time.',
-                  style: TextStyle(color: AppColors.muted),
+                const MotionReveal(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Workout',
+                        style: TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.w900),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        'Plan your week. Train one day at a time.',
+                        style: TextStyle(color: AppColors.muted),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        'Weekly plan',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                      ),
+                if (_activeDraft != null) ...[
+                  MotionReveal(
+                    delay: const Duration(milliseconds: 55),
+                    child: _ResumeDraftCard(
+                      draft: _activeDraft!,
+                      onResume: () async {
+                        final workout = WorkoutFactory.fromDraft(_activeDraft!);
+                        if (workout.exercises.isEmpty) {
+                          return;
+                        }
+                        await Navigator.of(context).push(
+                          FitRoutes.route(
+                            context,
+                            motion: FitRouteMotion.fullScreen,
+                            builder: (_) => ActiveWorkoutScreen(
+                              workout: workout,
+                              resumeDraft: _activeDraft,
+                            ),
+                          ),
+                        );
+                        await _load();
+                      },
                     ),
-                    Text(
-                      'Tap a day to edit',
-                      style: TextStyle(
-                        color: AppColors.muted.withValues(alpha: .9),
-                        fontSize: 12,
+                  ),
+                  const SizedBox(height: 20),
+                ],
+                MotionReveal(
+                  delay: const Duration(milliseconds: 90),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Weekly plan',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w900),
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Tap a day to edit',
+                        style: TextStyle(
+                          color: AppColors.muted.withValues(alpha: .9),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 ..._plan.map((item) {
                   final isRest = item['isRest'] == true;
                   final exerciseCount =
                       ((item['exerciseIds'] as Iterable?) ?? const []).length;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: FitCard(
-                      onTap: () => _editDay(item),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 46,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: isRest
-                                  ? AppColors.surfaceAlt
-                                  : AppColors.primary.withValues(alpha: .12),
-                              borderRadius: BorderRadius.circular(14),
+                  return MotionReveal(
+                    delay: const Duration(milliseconds: 120),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: FitCard(
+                        onTap: () => _editDay(item),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 46,
+                              height: 46,
+                              decoration: BoxDecoration(
+                                color: isRest
+                                    ? AppColors.surfaceAlt
+                                    : AppColors.primary.withValues(alpha: .12),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Icon(
+                                isRest
+                                    ? Icons.bedtime_outlined
+                                    : Icons.fitness_center_rounded,
+                                color: isRest
+                                    ? AppColors.muted
+                                    : AppColors.primary,
+                                size: 21,
+                              ),
                             ),
-                            child: Icon(
-                              isRest
-                                  ? Icons.bedtime_outlined
-                                  : Icons.fitness_center_rounded,
-                              color: isRest ? AppColors.muted : AppColors.primary,
-                              size: 21,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item['day'].toString(),
-                                  style: const TextStyle(
-                                    color: AppColors.muted,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  item['title'].toString(),
-                                  style: const TextStyle(fontWeight: FontWeight.w900),
-                                ),
-                                if (!isRest)
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    '$exerciseCount exercises • ${item['durationMinutes']} min',
+                                    item['day'].toString(),
                                     style: const TextStyle(
                                       color: AppColors.muted,
-                                      fontSize: 11,
+                                      fontSize: 12,
                                     ),
                                   ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    item['title'].toString(),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w900),
+                                  ),
+                                  if (!isRest)
+                                    Text(
+                                      '$exerciseCount exercises • ${item['durationMinutes']} min',
+                                      style: const TextStyle(
+                                        color: AppColors.muted,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            PopupMenuButton<String>(
+                              onSelected: (value) async {
+                                if (value == 'copy') {
+                                  await _copyDay(item['day'].toString());
+                                } else if (value == 'rest') {
+                                  await LocalStore.setRestDay(
+                                      item['day'].toString());
+                                  await _load();
+                                } else if (value == 'start') {
+                                  _startMapWorkout(item);
+                                }
+                              },
+                              itemBuilder: (_) => [
+                                if (!isRest)
+                                  const PopupMenuItem(
+                                    value: 'start',
+                                    child: Text('Start workout'),
+                                  ),
+                                if (!isRest)
+                                  const PopupMenuItem(
+                                    value: 'copy',
+                                    child: Text('Copy to another day'),
+                                  ),
+                                const PopupMenuItem(
+                                  value: 'rest',
+                                  child: Text('Set as rest day'),
+                                ),
                               ],
                             ),
-                          ),
-                          PopupMenuButton<String>(
-                            onSelected: (value) async {
-                              if (value == 'copy') {
-                                await _copyDay(item['day'].toString());
-                              } else if (value == 'rest') {
-                                await LocalStore.setRestDay(item['day'].toString());
-                                await _load();
-                              } else if (value == 'start') {
-                                _startMapWorkout(item);
-                              }
-                            },
-                            itemBuilder: (_) => [
-                              if (!isRest)
-                                const PopupMenuItem(
-                                  value: 'start',
-                                  child: Text('Start workout'),
-                                ),
-                              if (!isRest)
-                                const PopupMenuItem(
-                                  value: 'copy',
-                                  child: Text('Copy to another day'),
-                                ),
-                              const PopupMenuItem(
-                                value: 'rest',
-                                child: Text('Set as rest day'),
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
                 }),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        'My workouts',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                MotionReveal(
+                  delay: const Duration(milliseconds: 180),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'My workouts',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w900),
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      tooltip: 'Create workout',
-                      onPressed: _createWorkout,
-                      icon: const Icon(Icons.add_circle_rounded, color: AppColors.primary),
-                    ),
-                  ],
+                      IconButton(
+                        tooltip: 'Create workout',
+                        onPressed: _createWorkout,
+                        icon: const Icon(Icons.add_circle_rounded,
+                            color: AppColors.primary),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 8),
                 if (_custom.isEmpty)
@@ -265,7 +350,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       children: [
                         CircleAvatar(
                           backgroundColor: AppColors.primarySoft,
-                          child: Icon(Icons.add_rounded, color: AppColors.primary),
+                          child:
+                              Icon(Icons.add_rounded, color: AppColors.primary),
                         ),
                         SizedBox(width: 14),
                         Expanded(
@@ -289,7 +375,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   )
                 else
                   ..._custom.map((item) {
-                    final count = ((item['exerciseIds'] as Iterable?) ?? const []).length;
+                    final count =
+                        ((item['exerciseIds'] as Iterable?) ?? const []).length;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Material(
@@ -300,30 +387,33 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           side: const BorderSide(color: AppColors.border),
                         ),
                         child: ListTile(
-                        leading: const CircleAvatar(
-                          backgroundColor: AppColors.primarySoft,
-                          child: Icon(Icons.bolt_rounded, color: AppColors.primary),
-                        ),
-                        title: Text(
-                          item['name'].toString(),
-                          style: const TextStyle(fontWeight: FontWeight.w900),
-                        ),
-                        subtitle: Text('$count exercises'),
-                        onTap: () => _startMapWorkout(item, custom: true),
-                        trailing: PopupMenuButton<String>(
-                          onSelected: (value) async {
-                            if (value == 'edit') {
-                              await _createWorkout(item);
-                            } else if (value == 'delete') {
-                              await LocalStore.deleteCustomWorkout(item['id'].toString());
-                              await _load();
-                            }
-                          },
-                          itemBuilder: (_) => const [
-                            PopupMenuItem(value: 'edit', child: Text('Edit')),
-                            PopupMenuItem(value: 'delete', child: Text('Delete')),
-                          ],
-                        ),
+                          leading: const CircleAvatar(
+                            backgroundColor: AppColors.primarySoft,
+                            child: Icon(Icons.bolt_rounded,
+                                color: AppColors.primary),
+                          ),
+                          title: Text(
+                            item['name'].toString(),
+                            style: const TextStyle(fontWeight: FontWeight.w900),
+                          ),
+                          subtitle: Text('$count exercises'),
+                          onTap: () => _startMapWorkout(item, custom: true),
+                          trailing: PopupMenuButton<String>(
+                            onSelected: (value) async {
+                              if (value == 'edit') {
+                                await _createWorkout(item);
+                              } else if (value == 'delete') {
+                                await LocalStore.deleteCustomWorkout(
+                                    item['id'].toString());
+                                await _load();
+                              }
+                            },
+                            itemBuilder: (_) => const [
+                              PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              PopupMenuItem(
+                                  value: 'delete', child: Text('Delete')),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -349,6 +439,73 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ),
               ],
             ),
+    );
+  }
+}
+
+class _ResumeDraftCard extends StatelessWidget {
+  final Map<String, dynamic> draft;
+  final VoidCallback onResume;
+
+  const _ResumeDraftCard({
+    required this.draft,
+    required this.onResume,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final completed = ((draft['sets'] as Iterable?) ?? const []).length;
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primarySoft,
+            AppColors.secondarySoft.withValues(alpha: .45),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.primary.withValues(alpha: .25)),
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 24,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.play_arrow_rounded, color: AppColors.primary),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'RESUME WORKOUT',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: .6,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  draft['title']?.toString() ?? 'Workout',
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
+                Text(
+                  '$completed completed sets saved',
+                  style: const TextStyle(color: AppColors.muted, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          FilledButton(
+            onPressed: onResume,
+            child: const Text('Resume'),
+          ),
+        ],
+      ),
     );
   }
 }

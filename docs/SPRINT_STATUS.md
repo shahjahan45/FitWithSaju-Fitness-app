@@ -75,3 +75,27 @@
 - [x] Workout history screen
 - [x] Custom workout builder foundation
 - [x] Orange/blue visual system aligned to official logo
+
+## Sprint 12 — Recovery & Strength Trends
+- [x] Resume interrupted workouts
+- [x] Rest timer recovery
+- [x] Edit/delete active completed sets
+- [x] Edit/delete historical sets
+- [x] Recalculate volume and PR flags after history edits
+- [x] Exercise strength history
+- [x] Estimated 1RM trend
+- [x] Backup import/restore
+
+
+## Sprint 14 — Real Exercise Media Library
+- [x] User-provided 30-exercise catalog integrated
+- [x] Supplied 360×360 GIF thumbnails integrated
+- [x] Supplied 720×720 GIF demonstrations integrated
+- [x] Search across exercise metadata
+- [x] Body-part filters
+- [x] Equipment filters
+- [x] Animated exercise cards
+- [x] Hero-connected detail media
+- [x] Real exercise media during active workout
+- [x] Backward compatibility for saved legacy exercise IDs
+- [x] TickerMode.valuesOf migration

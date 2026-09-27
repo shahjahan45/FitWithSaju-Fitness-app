@@ -20,8 +20,7 @@ class PersonalRecordsScreen extends StatelessWidget {
               ? snapshot.data![0] as List<Map<String, dynamic>>
               : <Map<String, dynamic>>[];
           final records = snapshot.hasData
-              ? snapshot.data![1]
-                  as Map<String, Map<String, dynamic>>
+              ? snapshot.data![1] as Map<String, Map<String, dynamic>>
               : <String, Map<String, dynamic>>{};
 
           if (history.isEmpty) {
@@ -187,6 +186,7 @@ class _ExerciseRecordCard extends StatelessWidget {
     final reps = (record['repsAtBestWeight'] as num?)?.toInt() ?? 0;
     final bestReps = (record['bestReps'] as num?)?.toInt() ?? reps;
     final bestVolume = (record['bestSetVolume'] as num?)?.toDouble() ?? 0;
+    final estimatedOneRm = LocalStore.estimatedOneRepMax(weight, reps);
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -249,7 +249,14 @@ class _ExerciseRecordCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: _MiniMetric(
-                  label: 'Best set volume',
+                  label: 'Estimated 1RM',
+                  value: '${_format(estimatedOneRm)} kg',
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _MiniMetric(
+                  label: 'Best volume',
                   value: '${bestVolume.round()} kg',
                 ),
               ),

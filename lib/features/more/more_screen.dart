@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/motion/motion_widgets.dart';
 import '../../core/theme/app_colors.dart';
 import 'data_export_screen.dart';
 import 'favorites_screen.dart';
@@ -17,94 +18,123 @@ class MoreScreen extends StatelessWidget {
         key: const PageStorageKey('more-scroll'),
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
         children: [
-          const Text(
-            'More',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Your fitness tools, all in one place.',
-            style: TextStyle(color: AppColors.muted),
-          ),
-          const SizedBox(height: 22),
-          const _SectionTitle('YOUR FITNESS'),
-          _Group(
-            children: [
-              _ActionTile(
-                icon: Icons.favorite_rounded,
-                title: 'Favorites',
-                onTap: () => _open(context, const FavoritesScreen()),
-              ),
-              _ActionTile(
-                icon: Icons.straighten_rounded,
-                title: 'Measurements',
-                onTap: () => _open(context, const MeasurementsScreen()),
-              ),
-              _ActionTile(
-                icon: Icons.emoji_events_rounded,
-                title: 'Personal Records',
-                onTap: () => _open(context, const PersonalRecordsScreen()),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          const _SectionTitle('PREFERENCES & DATA'),
-          _Group(
-            children: [
-              _ActionTile(
-                icon: Icons.settings_rounded,
-                title: 'Settings',
-                onTap: () => _info(context, 'Settings', 'Units, haptics, sound, and appearance controls are scheduled for the settings sprint.'),
-              ),
-              _ActionTile(
-                icon: Icons.file_download_outlined,
-                title: 'Export My Data',
-                onTap: () => _open(context, const DataExportScreen()),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          const _SectionTitle('ABOUT THE APP'),
-          _Group(
-            children: [
-              _ActionTile(
-                icon: Icons.info_outline_rounded,
-                title: 'About FitWithSaju',
-                onTap: () => _info(
-                  context,
-                  'FitWithSaju',
-                  'Move. Train. Progress. Every day. A free, no-login fitness companion for daily workout planning and progress tracking.',
-                ),
-              ),
-              _ActionTile(
-                icon: Icons.privacy_tip_outlined,
-                title: 'Privacy',
-                onTap: () => _info(
-                  context,
-                  'Privacy',
-                  'Workout plans, favorites, body metrics, and history in this starter are stored locally on your device.',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          const Center(
+          const MotionReveal(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'FitWithSaju',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12,
-                  ),
+                  'More',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
                 ),
-                SizedBox(height: 3),
+                SizedBox(height: 6),
                 Text(
-                  'Move. Train. Progress.',
-                  style: TextStyle(color: AppColors.muted, fontSize: 10),
+                  'Your fitness tools, all in one place.',
+                  style: TextStyle(color: AppColors.muted),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 22),
+          const MotionReveal(
+            delay: Duration(milliseconds: 55),
+            child: _SectionTitle('YOUR FITNESS'),
+          ),
+          MotionReveal(
+            delay: const Duration(milliseconds: 80),
+            child: _Group(
+              children: [
+                _ActionTile(
+                  icon: Icons.favorite_rounded,
+                  title: 'Favorites',
+                  onTap: () => _open(context, const FavoritesScreen()),
+                ),
+                _ActionTile(
+                  icon: Icons.straighten_rounded,
+                  title: 'Measurements',
+                  onTap: () => _open(context, const MeasurementsScreen()),
+                ),
+                _ActionTile(
+                  icon: Icons.emoji_events_rounded,
+                  title: 'Personal Records',
+                  onTap: () => _open(context, const PersonalRecordsScreen()),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const MotionReveal(
+            delay: Duration(milliseconds: 120),
+            child: _SectionTitle('PREFERENCES & DATA'),
+          ),
+          MotionReveal(
+            delay: const Duration(milliseconds: 145),
+            child: _Group(
+              children: [
+                _ActionTile(
+                  icon: Icons.settings_rounded,
+                  title: 'Settings',
+                  onTap: () => _info(context, 'Settings',
+                      'Units, haptics, sound, and appearance controls are scheduled for the settings sprint.'),
+                ),
+                _ActionTile(
+                  icon: Icons.file_download_outlined,
+                  title: 'Backup & Restore',
+                  onTap: () => _open(context, const DataExportScreen()),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const MotionReveal(
+            delay: Duration(milliseconds: 185),
+            child: _SectionTitle('ABOUT THE APP'),
+          ),
+          MotionReveal(
+            delay: const Duration(milliseconds: 210),
+            child: _Group(
+              children: [
+                _ActionTile(
+                  icon: Icons.info_outline_rounded,
+                  title: 'About FitWithSaju',
+                  onTap: () => _info(
+                    context,
+                    'FitWithSaju',
+                    'Move. Train. Progress. Every day. A free, no-login fitness companion for daily workout planning and progress tracking.',
+                  ),
+                ),
+                _ActionTile(
+                  icon: Icons.privacy_tip_outlined,
+                  title: 'Privacy',
+                  onTap: () => _info(
+                    context,
+                    'Privacy',
+                    'Workout plans, favorites, body metrics, and history in this starter are stored locally on your device.',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          const MotionReveal(
+            delay: Duration(milliseconds: 250),
+            child: Center(
+              child: Column(
+                children: [
+                  Text(
+                    'FitWithSaju',
+                    style: TextStyle(
+                      color: AppColors.muted,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                    ),
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    'Move. Train. Progress.',
+                    style: TextStyle(color: AppColors.muted, fontSize: 10),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -219,7 +249,8 @@ class _ActionTile extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
         leading: Icon(icon, color: AppColors.primary, size: 21),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-        trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
+        trailing:
+            const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
         onTap: onTap,
       ),
     );

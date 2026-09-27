@@ -6,12 +6,7 @@ class WorkoutFactory {
   WorkoutFactory._();
 
   static Exercise? exerciseById(String id) {
-    for (final exercise in DemoRepository.exercises) {
-      if (exercise.id == id) {
-        return exercise;
-      }
-    }
-    return null;
+    return DemoRepository.findExerciseById(id);
   }
 
   static List<Exercise> exercisesFromIds(Iterable<dynamic> ids) {
@@ -22,7 +17,8 @@ class WorkoutFactory {
   }
 
   static Workout fromPlan(Map<String, dynamic> map) {
-    final exercises = exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    final exercises =
+        exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
     return Workout(
       id: 'plan_${map['day'] ?? 'day'}',
       title: (map['title'] ?? 'Workout').toString(),
@@ -33,8 +29,22 @@ class WorkoutFactory {
     );
   }
 
+  static Workout fromDraft(Map<String, dynamic> map) {
+    final exercises =
+        exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    return Workout(
+      id: (map['workoutId'] ?? 'resumed').toString(),
+      title: (map['title'] ?? 'Workout').toString(),
+      subtitle: (map['subtitle'] ?? muscleSummary(exercises)).toString(),
+      durationMinutes: (map['durationMinutes'] as num?)?.toInt() ??
+          (exercises.length * 10).clamp(10, 90).toInt(),
+      exercises: exercises,
+    );
+  }
+
   static Workout fromCustom(Map<String, dynamic> map) {
-    final exercises = exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    final exercises =
+        exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
     return Workout(
       id: (map['id'] ?? 'custom').toString(),
       title: (map['name'] ?? 'Custom Workout').toString(),

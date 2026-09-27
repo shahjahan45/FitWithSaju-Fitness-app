@@ -121,7 +121,8 @@ class _SplashScreenState extends State<SplashScreen>
                           children: [
                             Container(
                               constraints: const BoxConstraints(maxWidth: 340),
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
                               child: Image.asset(
                                 'assets/images/fitwithsaju_logo.png',
                                 fit: BoxFit.contain,

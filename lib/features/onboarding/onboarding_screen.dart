@@ -35,20 +35,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return;
       }
       Navigator.of(context).pushReplacement(
-      FitRoutes.route(
-        context,
-        motion: FitRouteMotion.fadeScale,
-        builder: (_) => const MainShell(),
-      ),
-    );
+        FitRoutes.route(
+          context,
+          motion: FitRouteMotion.fadeScale,
+          builder: (_) => const MainShell(),
+        ),
+      );
     }
   }
 
   Future<void> _skip() async {
     await LocalStore.skipOnboarding();
     if (!mounted) {
-        return;
-      }
+      return;
+    }
     Navigator.of(context).pushReplacement(
       FitRoutes.route(
         context,
@@ -65,7 +65,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _SelectionPage(
         eyebrow: 'YOUR GOAL',
         title: 'What are you training for?',
-        subtitle: 'Choose your focus to personalize the FitWithSaju experience.',
+        subtitle:
+            'Choose your focus to personalize the FitWithSaju experience.',
         options: const [
           'Build Muscle',
           'Lose Weight',
@@ -80,7 +81,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _SelectionPage(
         eyebrow: 'YOUR LEVEL',
         title: 'Where are you starting?',
-        subtitle: 'We will keep every workout simple, practical, and motivating.',
+        subtitle:
+            'We will keep every workout simple, practical, and motivating.',
         options: const ['Beginner', 'Intermediate', 'Advanced'],
         selected: level,
         onSelected: (v) => setState(() => level = v),
@@ -101,7 +103,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           if (_page > 0)
             TextButton(
               onPressed: _skip,
-              child: const Text('Skip', style: TextStyle(color: AppColors.muted)),
+              child:
+                  const Text('Skip', style: TextStyle(color: AppColors.muted)),
             ),
           const SizedBox(width: 8),
         ],
@@ -141,7 +144,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           height: 10,
                           margin: const EdgeInsets.symmetric(horizontal: 5),
                           decoration: BoxDecoration(
-                            color: i == _page ? AppColors.secondary : const Color(0xFFBCC8D8),
+                            color: i == _page
+                                ? AppColors.secondary
+                                : const Color(0xFFBCC8D8),
                             borderRadius: BorderRadius.circular(99),
                           ),
                         ),
@@ -269,7 +274,8 @@ class _IntroPage extends StatelessWidget {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 30),
+                          Icon(Icons.arrow_forward_rounded,
+                              color: Colors.white, size: 30),
                           SizedBox(width: 12),
                           Text(
                             'Get Started',
@@ -366,10 +372,14 @@ class _SelectionPage extends StatelessWidget {
                 duration: const Duration(milliseconds: 220),
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: selected == option ? AppColors.primarySoft : AppColors.surface,
+                  color: selected == option
+                      ? AppColors.primarySoft
+                      : AppColors.surface,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: selected == option ? AppColors.primary : AppColors.border,
+                    color: selected == option
+                        ? AppColors.primary
+                        : AppColors.border,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -392,8 +402,12 @@ class _SelectionPage extends StatelessWidget {
                       ),
                     ),
                     Icon(
-                      selected == option ? Icons.check_circle_rounded : Icons.circle_outlined,
-                      color: selected == option ? AppColors.primary : AppColors.muted,
+                      selected == option
+                          ? Icons.check_circle_rounded
+                          : Icons.circle_outlined,
+                      color: selected == option
+                          ? AppColors.primary
+                          : AppColors.muted,
                     ),
                   ],
                 ),

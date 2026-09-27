@@ -1,29 +1,32 @@
-# FitWithSaju v11
+# FitWithSaju v14
 
-FitWithSaju is a no-login, local-first Flutter workout tracker.
+FitWithSaju is a no-login, offline-first Flutter workout tracker.
 
-## New in v11
+## v14 highlights
 
-- Every completed set now saves actual weight and reps
-- Previous-set values are shown and reused as workout input defaults
-- Automatic exercise PR detection
-- Live PR feedback during a workout
-- Session training-volume calculation
-- Rich workout-history details with exercise/set breakdown
-- Weekly training-volume chart
-- Exercise-specific Personal Records
-- Double-tap protection while completing a set
+- Integrated the user-provided exercise catalog from `excisize.rar`
+- 30 source exercises with supplied IDs, muscles, body parts, equipment, secondary muscles, and instructions
+- 30 animated 360×360 GIF thumbnails for Explore
+- 30 animated 720×720 GIF demonstrations for Exercise Detail and Active Workout
+- Search across name, target muscle, secondary muscle, body part, and equipment
+- Animated body-part filter chips
+- Equipment filter bottom sheet
+- Professional exercise cards with real motion thumbnails
+- Hero transition from exercise thumbnail to the full exercise demonstration
+- Step-by-step instruction cards sourced from the supplied exercise metadata
+- Real exercise media shown during active workouts
+- Existing v12/v13 locally-saved workout IDs remain resolvable for backward compatibility
+- New-install weekly plan seeds now use exercises from the supplied catalog
+- Updated `TickerMode.of(context)` calls to `TickerMode.valuesOf(context).enabled`
+- All v13 motion, workout recovery, PR tracking, strength trends, and backup/restore features retained
 
-## Existing features retained
+Version: `1.6.0+10`
 
-- Professional motion/navigation system
-- Editable Monday–Sunday workout plans
-- Custom workouts
-- Favorites
-- Body-weight and measurements tracking
-- JSON data export
-- Transparent FitWithSaju splash/app icon
-- No user login required
+## Exercise media layout
+
+- `assets/exercises/data/` — supplied JSON metadata
+- `assets/exercises/thumbs/` — supplied 360×360 GIFs
+- `assets/exercises/media/` — supplied 720×720 GIFs
 
 ## Run
 
@@ -36,4 +39,10 @@ flutter test
 flutter run
 ```
 
-Version: 1.3.0+7
+For physical-device performance validation:
+
+```bash
+flutter run --profile
+```
+
+Because the full supplied GIF catalog is bundled locally, the project/app size is intentionally larger than v13.

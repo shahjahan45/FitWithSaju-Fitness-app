@@ -63,13 +63,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   borderRadius: BorderRadius.circular(22),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(22),
-                    onTap: () => Navigator.of(context).push(
-                      FitRoutes.route(
-                        context,
-                        motion: FitRouteMotion.detail,
-                        builder: (_) => HistoryDetailScreen(session: item),
-                      ),
-                    ),
+                    onTap: () async {
+                      await Navigator.of(context).push(
+                        FitRoutes.route(
+                          context,
+                          motion: FitRouteMotion.detail,
+                          builder: (_) => HistoryDetailScreen(session: item),
+                        ),
+                      );
+                      if (mounted) {
+                        setState(() => data = LocalStore.history());
+                      }
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(17),
                       decoration: BoxDecoration(

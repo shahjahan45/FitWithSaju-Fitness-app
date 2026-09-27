@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
@@ -20,6 +21,7 @@ class HomeScreen extends StatelessWidget {
             LocalStore.todayPlan(),
             LocalStore.weeklyPlan(),
             LocalStore.history(),
+            LocalStore.activeWorkout(),
           ]),
           builder: (context, snapshot) {
             final todayPlan = snapshot.hasData
@@ -37,10 +39,14 @@ class HomeScreen extends StatelessWidget {
             final history = snapshot.hasData
                 ? snapshot.data![2] as List<Map<String, dynamic>>
                 : <Map<String, dynamic>>[];
+            final activeDraft = snapshot.hasData
+                ? snapshot.data![3] as Map<String, dynamic>?
+                : null;
             return _HomeContent(
               todayPlan: todayPlan,
               weeklyPlan: weeklyPlan,
               history: history,
+              activeDraft: activeDraft,
             );
           },
         );
@@ -53,11 +59,13 @@ class _HomeContent extends StatelessWidget {
   final Map<String, dynamic> todayPlan;
   final List<Map<String, dynamic>> weeklyPlan;
   final List<Map<String, dynamic>> history;
+  final Map<String, dynamic>? activeDraft;
 
   const _HomeContent({
     required this.todayPlan,
     required this.weeklyPlan,
     required this.history,
+    required this.activeDraft,
   });
 
   @override
@@ -79,159 +87,103 @@ class _HomeContent extends StatelessWidget {
           key: const PageStorageKey('home-scroll'),
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
           children: [
-            Row(
-              children: [
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FitWithSaju',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: .5,
+            const MotionReveal(
+              child: _HomeHeader(),
+            ),
+            const SizedBox(height: 24),
+            if (activeDraft != null) ...[
+              MotionReveal(
+                delay: const Duration(milliseconds: 55),
+                child: _ResumeWorkoutCard(draft: activeDraft!),
+              ),
+              const SizedBox(height: 14),
+            ],
+            MotionReveal(
+              delay: const Duration(milliseconds: 90),
+              child: BreathingGlow(
+                color: const Color(0xFF2F6B32),
+                child: _TodayWorkoutCard(
+                  isRest: isRest,
+                  title: todayPlan['title'].toString(),
+                  subtitle: isRest
+                      ? 'Recharge and come back stronger.'
+                      : workout.subtitle,
+                  durationMinutes: workout.durationMinutes,
+                  exerciseCount: workout.exercises.length,
+                  enabled: !isRest && workout.exercises.isNotEmpty,
+                  onStart: () {
+                    if (activeDraft != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text(
+                            'Resume or discard your current workout before starting another one.',
+                          ),
                         ),
+                      );
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      FitRoutes.route(
+                        context,
+                        motion: FitRouteMotion.fullScreen,
+                        builder: (_) => ActiveWorkoutScreen(workout: workout),
                       ),
-                      SizedBox(height: 5),
-                      Text(
-                        'Make time for your stronger self.',
-                        style: TextStyle(
-                          fontSize: 27,
-                          height: 1.05,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -.7,
-                          color: AppColors.text,
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 26),
+            MotionReveal(
+              delay: const Duration(milliseconds: 140),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'This week',
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 17,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      AnimatedNumberText(
+                        value: streak.toDouble(),
+                        formatter: (value) => '${value.round()}-day streak',
+                        duration: const Duration(milliseconds: 520),
+                        style: const TextStyle(
+                          color: AppColors.muted,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
                         ),
                       ),
                     ],
                   ),
-                ),
-                Container(
-                  width: 52,
-                  height: 52,
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Image.asset('assets/images/fitwithsaju_logo.png'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(22),
-              decoration: BoxDecoration(
-                color: const Color(0xFF123C2B),
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF123C2B).withValues(alpha: .18),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
-                  ),
                 ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isRest ? 'TODAY • RECOVERY' : 'TODAY’S PLAN',
-                    style: const TextStyle(
-                      color: Color(0xFFAEEA56),
-                      fontWeight: FontWeight.w900,
-                      fontSize: 11,
-                      letterSpacing: .7,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    todayPlan['title'].toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    isRest ? 'Recharge and come back stronger.' : workout.subtitle,
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  if (!isRest) ...[
-                    const SizedBox(height: 15),
-                    Text(
-                      '${workout.durationMinutes} min  •  ${workout.exercises.length} exercises',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 54,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFFA8E63B),
-                          foregroundColor: const Color(0xFF153020),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        onPressed: workout.exercises.isEmpty
-                            ? null
-                            : () => Navigator.of(context).push(
-                                  FitRoutes.route(
-                                    context,
-                                    motion: FitRouteMotion.fullScreen,
-                                    builder: (_) => ActiveWorkoutScreen(workout: workout),
-                                  ),
-                                ),
-                        child: const Text(
-                          'Start today’s workout',
-                          style: TextStyle(fontWeight: FontWeight.w900),
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text(
-                    'This week',
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
-                  ),
-                ),
-                Text(
-                  '$streak-day streak',
-                  style: const TextStyle(
-                    color: AppColors.muted,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 12),
-            _WeekStrip(plan: weeklyPlan),
-            const SizedBox(height: 24),
-            const Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Quick workouts',
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
-                  ),
-                ),
-              ],
+            MotionReveal(
+              delay: const Duration(milliseconds: 170),
+              child: _WeekStrip(plan: weeklyPlan),
+            ),
+            const SizedBox(height: 26),
+            const MotionReveal(
+              delay: Duration(milliseconds: 210),
+              child: Text(
+                'Quick workouts',
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
+              ),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -239,40 +191,64 @@ class _HomeContent extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: const [
-                  _QuickCard(
-                    icon: Icons.flash_on_rounded,
-                    title: '10 Min',
-                    subtitle: 'A short burst of movement',
+                  MotionReveal(
+                    delay: Duration(milliseconds: 235),
+                    offsetX: 12,
+                    offsetY: 0,
+                    child: _QuickCard(
+                      icon: Icons.flash_on_rounded,
+                      title: '10 Min',
+                      subtitle: 'A short burst of movement',
+                    ),
                   ),
-                  _QuickCard(
-                    icon: Icons.accessibility_new_rounded,
-                    title: 'Full Body',
-                    subtitle: 'Train all major muscle groups',
+                  MotionReveal(
+                    delay: Duration(milliseconds: 275),
+                    offsetX: 12,
+                    offsetY: 0,
+                    child: _QuickCard(
+                      icon: Icons.accessibility_new_rounded,
+                      title: 'Full Body',
+                      subtitle: 'Train all major muscle groups',
+                    ),
                   ),
-                  _QuickCard(
-                    icon: Icons.monitor_heart_rounded,
-                    title: 'Cardio',
-                    subtitle: 'Conditioning and endurance',
+                  MotionReveal(
+                    delay: Duration(milliseconds: 315),
+                    offsetX: 12,
+                    offsetY: 0,
+                    child: _QuickCard(
+                      icon: Icons.monitor_heart_rounded,
+                      title: 'Cardio',
+                      subtitle: 'Conditioning and endurance',
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            const FitCard(
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.primarySoft,
-                    child: Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
-                  ),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      'Small progress every day becomes big results.',
-                      style: TextStyle(fontWeight: FontWeight.w800, height: 1.35),
+            const MotionReveal(
+              delay: Duration(milliseconds: 340),
+              child: FitCard(
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: AppColors.primarySoft,
+                      child: Icon(
+                        Icons.auto_awesome_rounded,
+                        color: AppColors.primary,
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        'Small progress every day becomes big results.',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -304,6 +280,299 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'FitWithSaju',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: .5,
+                ),
+              ),
+              SizedBox(height: 5),
+              Text(
+                'Make time for your stronger self.',
+                style: TextStyle(
+                  fontSize: 27,
+                  height: 1.05,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -.7,
+                  color: AppColors.text,
+                ),
+              ),
+            ],
+          ),
+        ),
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: .90, end: 1),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOutBack,
+          builder: (context, scale, child) {
+            return Transform.scale(scale: scale, child: child);
+          },
+          child: Container(
+            width: 54,
+            height: 54,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppColors.border),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: .10),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Image.asset('assets/images/fitwithsaju_logo.png'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TodayWorkoutCard extends StatelessWidget {
+  final bool isRest;
+  final String title;
+  final String subtitle;
+  final int durationMinutes;
+  final int exerciseCount;
+  final bool enabled;
+  final VoidCallback onStart;
+
+  const _TodayWorkoutCard({
+    required this.isRest,
+    required this.title,
+    required this.subtitle,
+    required this.durationMinutes,
+    required this.exerciseCount,
+    required this.enabled,
+    required this.onStart,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF163F2F), Color(0xFF0E3124)],
+        ),
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -28,
+            top: -35,
+            child: Container(
+              width: 128,
+              height: 128,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFAEEA56).withValues(alpha: .08),
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isRest ? 'TODAY • RECOVERY' : 'TODAY’S PLAN',
+                style: const TextStyle(
+                  color: Color(0xFFAEEA56),
+                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  letterSpacing: .7,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(subtitle, style: const TextStyle(color: Colors.white70)),
+              if (!isRest) ...[
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.schedule_rounded,
+                      color: Colors.white70,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$durationMinutes min',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    const Icon(
+                      Icons.fitness_center_rounded,
+                      color: Colors.white70,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$exerciseCount exercises',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: PressableScale(
+                    onTap: enabled ? onStart : null,
+                    borderRadius: BorderRadius.circular(14),
+                    pressedScale: .985,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: enabled
+                            ? const Color(0xFFA8E63B)
+                            : Colors.white.withValues(alpha: .12),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        'Start today’s workout',
+                        style: TextStyle(
+                          color: enabled
+                              ? const Color(0xFF153020)
+                              : Colors.white54,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ResumeWorkoutCard extends StatelessWidget {
+  final Map<String, dynamic> draft;
+
+  const _ResumeWorkoutCard({required this.draft});
+
+  @override
+  Widget build(BuildContext context) {
+    final workout = WorkoutFactory.fromDraft(draft);
+    final completed = ((draft['sets'] as Iterable?) ?? const []).length;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.primary.withValues(alpha: .35)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: .07),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            backgroundColor: AppColors.primarySoft,
+            child: Icon(Icons.play_arrow_rounded, color: AppColors.primary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'WORKOUT IN PROGRESS',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: .5,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  workout.title,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
+                Text(
+                  '$completed completed sets',
+                  style: const TextStyle(color: AppColors.muted, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          PressableScale(
+            onTap: workout.exercises.isEmpty
+                ? null
+                : () => Navigator.of(context).push(
+                      FitRoutes.route(
+                        context,
+                        motion: FitRouteMotion.fullScreen,
+                        builder: (_) => ActiveWorkoutScreen(
+                          workout: workout,
+                          resumeDraft: draft,
+                        ),
+                      ),
+                    ),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Text(
+                'Resume',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _WeekStrip extends StatelessWidget {
   final List<Map<String, dynamic>> plan;
   const _WeekStrip({required this.plan});
@@ -318,36 +587,53 @@ class _WeekStrip extends StatelessWidget {
         final isRest = item?['isRest'] == true;
         final today = index == todayIndex;
         return Expanded(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            padding: const EdgeInsets.symmetric(vertical: 11),
-            decoration: BoxDecoration(
-              color: today
-                  ? const Color(0xFF2F6B32)
-                  : isRest
-                      ? Colors.white
-                      : const Color(0xFFF0F8E2),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: today ? const Color(0xFF2F6B32) : AppColors.border,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: .94, end: 1),
+            duration: Duration(milliseconds: 260 + (index * 30)),
+            curve: Curves.easeOutCubic,
+            builder: (context, scale, child) {
+              return Transform.scale(scale: scale, child: child);
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              padding: const EdgeInsets.symmetric(vertical: 11),
+              decoration: BoxDecoration(
+                color: today
+                    ? const Color(0xFF2F6B32)
+                    : isRest
+                        ? Colors.white
+                        : const Color(0xFFF0F8E2),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: today ? const Color(0xFF2F6B32) : AppColors.border,
+                ),
+                boxShadow: today
+                    ? [
+                        BoxShadow(
+                          color: const Color(0xFF2F6B32).withValues(alpha: .16),
+                          blurRadius: 14,
+                          offset: const Offset(0, 7),
+                        ),
+                      ]
+                    : null,
               ),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  letters[index],
-                  style: TextStyle(
-                    color: today ? Colors.white : AppColors.muted,
-                    fontWeight: FontWeight.w800,
+              child: Column(
+                children: [
+                  Text(
+                    letters[index],
+                    style: TextStyle(
+                      color: today ? Colors.white : AppColors.muted,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Icon(
-                  isRest ? Icons.remove_rounded : Icons.check_rounded,
-                  size: 15,
-                  color: today ? Colors.white : AppColors.primary,
-                ),
-              ],
+                  const SizedBox(height: 6),
+                  Icon(
+                    isRest ? Icons.remove_rounded : Icons.check_rounded,
+                    size: 15,
+                    color: today ? Colors.white : AppColors.primary,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -360,6 +646,7 @@ class _QuickCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+
   const _QuickCard({
     required this.icon,
     required this.title,
@@ -373,15 +660,34 @@ class _QuickCard extends StatelessWidget {
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Color(0xFFF8FBF4)],
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: .035),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: 24),
-          const SizedBox(height: 12),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: const BoxDecoration(
+              color: AppColors.primarySoft,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 20),
+          ),
+          const SizedBox(height: 10),
           Text(
             title,
             maxLines: 1,

@@ -109,34 +109,34 @@ class _CustomWorkoutScreenState extends State<CustomWorkoutScreen> {
                   ),
                 ),
                 child: CheckboxListTile(
-                value: _selected.contains(exercise.id),
-                activeColor: AppColors.primary,
-                checkColor: Colors.white,
-                secondary: const Icon(
-                  Icons.fitness_center_rounded,
-                  color: AppColors.primary,
-                ),
-                title: Text(
-                  exercise.name,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                subtitle: Text(
-                  '${exercise.muscle} • ${exercise.equipment}',
-                  style: const TextStyle(color: AppColors.muted),
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      _selected.add(exercise.id);
-                    } else {
-                      _selected.remove(exercise.id);
-                    }
-                  });
-                },
+                  value: _selected.contains(exercise.id),
+                  activeColor: AppColors.primary,
+                  checkColor: Colors.white,
+                  secondary: const Icon(
+                    Icons.fitness_center_rounded,
+                    color: AppColors.primary,
+                  ),
+                  title: Text(
+                    exercise.name,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  subtitle: Text(
+                    '${exercise.muscle} • ${exercise.equipment}',
+                    style: const TextStyle(color: AppColors.muted),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == true) {
+                        _selected.add(exercise.id);
+                      } else {
+                        _selected.remove(exercise.id);
+                      }
+                    });
+                  },
                 ),
               ),
             ),

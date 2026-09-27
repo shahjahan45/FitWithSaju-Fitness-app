@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 
-class HistoryDetailScreen extends StatelessWidget {
+class HistoryDetailScreen extends StatefulWidget {
   final Map<String, dynamic> session;
 
   const HistoryDetailScreen({
@@ -12,18 +12,182 @@ class HistoryDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<HistoryDetailScreen> createState() => _HistoryDetailScreenState();
+}
+
+class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
+  late Map<String, dynamic> _session;
+
+  @override
+  void initState() {
+    super.initState();
+    _session = Map<String, dynamic>.from(widget.session);
+  }
+
+  Future<void> _refresh() async {
+    final id = _session['id']?.toString();
+    if (id == null || id.isEmpty) {
+      return;
+    }
+    final fresh = await LocalStore.historySessionById(id);
+    if (fresh != null && mounted) {
+      setState(() => _session = fresh);
+    }
+  }
+
+  Future<void> _persistSets(List<Map<String, dynamic>> sets) async {
+    final id = _session['id']?.toString();
+    if (id == null || id.isEmpty) {
+      return;
+    }
+    final updated = Map<String, dynamic>.from(_session)..['sets'] = sets;
+    await LocalStore.replaceHistorySession(id, updated);
+    await LocalStore.normalizeWorkoutHistory();
+    await _refresh();
+  }
+
+  Future<void> _editSet(int index) async {
+    final sets = LocalStore.sessionSets(_session);
+    if (index < 0 || index >= sets.length) {
+      return;
+    }
+    final set = sets[index];
+    final weightController = TextEditingController(
+      text: _formatWeight((set['weight'] as num?)?.toDouble() ?? 0),
+    );
+    final repsController = TextEditingController(
+      text: ((set['reps'] as num?)?.toInt() ?? 0).toString(),
+    );
+
+    final result = await showModalBottomSheet<Map<String, num>>(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          20,
+          0,
+          20,
+          20 + MediaQuery.viewInsetsOf(sheetContext).bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Edit ${set['exerciseName'] ?? 'set'}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: weightController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(labelText: 'Weight (KG)'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: repsController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Reps'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  final weight = double.tryParse(
+                    weightController.text.trim().replaceAll(',', '.'),
+                  );
+                  final reps = int.tryParse(repsController.text.trim());
+                  if (weight == null ||
+                      weight < 0 ||
+                      reps == null ||
+                      reps <= 0) {
+                    return;
+                  }
+                  Navigator.of(sheetContext).pop(<String, num>{
+                    'weight': weight,
+                    'reps': reps,
+                  });
+                },
+                child: const Text('Save changes'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    weightController.dispose();
+    repsController.dispose();
+    if (result == null) {
+      return;
+    }
+    set['weight'] = result['weight'];
+    set['reps'] = result['reps'];
+    set['volume'] = (result['weight'] ?? 0) * (result['reps'] ?? 0);
+    set['estimated1RM'] = LocalStore.estimatedOneRepMax(
+      (result['weight'] ?? 0).toDouble(),
+      (result['reps'] ?? 0).toInt(),
+    );
+    await _persistSets(sets);
+  }
+
+  Future<void> _deleteSet(int index) async {
+    final sets = LocalStore.sessionSets(_session);
+    if (index < 0 || index >= sets.length) {
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete this set?'),
+        content: const Text(
+          'Workout volume and personal-record calculations will be updated.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) {
+      return;
+    }
+    sets.removeAt(index);
+    await _persistSets(sets);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final sets = LocalStore.sessionSets(session);
-    final grouped = <String, List<Map<String, dynamic>>>{};
-    for (final set in sets) {
+    final sets = LocalStore.sessionSets(_session);
+    final grouped = <String, List<_IndexedSet>>{};
+    for (var index = 0; index < sets.length; index++) {
+      final set = sets[index];
       final id = set['exerciseId']?.toString() ?? 'exercise';
-      grouped.putIfAbsent(id, () => []).add(set);
+      grouped.putIfAbsent(id, () => []).add(_IndexedSet(index, set));
     }
 
-    final date = DateTime.tryParse(session['date']?.toString() ?? '');
-    final duration = (session['durationMinutes'] as num?)?.toInt() ?? 0;
-    final totalVolume = (session['totalVolume'] as num?)?.toDouble() ?? 0;
-    final prCount = (session['prCount'] as num?)?.toInt() ?? 0;
+    final date = DateTime.tryParse(_session['date']?.toString() ?? '');
+    final duration = (_session['durationMinutes'] as num?)?.toInt() ?? 0;
+    final totalVolume = (_session['totalVolume'] as num?)?.toDouble() ?? 0;
+    final prCount = (_session['prCount'] as num?)?.toInt() ?? 0;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Workout Summary')),
@@ -31,11 +195,8 @@ class HistoryDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         children: [
           Text(
-            session['title']?.toString() ?? 'Workout',
-            style: const TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-            ),
+            _session['title']?.toString() ?? 'Workout',
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 6),
           Text(
@@ -82,7 +243,8 @@ class HistoryDetailScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.emoji_events_rounded, color: AppColors.primary),
+                  const Icon(Icons.emoji_events_rounded,
+                      color: AppColors.primary),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -98,9 +260,20 @@ class HistoryDetailScreen extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 24),
-          const Text(
-            'Exercise breakdown',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Exercise breakdown',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                ),
+              ),
+              if (sets.isNotEmpty)
+                const Text(
+                  'Tap ⋮ to edit',
+                  style: TextStyle(color: AppColors.muted, fontSize: 11),
+                ),
+            ],
           ),
           const SizedBox(height: 12),
           if (grouped.isEmpty)
@@ -112,19 +285,21 @@ class HistoryDetailScreen extends StatelessWidget {
                 border: Border.all(color: AppColors.border),
               ),
               child: const Text(
-                'This older session was saved before set-level tracking was introduced.',
+                'This older session was saved before set-level tracking was introduced, or all tracked sets were removed.',
                 style: TextStyle(color: AppColors.muted, height: 1.5),
               ),
             )
           else
             ...grouped.values.map((exerciseSets) {
-              final first = exerciseSets.first;
+              final first = exerciseSets.first.set;
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _ExerciseSessionCard(
                   name: first['exerciseName']?.toString() ?? 'Exercise',
                   muscle: first['muscle']?.toString() ?? '',
                   sets: exerciseSets,
+                  onEdit: _editSet,
+                  onDelete: _deleteSet,
                 ),
               );
             }),
@@ -150,6 +325,18 @@ class HistoryDetailScreen extends StatelessWidget {
     ];
     return months[month - 1];
   }
+
+  static String _formatWeight(double value) {
+    return value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(1);
+  }
+}
+
+class _IndexedSet {
+  final int index;
+  final Map<String, dynamic> set;
+  const _IndexedSet(this.index, this.set);
 }
 
 class _SummaryCard extends StatelessWidget {
@@ -196,19 +383,23 @@ class _SummaryCard extends StatelessWidget {
 class _ExerciseSessionCard extends StatelessWidget {
   final String name;
   final String muscle;
-  final List<Map<String, dynamic>> sets;
+  final List<_IndexedSet> sets;
+  final ValueChanged<int> onEdit;
+  final ValueChanged<int> onDelete;
 
   const _ExerciseSessionCard({
     required this.name,
     required this.muscle,
     required this.sets,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     final volume = sets.fold<double>(
       0,
-      (sum, set) => sum + ((set['volume'] as num?)?.toDouble() ?? 0),
+      (sum, item) => sum + ((item.set['volume'] as num?)?.toDouble() ?? 0),
     );
 
     return Container(
@@ -258,51 +449,17 @@ class _ExerciseSessionCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          const Row(
-            children: [
-              SizedBox(
-                width: 42,
-                child: Text(
-                  'SET',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  'WEIGHT',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  'REPS',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              SizedBox(width: 42),
-            ],
-          ),
-          const SizedBox(height: 6),
-          ...sets.map((set) {
+          ...sets.map((item) {
+            final set = item.set;
             final number = (set['setNumber'] as num?)?.toInt() ?? 0;
             final weight = (set['weight'] as num?)?.toDouble() ?? 0;
             final reps = (set['reps'] as num?)?.toInt() ?? 0;
             final isPr = set['isPR'] == true;
+            final oneRm = (set['estimated1RM'] as num?)?.toDouble() ??
+                LocalStore.estimatedOneRepMax(weight, reps);
             return Container(
-              margin: const EdgeInsets.only(top: 6),
-              padding: const EdgeInsets.symmetric(vertical: 9),
+              margin: const EdgeInsets.only(top: 7),
+              padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
               decoration: BoxDecoration(
                 color: isPr ? AppColors.primarySoft : AppColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(12),
@@ -310,34 +467,45 @@ class _ExerciseSessionCard extends StatelessWidget {
               child: Row(
                 children: [
                   SizedBox(
-                    width: 42,
+                    width: 34,
                     child: Text(
                       '$number',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontWeight: FontWeight.w800),
+                      style: const TextStyle(fontWeight: FontWeight.w900),
                     ),
                   ),
                   Expanded(
-                    child: Text(
-                      '${_formatWeight(weight)} KG',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${_HistoryDetailScreenState._formatWeight(weight)} KG × $reps',
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
+                        Text(
+                          'Est. 1RM ${_HistoryDetailScreenState._formatWeight(oneRm)} KG'
+                          '${isPr ? ' • PR' : ''}',
+                          style: TextStyle(
+                            color: isPr ? AppColors.primary : AppColors.muted,
+                            fontSize: 10,
+                            fontWeight:
+                                isPr ? FontWeight.w800 : FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      '$reps',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 42,
-                    child: isPr
-                        ? const Icon(
-                            Icons.emoji_events_rounded,
-                            color: AppColors.primary,
-                            size: 19,
-                          )
-                        : null,
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        onEdit(item.index);
+                      } else if (value == 'delete') {
+                        onDelete(item.index);
+                      }
+                    },
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(value: 'edit', child: Text('Edit set')),
+                      PopupMenuItem(value: 'delete', child: Text('Delete set')),
+                    ],
                   ),
                 ],
               ),
@@ -346,11 +514,5 @@ class _ExerciseSessionCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  static String _formatWeight(double value) {
-    return value == value.roundToDouble()
-        ? value.toInt().toString()
-        : value.toStringAsFixed(1);
   }
 }

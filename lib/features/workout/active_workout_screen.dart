@@ -3,17 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/exercise_media.dart';
 import '../../data/models/exercise.dart';
 import '../../data/models/workout.dart';
 
 class ActiveWorkoutScreen extends StatefulWidget {
   final Workout workout;
+  final Map<String, dynamic>? resumeDraft;
 
   const ActiveWorkoutScreen({
     super.key,
     required this.workout,
+    this.resumeDraft,
   });
 
   @override
@@ -21,12 +25,13 @@ class ActiveWorkoutScreen extends StatefulWidget {
 }
 
 class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   int exerciseIndex = 0;
   int setIndex = 1;
   int rest = 0;
   int completedSets = 0;
   Timer? timer;
+  DateTime? _restEndAt;
   late DateTime startedAt;
 
   final weightController = TextEditingController();
@@ -37,25 +42,96 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
   Map<String, dynamic>? _previousSet;
   bool _loadingPrevious = true;
   bool _completingSet = false;
+  bool _restored = false;
+  bool _finishedOrDiscarded = false;
   int _prCount = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     startedAt = DateTime.now();
+    _restoreDraft(widget.resumeDraft);
     _prepareWorkout();
   }
 
+  void _restoreDraft(Map<String, dynamic>? draft) {
+    if (draft == null) {
+      return;
+    }
+    _restored = true;
+    startedAt = DateTime.tryParse(draft['startedAt']?.toString() ?? '') ??
+        DateTime.now();
+    exerciseIndex = ((draft['exerciseIndex'] as num?)?.toInt() ?? 0)
+        .clamp(0, widget.workout.exercises.length - 1)
+        .toInt();
+    setIndex = ((draft['setIndex'] as num?)?.toInt() ?? 1).clamp(1, 99).toInt();
+    _sessionSets.addAll(_mapList(draft['sets']));
+    completedSets = _sessionSets.length;
+    weightController.text = draft['weight']?.toString() ?? '';
+    repsController.text = draft['reps']?.toString() ?? '';
+
+    final restEndAt = DateTime.tryParse(draft['restEndAt']?.toString() ?? '');
+    if (restEndAt != null && restEndAt.isAfter(DateTime.now())) {
+      _restEndAt = restEndAt;
+      rest =
+          restEndAt.difference(DateTime.now()).inSeconds.clamp(1, 3600).toInt();
+    }
+  }
+
   Future<void> _prepareWorkout() async {
-    final records = await LocalStore.exerciseRecords();
-    _records
-      ..clear()
-      ..addAll(records);
-    await _prepareCurrentSet(prefill: true);
+    await _rebuildRecordsAndPrCount();
+    await _prepareCurrentSet(prefill: !_restored);
+    if (_restored && weightController.text.isEmpty) {
+      await _prepareCurrentSet(prefill: true);
+    }
+    if (rest > 0) {
+      _startRest(existingEnd: _restEndAt);
+    }
+    await _persistDraft();
+    if (mounted && _restored) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Workout resumed from your last saved set.'),
+        ),
+      );
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _persistDraft();
+    }
+  }
+
+  Future<void> _persistDraft() async {
+    if (widget.workout.exercises.isEmpty) {
+      return;
+    }
+    await LocalStore.saveActiveWorkout(<String, dynamic>{
+      'draftVersion': 1,
+      'workoutId': widget.workout.id,
+      'title': widget.workout.title,
+      'subtitle': widget.workout.subtitle,
+      'durationMinutes': widget.workout.durationMinutes,
+      'exerciseIds': widget.workout.exercises.map((e) => e.id).toList(),
+      'exerciseIndex': exerciseIndex,
+      'setIndex': setIndex,
+      'startedAt': startedAt.toIso8601String(),
+      'sets': _sessionSets,
+      'weight': weightController.text,
+      'reps': repsController.text,
+      'restEndAt': _restEndAt?.toIso8601String(),
+      'updatedAt': DateTime.now().toIso8601String(),
+    });
   }
 
   Future<void> _prepareCurrentSet({bool prefill = false}) async {
-    if (!mounted) {
+    if (!mounted || widget.workout.exercises.isEmpty) {
       return;
     }
     final exercise = widget.workout.exercises[exerciseIndex];
@@ -73,7 +149,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     setState(() {
       _previousSet = previous;
       _loadingPrevious = false;
-      if (prefill || previous != null) {
+      if (prefill || previous != null && weightController.text.isEmpty) {
         weightController.text = previous == null
             ? _defaultWeight(exercise).toStringAsFixed(0)
             : _formatNumber((previous['weight'] as num?)?.toDouble() ?? 0);
@@ -91,13 +167,16 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     }
 
     final exercise = widget.workout.exercises[exerciseIndex];
-    final weight = double.tryParse(weightController.text.trim().replaceAll(',', '.'));
+    final weight = double.tryParse(
+      weightController.text.trim().replaceAll(',', '.'),
+    );
     final reps = int.tryParse(repsController.text.trim());
 
     if (weight == null || weight < 0 || reps == null || reps <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Enter a valid weight and reps before completing the set.'),
+          content:
+              Text('Enter a valid weight and reps before completing the set.'),
         ),
       );
       return;
@@ -117,6 +196,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       'weight': weight,
       'reps': reps,
       'volume': volume,
+      'estimated1RM': LocalStore.estimatedOneRepMax(weight, reps),
       'isPR': isPr,
       'completedAt': completedAt.toIso8601String(),
     };
@@ -149,6 +229,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       });
       await _prepareCurrentSet();
       _startRest();
+      await _persistDraft();
       if (mounted) {
         setState(() => _completingSet = false);
       }
@@ -160,8 +241,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         exerciseIndex++;
         setIndex = 1;
         rest = 0;
+        _restEndAt = null;
+        weightController.clear();
+        repsController.clear();
       });
       await _prepareCurrentSet(prefill: true);
+      await _persistDraft();
       if (mounted) {
         setState(() => _completingSet = false);
       }
@@ -171,6 +256,171 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         setState(() => _completingSet = false);
       }
     }
+  }
+
+  Future<void> _rebuildRecordsAndPrCount() async {
+    final base = await LocalStore.exerciseRecords();
+    _records
+      ..clear()
+      ..addAll(base);
+    _prCount = 0;
+    final counts = <String, int>{};
+
+    for (final set in _sessionSets) {
+      final exerciseId = set['exerciseId']?.toString() ?? '';
+      final exercise = _exerciseById(exerciseId);
+      if (exercise == null) {
+        continue;
+      }
+      counts[exerciseId] = (counts[exerciseId] ?? 0) + 1;
+      set['setNumber'] = counts[exerciseId];
+      final weight = (set['weight'] as num?)?.toDouble() ?? 0;
+      final reps = (set['reps'] as num?)?.toInt() ?? 0;
+      final volume = weight * reps;
+      final completedAt =
+          DateTime.tryParse(set['completedAt']?.toString() ?? '') ??
+              DateTime.now();
+      final isPr = _isNewRecord(exerciseId, weight, reps);
+      set['volume'] = volume;
+      set['estimated1RM'] = LocalStore.estimatedOneRepMax(weight, reps);
+      set['isPR'] = isPr;
+      if (isPr) {
+        _prCount++;
+      }
+      _updateRecord(exercise, weight, reps, volume, completedAt);
+    }
+    completedSets = _sessionSets.length;
+  }
+
+  Exercise? _exerciseById(String id) {
+    for (final exercise in widget.workout.exercises) {
+      if (exercise.id == id) {
+        return exercise;
+      }
+    }
+    return null;
+  }
+
+  Future<void> _editCompletedSet(int index) async {
+    final current = _sessionSets[index];
+    final weightController = TextEditingController(
+      text: _formatNumber((current['weight'] as num?)?.toDouble() ?? 0),
+    );
+    final repsController = TextEditingController(
+      text: ((current['reps'] as num?)?.toInt() ?? 0).toString(),
+    );
+
+    final result = await showModalBottomSheet<Map<String, num>>(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          20,
+          0,
+          20,
+          20 + MediaQuery.viewInsetsOf(sheetContext).bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Edit ${current['exerciseName'] ?? 'set'}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: weightController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(labelText: 'Weight (KG)'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: repsController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Reps'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  final weight = double.tryParse(
+                    weightController.text.trim().replaceAll(',', '.'),
+                  );
+                  final reps = int.tryParse(repsController.text.trim());
+                  if (weight == null ||
+                      weight < 0 ||
+                      reps == null ||
+                      reps <= 0) {
+                    return;
+                  }
+                  Navigator.of(sheetContext).pop(<String, num>{
+                    'weight': weight,
+                    'reps': reps,
+                  });
+                },
+                child: const Text('Save changes'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    weightController.dispose();
+    repsController.dispose();
+    if (result == null || !mounted) {
+      return;
+    }
+
+    current['weight'] = result['weight'];
+    current['reps'] = result['reps'];
+    await _rebuildRecordsAndPrCount();
+    await _persistDraft();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _deleteCompletedSet(int index) async {
+    final removed = Map<String, dynamic>.from(_sessionSets[index]);
+    setState(() => _sessionSets.removeAt(index));
+    await _rebuildRecordsAndPrCount();
+    await _persistDraft();
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Completed set removed.'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () async {
+            final safeIndex = index < 0
+                ? 0
+                : (index > _sessionSets.length ? _sessionSets.length : index);
+            _sessionSets.insert(safeIndex, removed);
+            await _rebuildRecordsAndPrCount();
+            await _persistDraft();
+            if (mounted) {
+              setState(() {});
+            }
+          },
+        ),
+      ),
+    );
   }
 
   bool _isNewRecord(String exerciseId, double weight, int reps) {
@@ -227,23 +477,61 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     }
   }
 
-  void _startRest() {
+  void _startRest({DateTime? existingEnd}) {
     timer?.cancel();
+    _restEndAt = existingEnd ?? DateTime.now().add(Duration(seconds: rest));
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) {
         return;
       }
-      if (rest <= 1) {
+      final remaining = _restEndAt!.difference(DateTime.now()).inSeconds;
+      if (remaining <= 0) {
         t.cancel();
-        setState(() => rest = 0);
+        setState(() {
+          rest = 0;
+          _restEndAt = null;
+        });
+        _persistDraft();
       } else {
-        setState(() => rest--);
+        setState(() => rest = remaining);
       }
     });
   }
 
+  Future<void> _discardWorkout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Discard workout?'),
+        content: const Text(
+          'Your completed sets in this unfinished workout will be removed.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Keep'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) {
+      return;
+    }
+    timer?.cancel();
+    _finishedOrDiscarded = true;
+    await LocalStore.clearActiveWorkout();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   Future<void> _finishWorkout() async {
-    final duration = DateTime.now().difference(startedAt).inMinutes.clamp(1, 999);
+    final duration =
+        DateTime.now().difference(startedAt).inMinutes.clamp(1, 999);
     final totalVolume = _sessionSets.fold<double>(
       0,
       (sum, set) => sum + ((set['volume'] as num?)?.toDouble() ?? 0),
@@ -262,6 +550,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         'prCount': _prCount,
         'sets': _sessionSets,
       });
+      _finishedOrDiscarded = true;
+      await LocalStore.clearActiveWorkout();
     } catch (_) {
       if (!mounted) {
         return;
@@ -313,6 +603,11 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (!_finishedOrDiscarded &&
+        (_sessionSets.isNotEmpty || weightController.text.isNotEmpty)) {
+      _persistDraft();
+    }
     timer?.cancel();
     weightController.dispose();
     repsController.dispose();
@@ -328,7 +623,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         title: Text(widget.workout.title),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 4),
             child: Center(
               child: Text(
                 '${exerciseIndex + 1}/${widget.workout.exercises.length}',
@@ -339,19 +634,28 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
               ),
             ),
           ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'discard') {
+                _discardWorkout();
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'discard',
+                child: Text('Discard workout'),
+              ),
+            ],
+          ),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: LinearProgressIndicator(
-              value: (exerciseIndex + 1) / widget.workout.exercises.length,
-              minHeight: 8,
-              color: AppColors.primary,
-              backgroundColor: AppColors.surfaceAlt,
-            ),
+          AnimatedLinearProgress(
+            value: (exerciseIndex + 1) / widget.workout.exercises.length,
+            color: AppColors.primary,
+            backgroundColor: AppColors.surfaceAlt,
           ),
           const SizedBox(height: 24),
           Container(
@@ -368,11 +672,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
               borderRadius: BorderRadius.circular(30),
               border: Border.all(color: AppColors.border),
             ),
-            child: Center(
-              child: Image.asset(
-                'assets/images/fitwithsaju_logo.png',
-                width: 190,
-              ),
+            child: ExerciseMedia(
+              exercise: exercise,
+              width: double.infinity,
+              height: 230,
+              borderRadius: BorderRadius.circular(29),
+              fit: BoxFit.contain,
             ),
           ),
           const SizedBox(height: 22),
@@ -402,60 +707,131 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
             ],
           ),
           const SizedBox(height: 20),
-          if (rest > 0)
-            _RestCard(
-              rest: rest,
-              onSkip: () {
-                timer?.cancel();
-                setState(() => rest = 0);
-              },
-              onAdd: () => setState(() => rest += 15),
-            )
-          else ...[
-            Row(
-              children: [
-                Expanded(
-                  child: _EditableMetric(
-                    label: 'WEIGHT',
-                    controller: weightController,
-                    suffix: 'KG',
-                    decimal: true,
+          AnimatedSwitcher(
+            duration:
+                AppMotion.duration(context, const Duration(milliseconds: 260)),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) {
+              final offset = Tween<Offset>(
+                begin: const Offset(0, .025),
+                end: Offset.zero,
+              ).animate(animation);
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(position: offset, child: child),
+              );
+            },
+            child: rest > 0
+                ? _RestCard(
+                    key: const ValueKey('rest-card'),
+                    rest: rest,
+                    onSkip: () {
+                      timer?.cancel();
+                      setState(() {
+                        rest = 0;
+                        _restEndAt = null;
+                      });
+                      _persistDraft();
+                    },
+                    onAdd: () {
+                      setState(() {
+                        rest += 15;
+                        _restEndAt =
+                            DateTime.now().add(Duration(seconds: rest));
+                      });
+                      _persistDraft();
+                    },
+                  )
+                : Column(
+                    key: const ValueKey('set-entry'),
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _EditableMetric(
+                              label: 'WEIGHT',
+                              controller: weightController,
+                              suffix: 'KG',
+                              decimal: true,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _EditableMetric(
+                              label: 'REPS',
+                              controller: repsController,
+                              suffix: '',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _PreviousSetCard(
+                        loading: _loadingPrevious,
+                        previousSet: _previousSet,
+                        targetReps: exercise.reps,
+                      ),
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        height: 58,
+                        child: PressableScale(
+                          onTap: _completingSet ? null : _completeSet,
+                          borderRadius: BorderRadius.circular(20),
+                          pressedScale: .985,
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [AppColors.primary, Color(0xFF6CB000)],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      AppColors.primary.withValues(alpha: .18),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 9),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (_completingSet)
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                else
+                                  const Icon(Icons.check_rounded,
+                                      color: Colors.white),
+                                const SizedBox(width: 9),
+                                const Text(
+                                  'Complete Set',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _EditableMetric(
-                    label: 'REPS',
-                    controller: repsController,
-                    suffix: '',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _PreviousSetCard(
-              loading: _loadingPrevious,
-              previousSet: _previousSet,
-              targetReps: exercise.reps,
-            ),
-            const SizedBox(height: 18),
-            SizedBox(
-              height: 58,
-              child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                onPressed: _completingSet ? null : _completeSet,
-                icon: const Icon(Icons.check_rounded),
-                label: const Text(
-                  'Complete Set',
-                  style: TextStyle(fontWeight: FontWeight.w900),
-                ),
-              ),
+          ),
+          if (_sessionSets.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            _CompletedSetsPanel(
+              sets: _sessionSets,
+              onEdit: _editCompletedSet,
+              onDelete: _deleteCompletedSet,
             ),
           ],
         ],
@@ -483,6 +859,105 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
   }
 
   static String _formatNumber(double value) {
+    return value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(1);
+  }
+
+  static List<Map<String, dynamic>> _mapList(dynamic value) {
+    if (value is! List) {
+      return <Map<String, dynamic>>[];
+    }
+    return value
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
+  }
+}
+
+class _CompletedSetsPanel extends StatelessWidget {
+  final List<Map<String, dynamic>> sets;
+  final ValueChanged<int> onEdit;
+  final ValueChanged<int> onDelete;
+
+  const _CompletedSetsPanel({
+    required this.sets,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Completed sets',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 10),
+          ...List.generate(sets.length, (index) {
+            final set = sets[index];
+            final weight = (set['weight'] as num?)?.toDouble() ?? 0;
+            final reps = (set['reps'] as num?)?.toInt() ?? 0;
+            return Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+              decoration: BoxDecoration(
+                color: set['isPR'] == true
+                    ? AppColors.primarySoft
+                    : AppColors.surfaceAlt,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${set['exerciseName'] ?? 'Exercise'} • Set ${set['setNumber'] ?? index + 1}',
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          '${_formatWeight(weight)} KG × $reps reps'
+                          '${set['isPR'] == true ? '  •  PR 🏆' : ''}',
+                          style: const TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Edit set',
+                    onPressed: () => onEdit(index),
+                    icon: const Icon(Icons.edit_outlined, size: 20),
+                  ),
+                  IconButton(
+                    tooltip: 'Delete set',
+                    onPressed: () => onDelete(index),
+                    icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  static String _formatWeight(double value) {
     return value == value.roundToDouble()
         ? value.toInt().toString()
         : value.toStringAsFixed(1);
@@ -539,10 +1014,12 @@ class _WorkoutSuccessSheet extends StatelessWidget {
                   colors: [AppColors.primary, AppColors.secondary],
                 ),
               ),
-              child: const Icon(
-                Icons.check_rounded,
-                color: Colors.white,
-                size: 46,
+              child: const Center(
+                child: AnimatedCheckBurst(
+                  active: true,
+                  size: 48,
+                  color: Colors.white,
+                ),
               ),
             ),
             const SizedBox(height: 18),
@@ -579,7 +1056,8 @@ class _WorkoutSuccessSheet extends StatelessWidget {
               const SizedBox(height: 14),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppColors.primarySoft,
                   borderRadius: BorderRadius.circular(16),
@@ -777,7 +1255,8 @@ class _EditableMetric extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
-                  keyboardType: TextInputType.numberWithOptions(decimal: decimal),
+                  keyboardType:
+                      TextInputType.numberWithOptions(decimal: decimal),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
@@ -814,6 +1293,7 @@ class _RestCard extends StatelessWidget {
   final VoidCallback onAdd;
 
   const _RestCard({
+    super.key,
     required this.rest,
     required this.onSkip,
     required this.onAdd,
@@ -821,45 +1301,90 @@ class _RestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primary.withValues(alpha: .12),
-            AppColors.secondary.withValues(alpha: .10),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.primary),
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'REST',
-            style: TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '${rest ~/ 60}:${(rest % 60).toString().padLeft(2, '0')}',
-            style: const TextStyle(
-              fontSize: 42,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(onPressed: onAdd, child: const Text('+15 sec')),
-              const SizedBox(width: 14),
-              TextButton(onPressed: onSkip, child: const Text('Skip rest')),
+    return BreathingGlow(
+      color: AppColors.primary,
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primary.withValues(alpha: .12),
+              AppColors.secondary.withValues(alpha: .10),
             ],
           ),
-        ],
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.primary.withValues(alpha: .45)),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'REST',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 12),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: .94, end: 1),
+              duration: const Duration(milliseconds: 700),
+              curve: Curves.easeOutBack,
+              builder: (context, scale, child) {
+                return Transform.scale(scale: scale, child: child);
+              },
+              child: Container(
+                width: 124,
+                height: 124,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: .70),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: .24),
+                    width: 7,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: .10),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  child: Text(
+                    '${rest ~/ 60}:${(rest % 60).toString().padLeft(2, '0')}',
+                    key: ValueKey(rest),
+                    style: const TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton.icon(
+                  onPressed: onAdd,
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('15 sec'),
+                ),
+                const SizedBox(width: 10),
+                TextButton.icon(
+                  onPressed: onSkip,
+                  icon: const Icon(Icons.skip_next_rounded, size: 18),
+                  label: const Text('Skip rest'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

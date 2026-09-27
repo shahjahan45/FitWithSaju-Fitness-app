@@ -30,7 +30,8 @@ class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
       text: (widget.plan['title'] ?? 'Workout').toString(),
     );
     _durationController = TextEditingController(
-      text: ((widget.plan['durationMinutes'] as num?)?.toInt() ?? 45).toString(),
+      text:
+          ((widget.plan['durationMinutes'] as num?)?.toInt() ?? 45).toString(),
     );
     _selected = ((widget.plan['exerciseIds'] as Iterable?) ?? const [])
         .map((e) => e.toString())
@@ -135,33 +136,33 @@ class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
                     ),
                   ),
                   child: CheckboxListTile(
-                  value: _selected.contains(exercise.id),
-                  activeColor: AppColors.primary,
-                  checkColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  title: Text(
-                    exercise.name,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  subtitle: Text(
-                    '${exercise.muscle} • ${exercise.equipment}',
-                    style: const TextStyle(color: AppColors.muted),
-                  ),
-                  secondary: const Icon(
-                    Icons.fitness_center_rounded,
-                    color: AppColors.primary,
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == true) {
-                        _selected.add(exercise.id);
-                      } else {
-                        _selected.remove(exercise.id);
-                      }
-                    });
-                  },
+                    value: _selected.contains(exercise.id),
+                    activeColor: AppColors.primary,
+                    checkColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    title: Text(
+                      exercise.name,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    subtitle: Text(
+                      '${exercise.muscle} • ${exercise.equipment}',
+                      style: const TextStyle(color: AppColors.muted),
+                    ),
+                    secondary: const Icon(
+                      Icons.fitness_center_rounded,
+                      color: AppColors.primary,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          _selected.add(exercise.id);
+                        } else {
+                          _selected.remove(exercise.id);
+                        }
+                      });
+                    },
                   ),
                 ),
               ),

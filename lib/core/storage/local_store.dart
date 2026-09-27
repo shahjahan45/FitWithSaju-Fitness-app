@@ -17,6 +17,7 @@ class LocalStore {
   static const _customWorkoutsKey = 'custom_workouts_v1';
   static const _weightEntriesKey = 'weight_entries_v1';
   static const _measurementEntriesKey = 'measurement_entries_v1';
+  static const _activeWorkoutKey = 'active_workout_v1';
 
   static const List<String> weekDays = [
     'Monday',
@@ -188,7 +189,8 @@ class LocalStore {
       'value': value,
       'date': DateTime.now().toIso8601String(),
     });
-    await prefs.setString(_weightEntriesKey, jsonEncode(items.take(120).toList()));
+    await prefs.setString(
+        _weightEntriesKey, jsonEncode(items.take(120).toList()));
     _notify();
   }
 
@@ -221,6 +223,200 @@ class LocalStore {
     _notify();
   }
 
+  static Future<Map<String, dynamic>?> activeWorkout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_activeWorkoutKey);
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final decoded = jsonDecode(raw);
+    if (decoded is! Map) {
+      return null;
+    }
+    return Map<String, dynamic>.from(decoded);
+  }
+
+  static Future<void> saveActiveWorkout(Map<String, dynamic> draft) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_activeWorkoutKey, jsonEncode(draft));
+    _notify();
+  }
+
+  static Future<void> clearActiveWorkout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_activeWorkoutKey);
+    _notify();
+  }
+
+  static Future<void> replaceHistorySession(
+    String sessionId,
+    Map<String, dynamic> session,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await history();
+    final index =
+        items.indexWhere((item) => item['id']?.toString() == sessionId);
+    if (index < 0) {
+      return;
+    }
+    items[index] = session;
+    await prefs.setString(_historyKey, jsonEncode(items));
+    _notify();
+  }
+
+  static Future<Map<String, dynamic>?> historySessionById(
+      String sessionId) async {
+    final items = await history();
+    for (final item in items) {
+      if (item['id']?.toString() == sessionId) {
+        return Map<String, dynamic>.from(item);
+      }
+    }
+    return null;
+  }
+
+  static Future<void> normalizeWorkoutHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await history();
+    final records = <String, Map<String, dynamic>>{};
+
+    for (final session in items.reversed) {
+      final sets = _mapList(session['sets']);
+      var prCount = 0;
+      var totalVolume = 0.0;
+      final counts = <String, int>{};
+
+      for (final set in sets) {
+        final exerciseId = set['exerciseId']?.toString() ?? '';
+        if (exerciseId.isEmpty) {
+          continue;
+        }
+        counts[exerciseId] = (counts[exerciseId] ?? 0) + 1;
+        set['setNumber'] = counts[exerciseId];
+        final weight = (set['weight'] as num?)?.toDouble() ?? 0;
+        final reps = (set['reps'] as num?)?.toInt() ?? 0;
+        final volume = weight * reps;
+        final current = records[exerciseId];
+        final bestWeight = (current?['bestWeight'] as num?)?.toDouble() ?? -1;
+        final repsAtBest =
+            (current?['repsAtBestWeight'] as num?)?.toInt() ?? -1;
+        final isPr = current == null ||
+            weight > bestWeight ||
+            (weight == bestWeight && reps > repsAtBest);
+
+        set['volume'] = volume;
+        set['estimated1RM'] = estimatedOneRepMax(weight, reps);
+        set['isPR'] = isPr;
+        totalVolume += volume;
+        if (isPr) {
+          prCount++;
+        }
+
+        if (current == null) {
+          records[exerciseId] = <String, dynamic>{
+            'bestWeight': weight,
+            'repsAtBestWeight': reps,
+          };
+        } else if (weight > bestWeight ||
+            (weight == bestWeight && reps > repsAtBest)) {
+          current['bestWeight'] = weight;
+          current['repsAtBestWeight'] = reps;
+        }
+      }
+
+      session['sets'] = sets;
+      session['completedSets'] = sets.length;
+      session['totalVolume'] = totalVolume;
+      session['prCount'] = prCount;
+    }
+
+    await prefs.setString(_historyKey, jsonEncode(items));
+    _notify();
+  }
+
+  static Future<List<Map<String, dynamic>>> exerciseSetHistory(
+    String exerciseId,
+  ) async {
+    final items = await history();
+    final result = <Map<String, dynamic>>[];
+    for (final session in items.reversed) {
+      final sessionDate = session['date']?.toString();
+      for (final set in _mapList(session['sets'])) {
+        if (set['exerciseId']?.toString() != exerciseId) {
+          continue;
+        }
+        final copy = Map<String, dynamic>.from(set);
+        copy['sessionDate'] = sessionDate;
+        copy['sessionTitle'] = session['title']?.toString() ?? 'Workout';
+        result.add(copy);
+      }
+    }
+    return result;
+  }
+
+  static double estimatedOneRepMax(double weight, int reps) {
+    if (weight <= 0 || reps <= 0) {
+      return 0;
+    }
+    if (reps == 1) {
+      return weight;
+    }
+    return weight * (1 + (reps / 30.0));
+  }
+
+  static Future<Map<String, dynamic>> exportData() async {
+    return <String, dynamic>{
+      'app': 'FitWithSaju',
+      'formatVersion': 2,
+      'exportedAt': DateTime.now().toIso8601String(),
+      'weeklyPlan': await weeklyPlan(),
+      'customWorkouts': await customWorkouts(),
+      'favorites': (await favorites()).toList(),
+      'workoutHistory': await history(),
+      'weightEntries': await weightEntries(),
+      'measurements': await measurementEntries(),
+      'activeWorkout': await activeWorkout(),
+    };
+  }
+
+  static Future<void> importData(Map<String, dynamic> data) async {
+    if (data['app']?.toString() != 'FitWithSaju') {
+      throw const FormatException('This backup is not a FitWithSaju export.');
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final weekly = _mapList(data['weeklyPlan']);
+    final custom = _mapList(data['customWorkouts']);
+    final historyItems = _mapList(data['workoutHistory']);
+    final weights = _mapList(data['weightEntries']);
+    final measurements = _mapList(data['measurements']);
+    final activeWorkoutValue = data['activeWorkout'];
+    final favoritesValue = data['favorites'];
+    final favoriteIds = favoritesValue is List
+        ? favoritesValue.map((item) => item.toString()).toList()
+        : <String>[];
+
+    if (weekly.isNotEmpty) {
+      await prefs.setString(_weeklyPlanKey, jsonEncode(weekly));
+    }
+    await prefs.setString(_customWorkoutsKey, jsonEncode(custom));
+    await prefs.setString(
+        _historyKey, jsonEncode(historyItems.take(100).toList()));
+    await prefs.setString(
+        _weightEntriesKey, jsonEncode(weights.take(120).toList()));
+    await prefs.setString(
+        _measurementEntriesKey, jsonEncode(measurements.take(60).toList()));
+    await prefs.setStringList(_favoritesKey, favoriteIds);
+    if (activeWorkoutValue is Map) {
+      await prefs.setString(
+        _activeWorkoutKey,
+        jsonEncode(Map<String, dynamic>.from(activeWorkoutValue)),
+      );
+    } else {
+      await prefs.remove(_activeWorkoutKey);
+    }
+    _notify();
+  }
 
   static Future<Map<String, dynamic>?> latestSetForExercise(
     String exerciseId, {
@@ -235,7 +431,8 @@ class LocalStore {
           continue;
         }
         fallback ??= set;
-        if (setNumber == null || (set['setNumber'] as num?)?.toInt() == setNumber) {
+        if (setNumber == null ||
+            (set['setNumber'] as num?)?.toInt() == setNumber) {
           return Map<String, dynamic>.from(set);
         }
       }
@@ -279,7 +476,8 @@ class LocalStore {
         final bestVolume = (current['bestSetVolume'] as num?)?.toDouble() ?? 0;
         final bestReps = (current['bestReps'] as num?)?.toInt() ?? 0;
 
-        if (weight > bestWeight || (weight == bestWeight && reps > repsAtBest)) {
+        if (weight > bestWeight ||
+            (weight == bestWeight && reps > repsAtBest)) {
           current['bestWeight'] = weight;
           current['repsAtBestWeight'] = reps;
           current['achievedAt'] = set['completedAt']?.toString() ?? sessionDate;
@@ -305,8 +503,7 @@ class LocalStore {
       }
       final calculated = _mapList(session['sets']).fold<double>(
         0,
-        (setSum, set) =>
-            setSum + ((set['volume'] as num?)?.toDouble() ?? 0),
+        (setSum, set) => setSum + ((set['volume'] as num?)?.toDouble() ?? 0),
       );
       return sum + calculated;
     });
@@ -346,21 +543,21 @@ class LocalStore {
           'title': 'Push Day',
           'isRest': false,
           'durationMinutes': 45,
-          'exerciseIds': ['bench_press', 'incline_db_press', 'shoulder_press'],
+          'exerciseIds': ['3TZduzM', '3eGE2JC', '5uFK1xr'],
         },
         {
           'day': 'Tuesday',
           'title': 'Pull Day',
           'isRest': false,
           'durationMinutes': 40,
-          'exerciseIds': ['lat_pulldown', 'biceps_curl'],
+          'exerciseIds': ['7F1DVzn', '7I6LNUG', '4dF3maG'],
         },
         {
           'day': 'Wednesday',
           'title': 'Leg Day',
           'isRest': false,
           'durationMinutes': 35,
-          'exerciseIds': ['squat'],
+          'exerciseIds': ['2Qh2J1e', '5bpPTHv', '2ORFMoR'],
         },
         {
           'day': 'Thursday',
@@ -375,10 +572,10 @@ class LocalStore {
           'isRest': false,
           'durationMinutes': 50,
           'exerciseIds': [
-            'bench_press',
-            'lat_pulldown',
-            'shoulder_press',
-            'biceps_curl',
+            '5v7KYld',
+            '7F1DVzn',
+            '6cKQC5E',
+            '8oYqOt9',
           ],
         },
         {
@@ -386,7 +583,7 @@ class LocalStore {
           'title': 'Full Body',
           'isRest': false,
           'durationMinutes': 45,
-          'exerciseIds': ['squat', 'bench_press', 'lat_pulldown'],
+          'exerciseIds': ['2Qh2J1e', '7I6LNUG', '8eqjhOl', '8xUv4J7'],
         },
         {
           'day': 'Sunday',

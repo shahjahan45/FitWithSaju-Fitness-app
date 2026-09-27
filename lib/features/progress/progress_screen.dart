@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
@@ -67,35 +68,46 @@ class _ProgressContent extends StatelessWidget {
         key: const PageStorageKey('progress-scroll'),
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
         children: [
-          const Text(
-            'Progress',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Consistency is your strongest metric.',
-            style: TextStyle(color: AppColors.muted),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.primarySoft,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Row(
+          const MotionReveal(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'THIS WEEK',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 11,
-                  ),
+                  'Progress',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
                 ),
-                Spacer(),
-                Text('Mon – Sun', style: TextStyle(fontWeight: FontWeight.w700)),
+                SizedBox(height: 6),
+                Text(
+                  'Consistency is your strongest metric.',
+                  style: TextStyle(color: AppColors.muted),
+                ),
               ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          MotionReveal(
+            delay: const Duration(milliseconds: 55),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.primarySoft,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Row(
+                children: [
+                  Text(
+                    'THIS WEEK',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 11,
+                    ),
+                  ),
+                  Spacer(),
+                  Text('Mon – Sun',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -107,25 +119,37 @@ class _ProgressContent extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             children: [
-              _StatCard(
-                label: 'Workouts this week',
-                value: '${thisWeek.length}',
-                icon: Icons.bolt_rounded,
+              MotionReveal(
+                delay: const Duration(milliseconds: 90),
+                child: _StatCard(
+                  label: 'Workouts this week',
+                  value: '${thisWeek.length}',
+                  icon: Icons.bolt_rounded,
+                ),
               ),
-              _StatCard(
-                label: 'Training this week',
-                value: _formatMinutes(minutes),
-                icon: Icons.timer_rounded,
+              MotionReveal(
+                delay: const Duration(milliseconds: 125),
+                child: _StatCard(
+                  label: 'Training this week',
+                  value: _formatMinutes(minutes),
+                  icon: Icons.timer_rounded,
+                ),
               ),
-              _StatCard(
-                label: 'Sets this week',
-                value: '$sets',
-                icon: Icons.repeat_rounded,
+              MotionReveal(
+                delay: const Duration(milliseconds: 160),
+                child: _StatCard(
+                  label: 'Sets this week',
+                  value: '$sets',
+                  icon: Icons.repeat_rounded,
+                ),
               ),
-              _StatCard(
-                label: 'Current streak',
-                value: '$streak days',
-                icon: Icons.local_fire_department_rounded,
+              MotionReveal(
+                delay: const Duration(milliseconds: 195),
+                child: _StatCard(
+                  label: 'Current streak',
+                  value: '$streak days',
+                  icon: Icons.local_fire_department_rounded,
+                ),
               ),
             ],
           ),
@@ -289,12 +313,14 @@ class _WeeklyBars extends StatelessWidget {
       if (date == null || date.isBefore(start)) {
         continue;
       }
-      final diff = DateTime(date.year, date.month, date.day).difference(start).inDays;
+      final diff =
+          DateTime(date.year, date.month, date.day).difference(start).inDays;
       if (diff >= 0 && diff < 7) {
         values[diff] += (item['durationMinutes'] as num?)?.toInt() ?? 0;
       }
     }
-    final maxValue = values.fold<int>(1, (max, value) => value > max ? value : max);
+    final maxValue =
+        values.fold<int>(1, (max, value) => value > max ? value : max);
     const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -311,8 +337,9 @@ class _WeeklyBars extends StatelessWidget {
                   style: const TextStyle(fontSize: 10, color: AppColors.muted),
                 ),
                 const SizedBox(height: 4),
-                Container(
+                AnimatedVerticalBar(
                   height: 18 + (95 * normalized),
+                  duration: Duration(milliseconds: 520 + (index * 55)),
                   decoration: BoxDecoration(
                     color: index == DateTime.now().weekday - 1
                         ? const Color(0xFF2F6B32)
@@ -379,8 +406,9 @@ class _WeeklyVolumeBars extends StatelessWidget {
                   style: const TextStyle(fontSize: 9, color: AppColors.muted),
                 ),
                 const SizedBox(height: 4),
-                Container(
+                AnimatedVerticalBar(
                   height: 14 + (78 * normalized),
+                  duration: Duration(milliseconds: 560 + (index * 55)),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,

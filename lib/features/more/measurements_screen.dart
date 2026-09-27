@@ -58,8 +58,10 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: TextField(
                     controller: controllers[field],
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(labelText: field, suffixText: 'CM'),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration:
+                        InputDecoration(labelText: field, suffixText: 'CM'),
                   ),
                 ),
               ),
@@ -71,7 +73,8 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                   onPressed: () {
                     final result = <String, double>{};
                     for (final field in fields) {
-                      final parsed = double.tryParse(controllers[field]!.text.trim());
+                      final parsed =
+                          double.tryParse(controllers[field]!.text.trim());
                       if (parsed != null && parsed > 0) {
                         result[field.toLowerCase()] = parsed;
                       }
