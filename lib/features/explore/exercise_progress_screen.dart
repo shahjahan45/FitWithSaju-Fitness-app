@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/pro_empty_state.dart';
 import '../../data/models/exercise.dart';
 
 class ExerciseProgressScreen extends StatelessWidget {
@@ -26,15 +27,13 @@ class ExerciseProgressScreen extends StatelessWidget {
           }
           final sets = snapshot.data!;
           if (sets.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(28),
-                child: Text(
-                  'Complete this exercise in a workout to start building your strength history.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.muted, height: 1.5),
-                ),
-              ),
+            return ProEmptyState(
+              icon: Icons.show_chart_rounded,
+              title: 'No strength trend yet',
+              message:
+                  'Complete ${exercise.name} in a workout with saved weight and reps. FitWithSaju will build your estimated 1RM and set history here.',
+              primaryLabel: 'Back to exercise',
+              onPrimary: () => Navigator.of(context).pop(),
             );
           }
 

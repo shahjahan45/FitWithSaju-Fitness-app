@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/motion/app_motion.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/pro_empty_state.dart';
 import 'history_detail_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -34,23 +35,48 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           final items = snapshot.data!;
           if (items.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text(
-                  'Complete your first workout and it will appear here.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.muted),
-                ),
-              ),
+            return ProEmptyState(
+              icon: Icons.history_rounded,
+              title: 'Your training timeline starts here',
+              message:
+                  'Complete a workout and FitWithSaju will save the session, sets, duration, volume and PRs in this timeline.',
+              primaryLabel: 'Go back to Progress',
+              onPrimary: () => Navigator.of(context).pop(),
             );
           }
 
+          final totalMinutes = items.fold<int>(
+            0,
+            (sum, item) =>
+                sum + ((item['durationMinutes'] as num?)?.toInt() ?? 0),
+          );
+          final totalSets = items.fold<int>(
+            0,
+            (sum, item) =>
+                sum + ((item['completedSets'] as num?)?.toInt() ?? 0),
+          );
+          final totalVolume = items.fold<double>(
+            0,
+            (sum, item) =>
+                sum + ((item['totalVolume'] as num?)?.toDouble() ?? 0),
+          );
+
           return ListView.builder(
-            padding: const EdgeInsets.all(20),
-            itemCount: items.length,
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            itemCount: items.length + 1,
             itemBuilder: (_, index) {
-              final item = items[index];
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: _HistorySummary(
+                    workouts: items.length,
+                    minutes: totalMinutes,
+                    sets: totalSets,
+                    volume: totalVolume,
+                  ),
+                );
+              }
+              final item = items[index - 1];
               final date = DateTime.tryParse(item['date']?.toString() ?? '');
               final volume = (item['totalVolume'] as num?)?.toDouble() ?? 0;
               final prCount = (item['prCount'] as num?)?.toInt() ?? 0;
@@ -151,6 +177,89 @@ class _HistoryScreenState extends State<HistoryScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+class _HistorySummary extends StatelessWidget {
+  final int workouts;
+  final int minutes;
+  final int sets;
+  final double volume;
+
+  const _HistorySummary({
+    required this.workouts,
+    required this.minutes,
+    required this.sets,
+    required this.volume,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final time =
+        minutes < 60 ? '${minutes}m' : '${minutes ~/ 60}h ${minutes % 60}m';
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.primarySoft,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Training archive',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'A lifetime view of the sessions saved on this device.',
+            style: TextStyle(color: AppColors.muted, fontSize: 12),
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              Expanded(
+                  child: _SummaryMetric(value: '$workouts', label: 'Workouts')),
+              Expanded(child: _SummaryMetric(value: time, label: 'Training')),
+              Expanded(child: _SummaryMetric(value: '$sets', label: 'Sets')),
+              Expanded(
+                child: _SummaryMetric(
+                  value: '${volume.round()}kg',
+                  label: 'Volume',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryMetric extends StatelessWidget {
+  final String value;
+  final String label;
+
+  const _SummaryMetric({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(color: AppColors.muted, fontSize: 10),
+        ),
+      ],
     );
   }
 }

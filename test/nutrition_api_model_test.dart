@@ -3,10 +3,22 @@ import 'package:fitwithsaju/features/nutrition/data/nutrition_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('bundled nutrition catalog keeps stable recipe ids', () {
-    expect(NutritionCatalog.bundledRecipes.length, 12);
+  test('bundled nutrition catalog keeps stable ids after expansion', () {
+    expect(NutritionCatalog.bundledRecipes.length, 39);
+
+    // Legacy recipe ids must remain stable so saved plans/logs still resolve.
     expect(NutritionCatalog.byId('berry_oats')?.name, 'Berry overnight oats');
     expect(NutritionCatalog.byId('chicken_rice')?.slot, 'Lunch');
+
+    // v18 high-protein recipes are part of the bundled offline catalog.
+    expect(
+      NutritionCatalog.byId('hp_eggs_whites_berries')?.slot,
+      'Breakfast',
+    );
+    expect(
+      NutritionCatalog.byId('hp_shrimp_vegetables')?.slot,
+      'Dinner',
+    );
   });
 
   test('recipe api model parses nutrition, ingredients, and review metadata',

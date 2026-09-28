@@ -329,7 +329,8 @@ class _TemplateCard extends StatelessWidget {
               spacing: 7,
               runSpacing: 7,
               children: [
-                _StatPill(label: '7 days', icon: Icons.calendar_month_outlined),
+                const _StatPill(
+                    label: '7 days', icon: Icons.calendar_month_outlined),
                 _StatPill(
                     label: '${stats.mealsPerDay} meals/day',
                     icon: Icons.restaurant_outlined),

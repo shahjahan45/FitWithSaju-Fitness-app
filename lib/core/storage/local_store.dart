@@ -234,6 +234,17 @@ class LocalStore {
     _notify();
   }
 
+  static Future<void> deleteMeasurementAt(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await measurementEntries();
+    if (index < 0 || index >= items.length) {
+      return;
+    }
+    items.removeAt(index);
+    await prefs.setString(_measurementEntriesKey, jsonEncode(items));
+    _notify();
+  }
+
   static Future<Map<String, dynamic>?> activeWorkout() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_activeWorkoutKey);

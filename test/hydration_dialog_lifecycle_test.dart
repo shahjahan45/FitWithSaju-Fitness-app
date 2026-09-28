@@ -21,8 +21,11 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.text('Custom'), 250);
-    await tester.tap(find.text('Custom'));
+    const customWaterKey = Key('hydration-custom-water-button');
+    final customWaterButton = find.byKey(customWaterKey);
+    expect(customWaterButton, findsOneWidget);
+    await tester.scrollUntilVisible(customWaterButton, 250);
+    await tester.tap(customWaterButton);
     await tester.pumpAndSettle();
 
     expect(find.text('Add water'), findsOneWidget);

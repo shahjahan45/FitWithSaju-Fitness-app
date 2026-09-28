@@ -5,9 +5,11 @@ import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/exercise_media.dart';
+import '../../core/widgets/pro_empty_state.dart';
 import '../../data/exercise_catalog.dart';
 import '../../data/models/exercise.dart';
 import '../explore/exercise_detail_screen.dart';
+import '../explore/explore_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -46,16 +48,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
           final items = snapshot.data!;
           if (items.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text(
-                  'No favorite exercises yet. Tap the heart on an exercise to save it here.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    height: 1.5,
-                  ),
+            return ProEmptyState(
+              icon: Icons.favorite_border_rounded,
+              title: 'Build your exercise shortlist',
+              message:
+                  'Save the movements you use most and they will stay one tap away here.',
+              primaryLabel: 'Browse exercises',
+              onPrimary: () => Navigator.of(context).push(
+                FitRoutes.route(
+                  context,
+                  motion: FitRouteMotion.detail,
+                  builder: (_) => const ExploreScreen(),
                 ),
               ),
             );

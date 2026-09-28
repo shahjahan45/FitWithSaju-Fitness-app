@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/pro_empty_state.dart';
 
 class PersonalRecordsScreen extends StatelessWidget {
   const PersonalRecordsScreen({super.key});
@@ -24,15 +25,13 @@ class PersonalRecordsScreen extends StatelessWidget {
               : <String, Map<String, dynamic>>{};
 
           if (history.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text(
-                  'Complete workouts to start building your personal training records.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.muted, height: 1.5),
-                ),
-              ),
+            return ProEmptyState(
+              icon: Icons.emoji_events_outlined,
+              title: 'Your records are waiting to be earned',
+              message:
+                  'Complete workouts with saved weight and reps to build exercise PRs, session milestones and lifetime training volume.',
+              primaryLabel: 'Back to More',
+              onPrimary: () => Navigator.of(context).pop(),
             );
           }
 

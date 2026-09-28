@@ -106,13 +106,42 @@ class _NutritionDayEditorScreenState extends State<NutritionDayEditorScreen> {
                 ),
                 const SizedBox(height: 16),
                 if (plan.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40),
-                    child: Center(
-                      child: Text(
-                        'No meals planned for this day.',
-                        style: TextStyle(color: NutritionPalette.muted),
-                      ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(color: NutritionPalette.line),
+                    ),
+                    child: const Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: NutritionPalette.tint,
+                          child: Icon(
+                            Icons.restaurant_menu_rounded,
+                            color: NutritionPalette.brand,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          'No meals planned yet',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          'Add meals one at a time or apply a weekly plan to build this day automatically.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: NutritionPalette.muted,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 else

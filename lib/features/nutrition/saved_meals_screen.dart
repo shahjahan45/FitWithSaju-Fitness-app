@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/widgets/pro_empty_state.dart';
 import 'data/nutrition_catalog.dart';
 import 'data/nutrition_models.dart';
 import 'data/nutrition_store.dart';
@@ -27,28 +28,13 @@ class SavedMealsScreen extends StatelessWidget {
                 .where((recipe) => snapshot.data!.contains(recipe.id))
                 .toList();
             if (recipes.isEmpty) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.bookmark_border_rounded,
-                          size: 48, color: NutritionPalette.muted),
-                      SizedBox(height: 12),
-                      Text('No saved meals yet',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w900)),
-                      SizedBox(height: 6),
-                      Text(
-                        'Save meals from the daily plan or meal details and they will appear here.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: NutritionPalette.muted, height: 1.45),
-                      ),
-                    ],
-                  ),
-                ),
+              return ProEmptyState(
+                icon: Icons.bookmark_border_rounded,
+                title: 'Save meals you want again',
+                message:
+                    'Bookmark meals from your daily plan or meal details and build a reusable personal meal collection.',
+                primaryLabel: 'Back to meal plan',
+                onPrimary: () => Navigator.of(context).pop(),
               );
             }
             return ListView.separated(

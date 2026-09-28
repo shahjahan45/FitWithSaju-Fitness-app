@@ -1253,8 +1253,12 @@ class _HydrationCard extends StatelessWidget {
                       onTap: () => _add(us ? 473 : 500))),
               const SizedBox(width: 8),
               Expanded(
-                  child: _WaterButton(
-                      label: 'Custom', onTap: () => _custom(context))),
+                child: _WaterButton(
+                  key: const Key('hydration-custom-water-button'),
+                  label: 'Custom',
+                  onTap: () => _custom(context),
+                ),
+              ),
             ],
           ),
         ],
@@ -1426,7 +1430,7 @@ class _WaterButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _WaterButton({required this.label, required this.onTap});
+  const _WaterButton({super.key, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

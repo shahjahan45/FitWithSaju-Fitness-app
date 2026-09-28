@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
+import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../nutrition/nutrition_plan_screen.dart';
+import 'achievements_screen.dart';
 import 'content_sync_screen.dart';
 import 'data_export_screen.dart';
 import 'favorites_screen.dart';
 import 'measurements_screen.dart';
 import 'personal_records_screen.dart';
 import 'settings_screen.dart';
+import 'info_screens.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -35,6 +38,17 @@ class MoreScreen extends StatelessWidget {
                   style: TextStyle(color: AppColors.muted),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 18),
+          MotionReveal(
+            delay: const Duration(milliseconds: 35),
+            child: FutureBuilder<Map<String, String>>(
+              future: LocalStore.profile(),
+              builder: (context, snapshot) => _ProfileSummary(
+                profile: snapshot.data ?? const <String, String>{},
+                onTap: () => _open(context, const SettingsScreen()),
+              ),
             ),
           ),
           const SizedBox(height: 22),
@@ -65,6 +79,11 @@ class MoreScreen extends StatelessWidget {
                   icon: Icons.emoji_events_rounded,
                   title: 'Personal Records',
                   onTap: () => _open(context, const PersonalRecordsScreen()),
+                ),
+                _ActionTile(
+                  icon: Icons.workspace_premium_rounded,
+                  title: 'Achievements',
+                  onTap: () => _open(context, const AchievementsScreen()),
                 ),
               ],
             ),
@@ -106,22 +125,19 @@ class MoreScreen extends StatelessWidget {
             child: _Group(
               children: [
                 _ActionTile(
+                  icon: Icons.menu_book_rounded,
+                  title: 'App Guide',
+                  onTap: () => _open(context, const AppGuideScreen()),
+                ),
+                _ActionTile(
                   icon: Icons.info_outline_rounded,
                   title: 'About FitWithSaju',
-                  onTap: () => _info(
-                    context,
-                    'FitWithSaju',
-                    'Move. Train. Progress. Every day. A free, no-login fitness companion for daily workout planning and progress tracking.',
-                  ),
+                  onTap: () => _open(context, const AboutFitWithSajuScreen()),
                 ),
                 _ActionTile(
                   icon: Icons.privacy_tip_outlined,
-                  title: 'Privacy',
-                  onTap: () => _info(
-                    context,
-                    'Privacy',
-                    'Workout plans, favorites, body metrics, history, and nutrition logs are stored locally on your device. The optional server only supplies public exercise and recipe content.',
-                  ),
+                  title: 'Privacy & Data',
+                  onTap: () => _open(context, const PrivacyScreen()),
                 ),
               ],
             ),
@@ -163,32 +179,88 @@ class MoreScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  static Future<void> _info(
-    BuildContext context,
-    String title,
-    String message,
-  ) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      useSafeArea: true,
-      showDragHandle: true,
-      builder: (sheetContext) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 6, 24, 30),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+class _ProfileSummary extends StatelessWidget {
+  final Map<String, String> profile;
+  final VoidCallback onTap;
+
+  const _ProfileSummary({required this.profile, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final goal = profile['goal']?.trim().isNotEmpty == true
+        ? profile['goal']!
+        : 'Balanced fitness';
+    final level = profile['level']?.trim().isNotEmpty == true
+        ? profile['level']!
+        : 'Build your level';
+    final place = profile['place']?.trim().isNotEmpty == true
+        ? profile['place']!
+        : 'Any training place';
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF173D25), Color(0xFF285D2E)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: 10),
-            Text(
-              message,
-              style: const TextStyle(color: AppColors.muted, height: 1.5),
-            ),
-          ],
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 54,
+                height: 54,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: .12),
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: Color(0xFFA5D83F),
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      goal,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 17,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      '$level • $place',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: .72),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.tune_rounded, color: Color(0xFFA5D83F)),
+            ],
+          ),
         ),
       ),
     );

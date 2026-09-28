@@ -251,13 +251,53 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                 ),
                 const SizedBox(height: 18),
                 if (data.items.isEmpty && data.manual.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 60),
-                    child: Center(
-                      child: Text(
-                        'Your shopping list is empty.',
-                        style: TextStyle(color: NutritionPalette.muted),
-                      ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: NutritionPalette.line),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: NutritionPalette.tint,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.shopping_basket_outlined,
+                            color: NutritionPalette.brand,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        const Text(
+                          'Nothing to shop for yet',
+                          style: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Apply a meal plan or add meals to your selected dates and ingredients will be grouped here automatically.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: NutritionPalette.muted,
+                            height: 1.45,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        OutlinedButton.icon(
+                          onPressed: _addManual,
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('Add manual item'),
+                        ),
+                      ],
                     ),
                   )
                 else ...[

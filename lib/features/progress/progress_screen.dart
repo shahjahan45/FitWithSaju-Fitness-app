@@ -5,6 +5,7 @@ import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
+import '../more/achievements_screen.dart';
 import 'history_screen.dart';
 import 'weight_tracker_screen.dart';
 
@@ -244,6 +245,21 @@ class _ProgressContent extends StatelessWidget {
               subtitle: weights.isEmpty
                   ? 'Add your first weight entry'
                   : 'Latest: ${(weights.first['value'] as num).toStringAsFixed(1)} KG',
+            ),
+          ),
+          const SizedBox(height: 12),
+          FitCard(
+            onTap: () => Navigator.of(context).push(
+              FitRoutes.route(
+                context,
+                motion: FitRouteMotion.detail,
+                builder: (_) => const AchievementsScreen(),
+              ),
+            ),
+            child: const _LinkRow(
+              icon: Icons.workspace_premium_rounded,
+              title: 'Achievements',
+              subtitle: 'Track milestones unlocked from your real activity',
             ),
           ),
           const SizedBox(height: 16),

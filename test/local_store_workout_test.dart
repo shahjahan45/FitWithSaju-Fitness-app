@@ -144,6 +144,14 @@ void main() {
     expect(await LocalStore.onboardingComplete(), isTrue);
   });
 
+  test('measurement entries can be added and deleted', () async {
+    await LocalStore.addMeasurements({'waist': 82.0, 'arms': 35.0});
+    expect((await LocalStore.measurementEntries()).length, 1);
+
+    await LocalStore.deleteMeasurementAt(0);
+    expect(await LocalStore.measurementEntries(), isEmpty);
+  });
+
   test('estimated 1RM uses the Epley estimate', () {
     expect(LocalStore.estimatedOneRepMax(100, 1), 100);
     expect(LocalStore.estimatedOneRepMax(100, 10), closeTo(133.33, .02));

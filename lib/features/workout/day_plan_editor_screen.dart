@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/exercise_catalog.dart';
+import '../../data/models/exercise.dart';
 
 class DayPlanEditorScreen extends StatefulWidget {
   final Map<String, dynamic> plan;
@@ -19,9 +20,11 @@ class DayPlanEditorScreen extends StatefulWidget {
 class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _durationController;
+  late final TextEditingController _searchController;
   late final Set<String> _selected;
   late bool _isRest;
   bool _saving = false;
+  String _query = '';
 
   @override
   void initState() {
@@ -33,6 +36,7 @@ class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
       text:
           ((widget.plan['durationMinutes'] as num?)?.toInt() ?? 45).toString(),
     );
+    _searchController = TextEditingController();
     _selected = ((widget.plan['exerciseIds'] as Iterable?) ?? const [])
         .map((e) => e.toString())
         .toSet();
@@ -43,7 +47,20 @@ class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
   void dispose() {
     _titleController.dispose();
     _durationController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  List<Exercise> get _filteredExercises {
+    final query = _query.trim().toLowerCase();
+    if (query.isEmpty) {
+      return ExerciseCatalog.instance.exercises;
+    }
+    return ExerciseCatalog.instance.exercises.where((exercise) {
+      final text = '${exercise.name} ${exercise.muscle} ${exercise.equipment}'
+          .toLowerCase();
+      return text.contains(query);
+    }).toList();
   }
 
   Future<void> _save() async {
@@ -121,7 +138,46 @@ class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
               style: TextStyle(color: AppColors.muted, height: 1.45),
             ),
             const SizedBox(height: 14),
-            ...ExerciseCatalog.instance.exercises.map(
+            TextField(
+              controller: _searchController,
+              onChanged: (value) => setState(() => _query = value),
+              decoration: InputDecoration(
+                hintText: 'Search exercise, muscle or equipment',
+                prefixIcon: const Icon(Icons.search_rounded),
+                suffixIcon: _query.isEmpty
+                    ? null
+                    : IconButton(
+                        tooltip: 'Clear search',
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _query = '');
+                        },
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (_filteredExercises.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceAlt,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.search_off_rounded, color: AppColors.muted),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'No exercises match this search.',
+                        style: TextStyle(color: AppColors.muted),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ..._filteredExercises.map(
               (exercise) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Material(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/pro_empty_state.dart';
 
 class WeightTrackerScreen extends StatefulWidget {
   const WeightTrackerScreen({super.key});
@@ -113,13 +114,13 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
                 if (_entries.isNotEmpty) _Summary(entries: _entries),
                 if (_entries.isNotEmpty) const SizedBox(height: 20),
                 if (_entries.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 80),
-                    child: Text(
-                      'Add your first body-weight entry to start tracking progress.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.muted, height: 1.5),
-                    ),
+                  ProEmptyState(
+                    icon: Icons.monitor_weight_outlined,
+                    title: 'Start your body-weight trend',
+                    message:
+                        'Add your first entry and FitWithSaju will build a simple local trend from your recent measurements.',
+                    primaryLabel: 'Add weight',
+                    onPrimary: _add,
                   ),
                 ...List.generate(_entries.length, (index) {
                   final entry = _entries[index];

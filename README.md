@@ -53,3 +53,16 @@ Version: `1.9.5+20`
 - Added high-protein template and recipes to Laravel seed data.
 - Hardened all nutrition modal bottom sheets with settled-route teardown before store-backed UI updates.
 - Active plan selection is included in backup/restore.
+
+
+## v19 Mobile Completeness & Professional Pages
+
+- Added real Achievements calculated from local workout data.
+- Replaced sparse About/Privacy dialogs with full professional pages.
+- Added an in-app FitWithSaju Guide.
+- Added professional empty states for Favorites, Saved Meals, Workout History, Measurements, Personal Records, Body Weight, and Exercise Strength History.
+- Added search to Custom Workout and Day Plan exercise selectors.
+- Added Workout History lifetime summary and Measurements latest snapshot.
+- Added measurement-entry deletion.
+- Improved empty Shopping List and Nutrition Day Editor states.
+- Added profile summary card in More and Achievements shortcut in Progress.
