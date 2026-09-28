@@ -59,13 +59,30 @@ class NutritionWeekScreen extends StatelessWidget {
                             ),
                             FutureBuilder<NutritionMacros>(
                               future: NutritionStore.plannedTotals(date),
-                              builder: (context, totalSnapshot) => Text(
-                                '${(totalSnapshot.data?.calories ?? 0).round()} kcal',
-                                style: const TextStyle(
-                                  color: NutritionPalette.brand,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
+                              builder: (context, totalSnapshot) {
+                                final totals = totalSnapshot.data ??
+                                    const NutritionMacros.zero();
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${totals.protein.round()} g protein',
+                                      style: const TextStyle(
+                                        color: NutritionPalette.brand,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${totals.calories.round()} kcal',
+                                      style: const TextStyle(
+                                        color: NutritionPalette.muted,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ],
                         ),

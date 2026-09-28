@@ -19,6 +19,7 @@ class NutritionStore {
   static const _selectedDateKey = 'nutrition_selected_date_v1';
   static const _shoppingCheckedKey = 'nutrition_shopping_checked_v1';
   static const _shoppingManualKey = 'nutrition_shopping_manual_v1';
+  static const _activeTemplateKey = 'nutrition_active_template_v1';
 
   static void _notify() => changes.value++;
 
@@ -108,6 +109,92 @@ class NutritionStore {
     final plans = _decodeMap(prefs.getString(_plansKey));
     plans[dateKey(date)] = meals.map((meal) => meal.toJson()).toList();
     await prefs.setString(_plansKey, jsonEncode(plans));
+    _notify();
+  }
+
+  static DateTime weekStart(DateTime date) {
+    final local = DateTime(date.year, date.month, date.day);
+    return local.subtract(Duration(days: local.weekday - 1));
+  }
+
+  static Future<String?> activeTemplateIdForWeek(DateTime date) async {
+    final prefs = await SharedPreferences.getInstance();
+    final values = _decodeMap(prefs.getString(_activeTemplateKey));
+    final value = values[dateKey(weekStart(date))];
+    return value?.toString();
+  }
+
+  static Future<NutritionTemplateApplyResult> applyTemplate({
+    required NutritionMealPlanTemplate template,
+    required DateTime anchorDate,
+    required NutritionPreferences preferences,
+  }) async {
+    final blocked = <String>[];
+    final missing = <String>[];
+
+    for (final meals in template.days.values) {
+      for (final meal in meals) {
+        final recipe = NutritionCatalog.byId(meal.recipeId);
+        if (recipe == null) {
+          missing.add(meal.recipeId);
+          continue;
+        }
+        if (!_isRecipeCompatible(recipe, preferences)) {
+          blocked.add(recipe.name);
+        }
+      }
+    }
+
+    if (missing.isNotEmpty) {
+      return NutritionTemplateApplyResult(
+        success: false,
+        message:
+            'This plan needs ${missing.length} meal${missing.length == 1 ? '' : 's'} that are not available in the current recipe catalog.',
+        blockedMeals: missing,
+      );
+    }
+    if (blocked.isNotEmpty) {
+      return NutritionTemplateApplyResult(
+        success: false,
+        message:
+            'This plan conflicts with your dietary preferences or allergy exclusions. FitWithSaju will not relax those restrictions automatically.',
+        blockedMeals: blocked.toSet().toList(),
+      );
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final plans = _decodeMap(prefs.getString(_plansKey));
+    final monday = weekStart(anchorDate);
+    for (var index = 0; index < 7; index++) {
+      final date = monday.add(Duration(days: index));
+      final meals = template.mealsForWeekday(index + 1);
+      plans[dateKey(date)] = meals.map((meal) => meal.toJson()).toList();
+    }
+    await prefs.setString(_plansKey, jsonEncode(plans));
+
+    final active = _decodeMap(prefs.getString(_activeTemplateKey));
+    active[dateKey(monday)] = template.id;
+    await prefs.setString(_activeTemplateKey, jsonEncode(active));
+    _notify();
+
+    return NutritionTemplateApplyResult(
+      success: true,
+      message:
+          '${template.name} applied to the week of ${dateKey(monday)}. Existing food and hydration logs were preserved.',
+    );
+  }
+
+  static Future<void> clearWeek(DateTime anchorDate) async {
+    final prefs = await SharedPreferences.getInstance();
+    final plans = _decodeMap(prefs.getString(_plansKey));
+    final monday = weekStart(anchorDate);
+    for (var index = 0; index < 7; index++) {
+      plans.remove(dateKey(monday.add(Duration(days: index))));
+    }
+    await prefs.setString(_plansKey, jsonEncode(plans));
+    final active = _decodeMap(prefs.getString(_activeTemplateKey));
+    active.remove(dateKey(monday));
+    await prefs.setString(_activeTemplateKey, jsonEncode(active));
     _notify();
   }
 
@@ -434,6 +521,8 @@ class NutritionStore {
       'shoppingChecked':
           jsonDecode(prefs.getString(_shoppingCheckedKey) ?? '{}'),
       'shoppingManual': jsonDecode(prefs.getString(_shoppingManualKey) ?? '[]'),
+      'activeTemplates':
+          jsonDecode(prefs.getString(_activeTemplateKey) ?? '{}'),
     };
   }
 
@@ -475,7 +564,41 @@ class NutritionStore {
         jsonEncode(value['shoppingManual']),
       );
     }
+    if (value['activeTemplates'] is Map) {
+      await prefs.setString(
+        _activeTemplateKey,
+        jsonEncode(value['activeTemplates']),
+      );
+    }
     _notify();
+  }
+
+  static bool _isRecipeCompatible(
+    NutritionRecipe recipe,
+    NutritionPreferences preferences,
+  ) {
+    final allergySet =
+        preferences.allergies.map((item) => item.toLowerCase()).toSet();
+    final recipeAllergens =
+        recipe.allergens.map((item) => item.toLowerCase()).toSet();
+    if (recipeAllergens.any(allergySet.contains)) {
+      return false;
+    }
+    final dietary =
+        preferences.dietary.map((item) => item.toLowerCase()).toSet();
+    final tags = recipe.dietaryTags.map((item) => item.toLowerCase()).toSet();
+    if (dietary.contains('vegan') && !tags.contains('vegan')) {
+      return false;
+    }
+    if (dietary.contains('vegetarian') &&
+        !tags.contains('vegetarian') &&
+        !tags.contains('vegan')) {
+      return false;
+    }
+    if (dietary.contains('gluten-free') && !tags.contains('gluten-free')) {
+      return false;
+    }
+    return true;
   }
 
   static List<PlannedNutritionMeal> _defaultPlanFor(DateTime date) {

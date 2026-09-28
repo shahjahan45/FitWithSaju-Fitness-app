@@ -38,3 +38,15 @@ Flutter treats Laravel as an optional public-content source:
 ## Personal-data boundary in v17
 
 These endpoints intentionally do not accept personal food/hydration records. The mobile app remains no-login and stores personal records locally. This is a deliberate privacy/architecture boundary, not a missing fallback disguised as a successful sync.
+
+## v18 meal-plan template behavior
+
+The Flutter client now synchronizes `/api/meal-plan-templates` alongside recipes and exercises. Published templates are cached for offline use and merged with the bundled templates.
+
+Bundled templates include:
+- `balanced-week-sample`
+- `high-protein-7-day`
+
+`high-protein-7-day` contains four meals per day and references stable `hp_*` recipe IDs. Protein values mirror the user-supplied reference plan (190–205 g/day, about 196 g/day average). Calories, carbohydrates and fats are sample estimates and remain marked as unreviewed until content review is completed in the Laravel admin.
+
+Applying a template replaces planned meals only. Existing food logs and hydration entries are preserved. Flutter validates dietary/allergy restrictions before applying and refuses incompatible templates rather than silently relaxing exclusions.

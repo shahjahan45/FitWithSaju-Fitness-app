@@ -213,6 +213,118 @@ class PlannedNutritionMeal {
   }
 }
 
+class NutritionMealPlanTemplate {
+  final String id;
+  final String name;
+  final String description;
+  final String goal;
+  final Map<int, List<PlannedNutritionMeal>> days;
+  final bool bundled;
+
+  const NutritionMealPlanTemplate({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.goal,
+    required this.days,
+    this.bundled = false,
+  });
+
+  List<PlannedNutritionMeal> mealsForWeekday(int weekday) =>
+      List<PlannedNutritionMeal>.of(
+          days[weekday] ?? const <PlannedNutritionMeal>[]);
+
+  Map<String, dynamic> toCacheJson() => <String, dynamic>{
+        'id': id,
+        'name': name,
+        'description': description,
+        'goal': goal,
+        'days': <String, dynamic>{
+          for (final entry in days.entries)
+            _weekdayKey(entry.key): entry.value
+                .map((meal) => <String, dynamic>{
+                      'slot': meal.slot,
+                      'recipe_id': meal.recipeId,
+                      'time': meal.time,
+                      'servings': meal.servings,
+                    })
+                .toList(),
+        },
+      };
+
+  factory NutritionMealPlanTemplate.fromApi(Map<String, dynamic> map) {
+    final parsed = <int, List<PlannedNutritionMeal>>{};
+    final rawDays = map['days'];
+    if (rawDays is Map) {
+      for (final entry in rawDays.entries) {
+        final weekday = _weekdayNumber(entry.key.toString());
+        if (weekday == null || entry.value is! List) {
+          continue;
+        }
+        parsed[weekday] = (entry.value as List)
+            .whereType<Map>()
+            .map((raw) {
+              final item = Map<String, dynamic>.from(raw);
+              return PlannedNutritionMeal(
+                slot: item['slot']?.toString() ?? 'Snack',
+                recipeId: item['recipe_id']?.toString() ??
+                    item['recipeId']?.toString() ??
+                    '',
+                time: item['time']?.toString() ?? '',
+                servings: (item['servings'] as num?)?.toDouble() ?? 1,
+              );
+            })
+            .where((meal) => meal.recipeId.isNotEmpty)
+            .toList(growable: false);
+      }
+    }
+    return NutritionMealPlanTemplate(
+      id: map['id']?.toString() ?? map['slug']?.toString() ?? '',
+      name: map['name']?.toString() ?? 'Meal plan',
+      description: map['description']?.toString() ?? '',
+      goal: map['goal']?.toString() ?? 'Balanced eating',
+      days: parsed,
+    );
+  }
+
+  static int? _weekdayNumber(String value) {
+    final normalized = value.toLowerCase().trim();
+    const names = <String, int>{
+      'monday': DateTime.monday,
+      'tuesday': DateTime.tuesday,
+      'wednesday': DateTime.wednesday,
+      'thursday': DateTime.thursday,
+      'friday': DateTime.friday,
+      'saturday': DateTime.saturday,
+      'sunday': DateTime.sunday,
+    };
+    return names[normalized] ?? int.tryParse(normalized);
+  }
+
+  static String _weekdayKey(int weekday) => switch (weekday) {
+        DateTime.monday => 'monday',
+        DateTime.tuesday => 'tuesday',
+        DateTime.wednesday => 'wednesday',
+        DateTime.thursday => 'thursday',
+        DateTime.friday => 'friday',
+        DateTime.saturday => 'saturday',
+        DateTime.sunday => 'sunday',
+        _ => weekday.toString(),
+      };
+}
+
+class NutritionTemplateApplyResult {
+  final bool success;
+  final String message;
+  final List<String> blockedMeals;
+
+  const NutritionTemplateApplyResult({
+    required this.success,
+    required this.message,
+    this.blockedMeals = const <String>[],
+  });
+}
+
 class NutritionPreferences {
   final String goal;
   final List<String> dietary;

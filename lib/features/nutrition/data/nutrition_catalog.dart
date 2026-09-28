@@ -384,6 +384,899 @@ class NutritionCatalog {
       ],
       instructions: ['Cut vegetables into sticks and serve with hummus.'],
     ),
+    NutritionRecipe(
+      id: 'hp_eggs_whites_berries',
+      name: 'Eggs, egg whites & berries',
+      slot: 'Breakfast',
+      artwork: '🍳',
+      cuisine: 'International',
+      prepMinutes: 12,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 430, protein: 40, carbs: 32, fat: 15),
+      dietaryTags: ['High-protein', 'Gluten-free'],
+      allergens: ['Eggs'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed berries',
+            quantity: 120,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Scramble the eggs and egg whites until fully cooked.',
+        'Serve with fresh berries.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_chicken_rice_broccoli',
+      name: 'Chicken, rice & broccoli',
+      slot: 'Lunch',
+      artwork: '🍗',
+      cuisine: 'International',
+      prepMinutes: 25,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 620, protein: 55, carbs: 72, fat: 12),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Chicken breast',
+            quantity: 170,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Broccoli', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Season and cook the chicken thoroughly.',
+        'Cook rice and steam broccoli.',
+        'Serve together with measured olive oil.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_yogurt_whey_berries',
+      name: 'Greek yogurt, whey & berries',
+      slot: 'Snack',
+      artwork: '🫐',
+      cuisine: 'International',
+      prepMinutes: 4,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 330, protein: 45, carbs: 30, fat: 5),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Dairy'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Greek yogurt', quantity: 250, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 30, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed berries',
+            quantity: 100,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Stir whey into yogurt until smooth.',
+        'Top with berries.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_salmon_vegetables',
+      name: 'Salmon & vegetables',
+      slot: 'Dinner',
+      artwork: '🐟',
+      cuisine: 'International',
+      prepMinutes: 25,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 560, protein: 50, carbs: 22, fat: 28),
+      dietaryTags: ['High-protein', 'Gluten-free'],
+      allergens: ['Fish'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Salmon fillet',
+            quantity: 200,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 250,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Season salmon and bake or pan-sear until cooked.',
+        'Cook vegetables until tender-crisp.',
+        'Serve together.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_protein_oatmeal_yogurt',
+      name: 'Protein oatmeal & Greek yogurt',
+      slot: 'Breakfast',
+      artwork: '🥣',
+      cuisine: 'International',
+      prepMinutes: 8,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 520, protein: 50, carbs: 60, fat: 10),
+      dietaryTags: ['High-protein', 'Vegetarian'],
+      allergens: ['Dairy', 'Gluten'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Rolled oats', quantity: 70, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 45, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Banana', quantity: 0.5, unit: 'pcs', category: 'Produce'),
+      ],
+      instructions: [
+        'Cook oats with water or milk.',
+        'Stir in whey after removing from heat.',
+        'Serve with Greek yogurt and banana.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_beef_potatoes_veg',
+      name: 'Lean beef, potatoes & vegetables',
+      slot: 'Lunch',
+      artwork: '🥩',
+      cuisine: 'International',
+      prepMinutes: 30,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 610, protein: 45, carbs: 55, fat: 22),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Lean ground beef',
+            quantity: 170,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Potatoes', quantity: 280, unit: 'g', category: 'Produce'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Cook lean beef thoroughly.',
+        'Roast or boil potatoes.',
+        'Cook vegetables and serve together.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_cottage_berries_eggs',
+      name: 'Cottage cheese, berries & eggs',
+      slot: 'Snack',
+      artwork: '🧀',
+      cuisine: 'International',
+      prepMinutes: 10,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 380, protein: 40, carbs: 25, fat: 14),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Dairy', 'Eggs'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Cottage cheese',
+            quantity: 220,
+            unit: 'g',
+            category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Mixed berries',
+            quantity: 100,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+      ],
+      instructions: [
+        'Cook eggs to preference.',
+        'Serve with cottage cheese and berries.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_chicken_salad',
+      name: 'Chicken breast & salad',
+      slot: 'Dinner',
+      artwork: '🥗',
+      cuisine: 'International',
+      prepMinutes: 20,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 520, protein: 60, carbs: 18, fat: 18),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Chicken breast',
+            quantity: 200,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed salad greens',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Tomato', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 10, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Grill chicken until fully cooked.',
+        'Toss salad vegetables with olive oil and seasoning.',
+        'Slice chicken and serve over salad.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_eggs_turkey_toast',
+      name: 'Eggs, egg whites, turkey & toast',
+      slot: 'Breakfast',
+      artwork: '🍳',
+      cuisine: 'International',
+      prepMinutes: 15,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 540, protein: 50, carbs: 38, fat: 22),
+      dietaryTags: ['High-protein', 'Halal'],
+      allergens: ['Eggs', 'Gluten'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Turkey breast slices',
+            quantity: 100,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Whole-grain bread',
+            quantity: 2,
+            unit: 'slices',
+            category: 'Bakery'),
+      ],
+      instructions: [
+        'Cook eggs and egg whites.',
+        'Warm turkey slices.',
+        'Serve with toasted bread.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_shrimp_rice_veg',
+      name: 'Shrimp, rice & vegetables',
+      slot: 'Lunch',
+      artwork: '🍤',
+      cuisine: 'International',
+      prepMinutes: 22,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 560, protein: 45, carbs: 65, fat: 10),
+      dietaryTags: ['High-protein', 'Gluten-free'],
+      allergens: ['Shellfish'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Shrimp', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Cook rice.',
+        'Sauté shrimp until opaque and fully cooked.',
+        'Add vegetables and serve with rice.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_steak_vegetables',
+      name: 'Lean steak & vegetables',
+      slot: 'Dinner',
+      artwork: '🥩',
+      cuisine: 'International',
+      prepMinutes: 25,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 570, protein: 55, carbs: 20, fat: 25),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Lean steak', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 250,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Season and cook steak to a safe internal temperature.',
+        'Cook vegetables until tender.',
+        'Rest steak before slicing.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_eggwhite_omelet_turkey',
+      name: 'Egg-white omelet, eggs & turkey',
+      slot: 'Breakfast',
+      artwork: '🥚',
+      cuisine: 'International',
+      prepMinutes: 15,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 500, protein: 50, carbs: 15, fat: 25),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: ['Eggs'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Egg whites', quantity: 250, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Turkey breast slices',
+            quantity: 100,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Spinach', quantity: 80, unit: 'g', category: 'Produce'),
+      ],
+      instructions: [
+        'Cook spinach briefly.',
+        'Add egg whites and eggs to form an omelet.',
+        'Fill with warmed turkey and fold.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_chicken_sweetpotato_broccoli',
+      name: 'Chicken, sweet potato & broccoli',
+      slot: 'Lunch',
+      artwork: '🍗',
+      cuisine: 'International',
+      prepMinutes: 28,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 620, protein: 60, carbs: 60, fat: 15),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Chicken breast',
+            quantity: 200,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Sweet potato',
+            quantity: 300,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Broccoli', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Roast sweet potato.',
+        'Cook chicken thoroughly.',
+        'Steam broccoli and serve together.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_shake_yogurt',
+      name: 'Protein shake & Greek yogurt',
+      slot: 'Snack',
+      artwork: '🥤',
+      cuisine: 'International',
+      prepMinutes: 3,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 300, protein: 45, carbs: 20, fat: 5),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Dairy'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 40, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Greek yogurt', quantity: 200, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Water', quantity: 300, unit: 'ml', category: 'Beverages'),
+      ],
+      instructions: [
+        'Shake whey with cold water.',
+        'Serve with Greek yogurt.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_whitefish_vegetables',
+      name: 'White fish & vegetables',
+      slot: 'Dinner',
+      artwork: '🐟',
+      cuisine: 'International',
+      prepMinutes: 22,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 470, protein: 45, carbs: 25, fat: 18),
+      dietaryTags: ['High-protein', 'Gluten-free'],
+      allergens: ['Fish'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'White fish fillet',
+            quantity: 210,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 250,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 10, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Season and bake fish until opaque and flaky.',
+        'Cook vegetables and serve alongside.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_pancakes_eggs',
+      name: 'Protein pancakes & eggs',
+      slot: 'Breakfast',
+      artwork: '🥞',
+      cuisine: 'International',
+      prepMinutes: 18,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 520, protein: 45, carbs: 55, fat: 15),
+      dietaryTags: ['High-protein', 'Vegetarian'],
+      allergens: ['Eggs', 'Dairy', 'Gluten'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Protein pancake mix',
+            quantity: 90,
+            unit: 'g',
+            category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 25, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed berries',
+            quantity: 80,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Prepare pancake batter with protein powder.',
+        'Cook pancakes on a non-stick pan.',
+        'Serve with cooked eggs and berries.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_beef_rice_veg',
+      name: 'Lean beef, rice & vegetables',
+      slot: 'Lunch',
+      artwork: '🥩',
+      cuisine: 'International',
+      prepMinutes: 28,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 640, protein: 50, carbs: 65, fat: 20),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Lean ground beef',
+            quantity: 190,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Cook rice.',
+        'Cook beef thoroughly and drain excess fat.',
+        'Serve with vegetables and rice.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_cottage_whey_berries',
+      name: 'Cottage cheese, whey & berries',
+      slot: 'Snack',
+      artwork: '🧀',
+      cuisine: 'International',
+      prepMinutes: 4,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 390, protein: 45, carbs: 28, fat: 12),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Dairy'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Cottage cheese',
+            quantity: 220,
+            unit: 'g',
+            category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 25, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed berries',
+            quantity: 100,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Stir whey into cottage cheese.',
+        'Top with berries.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_salmon_salad',
+      name: 'Salmon & salad',
+      slot: 'Dinner',
+      artwork: '🐟',
+      cuisine: 'International',
+      prepMinutes: 22,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 550, protein: 50, carbs: 20, fat: 28),
+      dietaryTags: ['High-protein', 'Gluten-free'],
+      allergens: ['Fish'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Salmon fillet',
+            quantity: 200,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed salad greens',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Cucumber', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Cook salmon until done.',
+        'Toss salad with vegetables and olive oil.',
+        'Serve salmon over salad.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_eggs_whites_yogurt',
+      name: 'Eggs, egg whites & Greek yogurt',
+      slot: 'Breakfast',
+      artwork: '🍳',
+      cuisine: 'International',
+      prepMinutes: 12,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 470, protein: 45, carbs: 20, fat: 22),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Eggs', 'Dairy'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
+      ],
+      instructions: [
+        'Cook eggs and egg whites.',
+        'Serve with Greek yogurt.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_steak_potatoes_veg',
+      name: 'Steak, potatoes & vegetables',
+      slot: 'Lunch',
+      artwork: '🥩',
+      cuisine: 'International',
+      prepMinutes: 30,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 630, protein: 55, carbs: 50, fat: 22),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Lean steak', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Potatoes', quantity: 260, unit: 'g', category: 'Produce'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Cook steak to a safe internal temperature.',
+        'Roast potatoes and vegetables.',
+        'Rest and slice steak before serving.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_shake_cottage',
+      name: 'Protein shake & cottage cheese',
+      slot: 'Snack',
+      artwork: '🥤',
+      cuisine: 'International',
+      prepMinutes: 3,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 320, protein: 45, carbs: 18, fat: 8),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Dairy'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 35, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Cottage cheese',
+            quantity: 200,
+            unit: 'g',
+            category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Water', quantity: 300, unit: 'ml', category: 'Beverages'),
+      ],
+      instructions: [
+        'Shake whey with water.',
+        'Serve with cottage cheese.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_chicken_vegetables',
+      name: 'Chicken breast & vegetables',
+      slot: 'Dinner',
+      artwork: '🍗',
+      cuisine: 'International',
+      prepMinutes: 22,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 530, protein: 60, carbs: 20, fat: 17),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Chicken breast',
+            quantity: 210,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 280,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Cook chicken thoroughly.',
+        'Cook vegetables and serve alongside.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_protein_oatmeal_eggs',
+      name: 'Protein oatmeal & eggs',
+      slot: 'Breakfast',
+      artwork: '🥣',
+      cuisine: 'International',
+      prepMinutes: 12,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 500, protein: 50, carbs: 50, fat: 12),
+      dietaryTags: ['High-protein'],
+      allergens: ['Eggs', 'Dairy', 'Gluten'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Rolled oats', quantity: 65, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 40, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+      ],
+      instructions: [
+        'Cook oats.',
+        'Stir in whey after removing from heat.',
+        'Serve with cooked eggs.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_chicken_rice_vegetables',
+      name: 'Chicken, rice & vegetables',
+      slot: 'Lunch',
+      artwork: '🍗',
+      cuisine: 'International',
+      prepMinutes: 25,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 650, protein: 60, carbs: 70, fat: 12),
+      dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
+      allergens: [],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Chicken breast',
+            quantity: 210,
+            unit: 'g',
+            category: 'Protein'),
+        NutritionIngredient(
+            name: 'Basmati rice', quantity: 190, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 180,
+            unit: 'g',
+            category: 'Produce'),
+      ],
+      instructions: [
+        'Cook rice.',
+        'Cook chicken thoroughly.',
+        'Cook vegetables and serve together.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_yogurt_whey_fruit',
+      name: 'Greek yogurt, whey & fruit',
+      slot: 'Snack',
+      artwork: '🫐',
+      cuisine: 'International',
+      prepMinutes: 4,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 320, protein: 45, carbs: 30, fat: 4),
+      dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
+      allergens: ['Dairy'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Greek yogurt', quantity: 250, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(
+            name: 'Whey protein', quantity: 30, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Fresh fruit', quantity: 120, unit: 'g', category: 'Produce'),
+      ],
+      instructions: [
+        'Stir whey into yogurt.',
+        'Top with chopped fruit.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
+    NutritionRecipe(
+      id: 'hp_shrimp_vegetables',
+      name: 'Shrimp & vegetables',
+      slot: 'Dinner',
+      artwork: '🍤',
+      cuisine: 'International',
+      prepMinutes: 20,
+      yieldServings: 1,
+      servingLabel: '1 serving',
+      macros: NutritionMacros(calories: 480, protein: 45, carbs: 22, fat: 16),
+      dietaryTags: ['High-protein', 'Gluten-free'],
+      allergens: ['Shellfish'],
+      ingredients: [
+        NutritionIngredient(
+            name: 'Shrimp', quantity: 210, unit: 'g', category: 'Protein'),
+        NutritionIngredient(
+            name: 'Mixed vegetables',
+            quantity: 280,
+            unit: 'g',
+            category: 'Produce'),
+        NutritionIngredient(
+            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+      ],
+      instructions: [
+        'Sauté shrimp until opaque and fully cooked.',
+        'Cook vegetables and serve together.',
+      ],
+      nutritionProvenance:
+          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      reviewStatus: 'unreviewed',
+    ),
   ];
 
   static List<NutritionRecipe> _recipes =
@@ -555,7 +1448,7 @@ class NutritionCatalog {
     final bundledById = <String, NutritionRecipe>{
       for (final recipe in bundledRecipes) recipe.id: recipe,
     };
-    return remote.map((recipe) {
+    final merged = remote.map((recipe) {
       final bundled = bundledById[recipe.id];
       if (bundled == null) {
         return recipe;
@@ -579,7 +1472,12 @@ class NutritionCatalog {
         nutritionProvenance: recipe.nutritionProvenance,
         reviewStatus: recipe.reviewStatus,
       );
-    }).toList(growable: false);
+    }).toList();
+    final remoteIds = remote.map((recipe) => recipe.id).toSet();
+    merged.addAll(
+      bundledRecipes.where((recipe) => !remoteIds.contains(recipe.id)),
+    );
+    return List<NutritionRecipe>.unmodifiable(merged);
   }
 
   static String _normalizeBaseUrl(String input) {

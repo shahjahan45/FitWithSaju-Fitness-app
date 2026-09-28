@@ -4,6 +4,7 @@ import '../../core/motion/motion_widgets.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/exercise_catalog.dart';
 import '../nutrition/data/nutrition_catalog.dart';
+import '../nutrition/data/nutrition_plan_catalog.dart';
 
 class ContentSyncScreen extends StatefulWidget {
   const ContentSyncScreen({super.key});
@@ -53,18 +54,23 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
     final nutritionResult = await NutritionCatalog.sync(
       baseUrl: _urlController.text,
     );
+    final planResult = await NutritionPlanCatalog.sync(
+      baseUrl: _urlController.text,
+    );
     if (!mounted) {
       return;
     }
 
-    final bothSucceeded = exerciseResult.success && nutritionResult.success;
-    final oneSucceeded = exerciseResult.success || nutritionResult.success;
+    final allSucceeded =
+        exerciseResult.success && nutritionResult.success && planResult.success;
+    final oneSucceeded =
+        exerciseResult.success || nutritionResult.success || planResult.success;
     setState(() {
       _syncing = false;
       _success = oneSucceeded;
-      _message = bothSucceeded
-          ? '${exerciseResult.message}\n${nutritionResult.message}'
-          : 'Exercises: ${exerciseResult.message}\nRecipes: ${nutritionResult.message}';
+      _message = allSucceeded
+          ? '${exerciseResult.message}\n${nutritionResult.message}\n${planResult.message}'
+          : 'Exercises: ${exerciseResult.message}\nRecipes: ${nutritionResult.message}\nMeal plans: ${planResult.message}';
     });
   }
 
@@ -94,12 +100,14 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
     await Future.wait([
       _exerciseCatalog.resetToBundled(),
       NutritionCatalog.resetToBundled(),
+      NutritionPlanCatalog.resetToBundled(),
     ]);
     if (!mounted) {
       return;
     }
     setState(() {
-      _message = 'Using the bundled offline exercise and meal catalogs.';
+      _message =
+          'Using the bundled offline exercise, recipe, and meal-plan catalogs.';
       _success = true;
     });
   }
@@ -141,9 +149,24 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                             icon: Icons.restaurant_menu_rounded,
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        ValueListenableBuilder<NutritionPlanCatalogSource>(
+                          valueListenable: NutritionPlanCatalog.source,
+                          builder: (context, planSource, _) => MotionReveal(
+                            delay: const Duration(milliseconds: 55),
+                            child: _StatusCard(
+                              title: 'Meal plan templates',
+                              sourceLabel: _planSourceLabel(planSource),
+                              countLabel:
+                                  '${NutritionPlanCatalog.templates.length} plans',
+                              syncedAt: NutritionPlanCatalog.lastSyncedAt,
+                              icon: Icons.calendar_month_rounded,
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 22),
                         const MotionReveal(
-                          delay: Duration(milliseconds: 60),
+                          delay: Duration(milliseconds: 80),
                           child: Text(
                             'FITWITHSAJU API',
                             style: TextStyle(
@@ -170,7 +193,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                         ),
                         const SizedBox(height: 10),
                         const Text(
-                          'For a physical phone on local Wi-Fi, use your computer IPv4 address instead of localhost. FitWithSaju calls /api/exercises and /api/recipes and keeps successful downloads cached for offline use.',
+                          'For a physical phone on local Wi-Fi, use your computer IPv4 address instead of localhost. FitWithSaju calls /api/exercises, /api/recipes, and /api/meal-plan-templates and keeps successful downloads cached for offline use.',
                           style: TextStyle(
                             color: AppColors.muted,
                             height: 1.45,
@@ -264,6 +287,13 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
         NutritionCatalogSource.live => 'Live API',
         NutritionCatalogSource.cached => 'Cached API',
         NutritionCatalogSource.bundled => 'Bundled offline',
+      };
+
+  static String _planSourceLabel(NutritionPlanCatalogSource source) =>
+      switch (source) {
+        NutritionPlanCatalogSource.live => 'Live API',
+        NutritionPlanCatalogSource.cached => 'Cached API',
+        NutritionPlanCatalogSource.bundled => 'Bundled offline',
       };
 }
 

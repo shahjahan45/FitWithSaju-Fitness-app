@@ -8,6 +8,9 @@ import 'data/nutrition_models.dart';
 import 'data/nutrition_store.dart';
 import 'meal_detail_screen.dart';
 import 'nutrition_preferences_screen.dart';
+import 'nutrition_day_editor_screen.dart';
+import 'nutrition_plan_templates_screen.dart';
+import 'data/nutrition_plan_catalog.dart';
 import 'nutrition_week_screen.dart';
 import 'nutrition_bottom_sheet_safe_area.dart';
 import 'nutrition_widgets.dart';
@@ -79,6 +82,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         title: const Text('Diet & Meal Plan'),
         actions: [
           IconButton(
+            tooltip: 'Edit this day plan',
+            onPressed: () => _open(NutritionDayEditorScreen(date: date)),
+            icon: const Icon(Icons.edit_calendar_rounded),
+          ),
+          IconButton(
             tooltip: 'Nutrition preferences',
             onPressed: () => _open(const NutritionPreferencesScreen()),
             icon: const Icon(Icons.tune_rounded),
@@ -135,6 +143,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       NutritionStore.waterEntries(date),
       NutritionStore.waterTotalMl(date),
       NutritionStore.savedMealIds(),
+      NutritionStore.activeTemplateIdForWeek(date),
     ]);
     return _PlanData(
       plan: values[0] as List<PlannedNutritionMeal>,
@@ -145,6 +154,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       waterEntries: values[5] as List<Map<String, dynamic>>,
       waterMl: values[6] as int,
       savedIds: values[7] as Set<String>,
+      activeTemplateId: values[8] as String?,
     );
   }
 
@@ -241,6 +251,18 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 onTap: () => _open(const NutritionPreferencesScreen()),
               ),
             ),
+            const SizedBox(height: 10),
+            MotionReveal(
+              delay: const Duration(milliseconds: 82),
+              child: NutritionSoftButton(
+                label: data.activeTemplateId == null
+                    ? 'Browse weekly meal plans'
+                    : '${NutritionPlanCatalog.byId(data.activeTemplateId!)?.name ?? 'Weekly plan'}  ·  Change plan',
+                icon: Icons.auto_awesome_rounded,
+                onTap: () =>
+                    _open(NutritionPlanTemplatesScreen(anchorDate: date)),
+              ),
+            ),
             const SizedBox(height: 14),
             MotionReveal(
               delay: const Duration(milliseconds: 95),
@@ -282,11 +304,22 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               ],
             ),
             const SizedBox(height: 22),
-            NutritionSectionTitle(
-              title: NutritionStore.dateKey(date) ==
-                      NutritionStore.dateKey(DateTime.now())
-                  ? 'Today’s meals'
-                  : nutritionLongDate(date),
+            Row(
+              children: [
+                Expanded(
+                  child: NutritionSectionTitle(
+                    title: NutritionStore.dateKey(date) ==
+                            NutritionStore.dateKey(DateTime.now())
+                        ? 'Today’s meals'
+                        : nutritionLongDate(date),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () => _logExtraFood(date),
+                  icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
+                  label: const Text('Add food'),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             ...List.generate(data.plan.length, (index) {
@@ -356,7 +389,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       );
       return;
     }
-    final chosen = await showModalBottomSheet<NutritionRecipe>(
+    final chosen = await showSettledModalBottomSheet<NutritionRecipe>(
       context: context,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -455,7 +488,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     NutritionRecipe recipe,
   ) async {
     var servings = meal.servings;
-    final selected = await showModalBottomSheet<double>(
+    final selected = await showSettledModalBottomSheet<double>(
       context: context,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -535,6 +568,143 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     );
   }
 
+  Future<void> _logExtraFood(DateTime date) async {
+    final recipe = await showSettledModalBottomSheet<NutritionRecipe>(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
+      builder: (sheetContext) => NutritionBottomSheetSafeArea(
+        child: SizedBox(
+          height: MediaQuery.sizeOf(sheetContext).height * .64,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Add food',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 5),
+              const Text(
+                'Log any supported FitWithSaju meal without changing the planned menu.',
+                style: TextStyle(color: NutritionPalette.muted, fontSize: 12),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: NutritionCatalog.recipes.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, index) {
+                    final item = NutritionCatalog.recipes[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: NutritionArtwork(
+                        artwork: item.artwork,
+                        assetPath: item.artworkAsset,
+                        networkUrl: item.imageUrl,
+                        size: 46,
+                      ),
+                      title: Text(
+                        item.name,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      subtitle: Text(
+                        '${item.macros.protein.round()} g protein · ${item.macros.calories.round()} kcal',
+                      ),
+                      onTap: () => Navigator.pop(sheetContext, item),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (recipe == null || !mounted) {
+      return;
+    }
+
+    var servings = 1.0;
+    final selected = await showSettledModalBottomSheet<double>(
+      context: context,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => NutritionBottomSheetSafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Log ${recipe.name}',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w900),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  IconButton.filledTonal(
+                    onPressed: servings > .25
+                        ? () => setSheetState(() => servings -= .25)
+                        : null,
+                    icon: const Icon(Icons.remove_rounded),
+                  ),
+                  Expanded(
+                    child: Text(
+                      '${formatAmount(servings)} serving${servings == 1 ? '' : 's'}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                  IconButton.filledTonal(
+                    onPressed: servings < 4
+                        ? () => setSheetState(() => servings += .25)
+                        : null,
+                    icon: const Icon(Icons.add_rounded),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              NutritionMacroLine(macros: recipe.macros, servings: servings),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(sheetContext, servings),
+                  child: const Text('Log eaten',
+                      style: TextStyle(fontWeight: FontWeight.w900)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (selected == null) {
+      return;
+    }
+    await NutritionStore.logMeal(
+      date: date,
+      recipe: recipe,
+      servings: selected,
+      sourceKey: 'extra:${DateTime.now().microsecondsSinceEpoch}',
+    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${recipe.name} added to your food log.')),
+      );
+    }
+  }
+
   Future<bool> _editFoodLogServings(
     BuildContext dialogContext,
     Map<String, dynamic> log,
@@ -586,7 +756,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     DateTime date,
     List<Map<String, dynamic>> logs,
   ) async {
-    await showModalBottomSheet<void>(
+    await showSettledModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -1187,7 +1357,7 @@ class _HydrationCard extends StatelessWidget {
   }
 
   Future<void> _showHistory(BuildContext context) async {
-    await showModalBottomSheet<void>(
+    await showSettledModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -1280,6 +1450,7 @@ class _PlanData {
   final List<Map<String, dynamic>> waterEntries;
   final int waterMl;
   final Set<String> savedIds;
+  final String? activeTemplateId;
 
   const _PlanData({
     required this.plan,
@@ -1290,5 +1461,6 @@ class _PlanData {
     required this.waterEntries,
     required this.waterMl,
     required this.savedIds,
+    required this.activeTemplateId,
   });
 }

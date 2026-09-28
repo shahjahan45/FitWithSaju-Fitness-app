@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/navigation/settled_dialog.dart';
+
 import '../../core/motion/motion_widgets.dart';
 import 'data/nutrition_catalog.dart';
 import 'data/nutrition_models.dart';
@@ -68,7 +70,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       current: _recipe,
       preferences: prefs,
     );
-    final chosen = await showModalBottomSheet<NutritionRecipe>(
+    final chosen = await showSettledModalBottomSheet<NutritionRecipe>(
       context: context,
       useSafeArea: true,
       isScrollControlled: true,
@@ -134,7 +136,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
 
   Future<void> _logMeal() async {
     var servings = _meal.servings;
-    final result = await showModalBottomSheet<double>(
+    final result = await showSettledModalBottomSheet<double>(
       context: context,
       useSafeArea: true,
       backgroundColor: Colors.transparent,

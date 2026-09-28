@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitwithsaju/features/nutrition/data/nutrition_catalog.dart';
 import 'package:fitwithsaju/features/nutrition/data/nutrition_models.dart';
+import 'package:fitwithsaju/features/nutrition/data/nutrition_plan_catalog.dart';
 import 'package:fitwithsaju/features/nutrition/data/nutrition_store.dart';
 
 void main() {
@@ -132,5 +133,72 @@ void main() {
       (await NutritionStore.manualShoppingItems()).single['name'],
       'Mineral water',
     );
+  });
+  test(
+      'high-protein weekly template applies all seven days and preserves protein structure',
+      () async {
+    final anchor = DateTime(2026, 9, 28); // Monday
+    const preferences = NutritionPreferences(
+      goal: 'Muscle gain',
+      dietary: <String>[],
+      allergies: <String>[],
+      cuisines: <String>[],
+      budget: 'Moderate',
+      prepMinutes: 45,
+      units: 'Metric',
+      calorieTarget: 2100,
+      proteinTarget: 200,
+      carbsTarget: 200,
+      fatTarget: 70,
+      waterTargetMl: 3000,
+    );
+
+    final result = await NutritionStore.applyTemplate(
+      template: NutritionPlanCatalog.highProteinWeek,
+      anchorDate: anchor,
+      preferences: preferences,
+    );
+    expect(result.success, isTrue);
+
+    final expectedProtein = <int>[190, 195, 195, 200, 190, 205, 200];
+    for (var index = 0; index < 7; index++) {
+      final date = anchor.add(Duration(days: index));
+      final plan = await NutritionStore.planForDate(date);
+      expect(plan, hasLength(4));
+      final totals = await NutritionStore.plannedTotals(date);
+      expect(totals.protein.round(), expectedProtein[index]);
+    }
+    expect(
+      await NutritionStore.activeTemplateIdForWeek(anchor),
+      'high-protein-7-day',
+    );
+  });
+
+  test('meal plan template refuses allergy conflicts instead of relaxing them',
+      () async {
+    final anchor = DateTime(2026, 9, 28);
+    const preferences = NutritionPreferences(
+      goal: 'Muscle gain',
+      dietary: <String>[],
+      allergies: <String>['Fish'],
+      cuisines: <String>[],
+      budget: 'Moderate',
+      prepMinutes: 45,
+      units: 'Metric',
+      calorieTarget: 2100,
+      proteinTarget: 180,
+      carbsTarget: 200,
+      fatTarget: 70,
+      waterTargetMl: 3000,
+    );
+
+    final result = await NutritionStore.applyTemplate(
+      template: NutritionPlanCatalog.highProteinWeek,
+      anchorDate: anchor,
+      preferences: preferences,
+    );
+    expect(result.success, isFalse);
+    expect(result.blockedMeals, isNotEmpty);
+    expect(await NutritionStore.activeTemplateIdForWeek(anchor), isNull);
   });
 }
