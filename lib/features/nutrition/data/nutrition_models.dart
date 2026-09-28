@@ -63,6 +63,23 @@ class NutritionIngredient {
     required this.unit,
     required this.category,
   });
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'name': name,
+        'quantity': quantity,
+        'unit': unit,
+        'category': category,
+      };
+
+  factory NutritionIngredient.fromJson(dynamic value) {
+    final map = value is Map ? value : const <String, dynamic>{};
+    return NutritionIngredient(
+      name: map['name']?.toString() ?? '',
+      quantity: (map['quantity'] as num?)?.toDouble() ?? 0,
+      unit: map['unit']?.toString() ?? '',
+      category: map['category']?.toString() ?? 'Other',
+    );
+  }
 }
 
 class NutritionRecipe {
@@ -71,6 +88,7 @@ class NutritionRecipe {
   final String slot;
   final String artwork;
   final String? artworkAsset;
+  final String? imageUrl;
   final String cuisine;
   final int prepMinutes;
   final int yieldServings;
@@ -80,6 +98,8 @@ class NutritionRecipe {
   final List<String> allergens;
   final List<NutritionIngredient> ingredients;
   final List<String> instructions;
+  final String nutritionProvenance;
+  final String reviewStatus;
 
   const NutritionRecipe({
     required this.id,
@@ -87,6 +107,7 @@ class NutritionRecipe {
     required this.slot,
     required this.artwork,
     this.artworkAsset,
+    this.imageUrl,
     required this.cuisine,
     required this.prepMinutes,
     required this.yieldServings,
@@ -96,7 +117,69 @@ class NutritionRecipe {
     required this.allergens,
     required this.ingredients,
     required this.instructions,
+    this.nutritionProvenance = 'Estimated sample nutrition',
+    this.reviewStatus = 'unreviewed',
   });
+
+  Map<String, dynamic> toCacheJson() => <String, dynamic>{
+        'id': id,
+        'name': name,
+        'slot': slot,
+        'artwork': artwork,
+        'image_url': imageUrl,
+        'cuisine': cuisine,
+        'prep_minutes': prepMinutes,
+        'yield_servings': yieldServings,
+        'serving_label': servingLabel,
+        'nutrition': macros.toJson(),
+        'dietary_tags': dietaryTags,
+        'allergens': allergens,
+        'ingredients': ingredients.map((item) => item.toJson()).toList(),
+        'instructions': instructions,
+        'nutrition_provenance': nutritionProvenance,
+        'review_status': reviewStatus,
+      };
+
+  factory NutritionRecipe.fromApi(Map<String, dynamic> map) {
+    List<String> strings(dynamic value) => value is List
+        ? value
+            .map((item) => item.toString())
+            .where((item) => item.isNotEmpty)
+            .toList()
+        : <String>[];
+
+    final nutrition = map['nutrition'] is Map
+        ? NutritionMacros.fromJson(map['nutrition'])
+        : NutritionMacros(
+            calories: (map['calories'] as num?)?.toDouble() ?? 0,
+            protein: (map['protein'] as num?)?.toDouble() ?? 0,
+            carbs: (map['carbs'] as num?)?.toDouble() ?? 0,
+            fat: (map['fat'] as num?)?.toDouble() ?? 0,
+          );
+    final ingredientList = map['ingredients'];
+
+    return NutritionRecipe(
+      id: map['id']?.toString() ?? map['source_id']?.toString() ?? '',
+      name: map['name']?.toString() ?? 'Recipe',
+      slot: map['slot']?.toString() ?? 'Snack',
+      artwork: map['artwork']?.toString() ?? '🍽️',
+      imageUrl: map['image_url']?.toString(),
+      cuisine: map['cuisine']?.toString() ?? 'International',
+      prepMinutes: (map['prep_minutes'] as num?)?.toInt() ?? 0,
+      yieldServings: (map['yield_servings'] as num?)?.toInt() ?? 1,
+      servingLabel: map['serving_label']?.toString() ?? '1 serving',
+      macros: nutrition,
+      dietaryTags: strings(map['dietary_tags']),
+      allergens: strings(map['allergens']),
+      ingredients: ingredientList is List
+          ? ingredientList.map(NutritionIngredient.fromJson).toList()
+          : const <NutritionIngredient>[],
+      instructions: strings(map['instructions']),
+      nutritionProvenance: map['nutrition_provenance']?.toString() ??
+          'Estimated nutrition supplied by content manager',
+      reviewStatus: map['review_status']?.toString() ?? 'unreviewed',
+    );
+  }
 }
 
 class PlannedNutritionMeal {

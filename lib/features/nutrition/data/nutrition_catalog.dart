@@ -1,9 +1,34 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'nutrition_models.dart';
+
+enum NutritionCatalogSource { bundled, cached, live }
+
+class NutritionCatalogSyncResult {
+  final bool success;
+  final int count;
+  final String message;
+
+  const NutritionCatalogSyncResult({
+    required this.success,
+    required this.count,
+    required this.message,
+  });
+}
 
 class NutritionCatalog {
   NutritionCatalog._();
 
-  static const List<NutritionRecipe> recipes = [
+  static const _cacheKey = 'nutrition_recipe_catalog_cache_v1';
+  static const _apiBaseUrlKey = 'exercise_api_base_url_v1';
+  static const _syncedAtKey = 'nutrition_recipe_catalog_synced_at_v1';
+
+  static const List<NutritionRecipe> bundledRecipes = [
     NutritionRecipe(
       id: 'berry_oats',
       name: 'Berry overnight oats',
@@ -361,8 +386,150 @@ class NutritionCatalog {
     ),
   ];
 
+  static List<NutritionRecipe> _recipes =
+      List<NutritionRecipe>.of(bundledRecipes);
+  static final ValueNotifier<List<NutritionRecipe>> listenable =
+      ValueNotifier<List<NutritionRecipe>>(
+          List<NutritionRecipe>.of(bundledRecipes));
+  static final ValueNotifier<NutritionCatalogSource> source =
+      ValueNotifier<NutritionCatalogSource>(NutritionCatalogSource.bundled);
+
+  static String? lastError;
+  static DateTime? lastSyncedAt;
+
+  static List<NutritionRecipe> get recipes => _recipes;
+
+  static Future<void> initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_cacheKey);
+    final syncedAt = prefs.getString(_syncedAtKey);
+    if (syncedAt != null) {
+      lastSyncedAt = DateTime.tryParse(syncedAt);
+    }
+    if (raw == null || raw.isEmpty) {
+      return;
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) {
+        return;
+      }
+      final remote = decoded
+          .whereType<Map>()
+          .map((item) =>
+              NutritionRecipe.fromApi(Map<String, dynamic>.from(item)))
+          .where((recipe) => recipe.id.isNotEmpty)
+          .toList(growable: false);
+      if (remote.isNotEmpty) {
+        _setRecipes(
+            _mergeRemoteWithBundled(remote), NutritionCatalogSource.cached);
+      }
+    } catch (_) {
+      // Corrupt cache must never block the bundled nutrition catalog.
+    }
+  }
+
+  static Future<String> apiBaseUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_apiBaseUrlKey) ?? '';
+  }
+
+  static Future<NutritionCatalogSyncResult> sync({String? baseUrl}) async {
+    final configured = baseUrl ?? await apiBaseUrl();
+    final normalized = _normalizeBaseUrl(configured);
+    if (normalized.isEmpty) {
+      return const NutritionCatalogSyncResult(
+        success: false,
+        count: 0,
+        message: 'Enter your FitWithSaju API URL first.',
+      );
+    }
+
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
+    try {
+      final uri = Uri.parse('$normalized/api/recipes?per_page=200');
+      final request = await client.getUrl(uri);
+      request.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      final response =
+          await request.close().timeout(const Duration(seconds: 12));
+      final body = await utf8.decoder.bind(response).join();
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        lastError = 'Recipe server returned HTTP ${response.statusCode}.';
+        return NutritionCatalogSyncResult(
+          success: false,
+          count: recipes.length,
+          message: lastError!,
+        );
+      }
+
+      final decoded = jsonDecode(body);
+      final list = decoded is Map ? decoded['data'] : decoded;
+      if (list is! List) {
+        throw const FormatException('Recipe API did not return a data list.');
+      }
+      final remote = list
+          .whereType<Map>()
+          .map((item) =>
+              NutritionRecipe.fromApi(Map<String, dynamic>.from(item)))
+          .where((recipe) => recipe.id.isNotEmpty)
+          .toList(growable: false);
+      if (remote.isEmpty) {
+        throw const FormatException(
+            'Recipe API returned no published recipes.');
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _cacheKey,
+        jsonEncode(remote.map((recipe) => recipe.toCacheJson()).toList()),
+      );
+      final now = DateTime.now();
+      await prefs.setString(_syncedAtKey, now.toIso8601String());
+      lastSyncedAt = now;
+      lastError = null;
+      _setRecipes(_mergeRemoteWithBundled(remote), NutritionCatalogSource.live);
+      return NutritionCatalogSyncResult(
+        success: true,
+        count: remote.length,
+        message: 'Synced ${remote.length} published recipes from the server.',
+      );
+    } on TimeoutException {
+      lastError = 'The recipe server took too long to respond.';
+    } on SocketException {
+      lastError = 'Could not connect to the recipe server.';
+    } on FormatException catch (error) {
+      lastError = error.message;
+    } catch (_) {
+      lastError =
+          'Recipe sync failed. Your offline meal catalog is still available.';
+    } finally {
+      client.close(force: true);
+    }
+
+    return NutritionCatalogSyncResult(
+      success: false,
+      count: recipes.length,
+      message: lastError ?? 'Recipe sync failed.',
+    );
+  }
+
+  static Future<void> resetToBundled() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cacheKey);
+    await prefs.remove(_syncedAtKey);
+    lastSyncedAt = null;
+    lastError = null;
+    _setRecipes(List<NutritionRecipe>.of(bundledRecipes),
+        NutritionCatalogSource.bundled);
+  }
+
   static NutritionRecipe? byId(String id) {
-    for (final recipe in recipes) {
+    for (final recipe in _recipes) {
+      if (recipe.id == id) {
+        return recipe;
+      }
+    }
+    for (final recipe in bundledRecipes) {
       if (recipe.id == id) {
         return recipe;
       }
@@ -371,5 +538,55 @@ class NutritionCatalog {
   }
 
   static List<NutritionRecipe> forSlot(String slot) =>
-      recipes.where((recipe) => recipe.slot == slot).toList();
+      _recipes.where((recipe) => recipe.slot == slot).toList();
+
+  static void _setRecipes(
+    List<NutritionRecipe> value,
+    NutritionCatalogSource catalogSource,
+  ) {
+    _recipes = List<NutritionRecipe>.unmodifiable(value);
+    listenable.value = _recipes;
+    source.value = catalogSource;
+  }
+
+  static List<NutritionRecipe> _mergeRemoteWithBundled(
+    List<NutritionRecipe> remote,
+  ) {
+    final bundledById = <String, NutritionRecipe>{
+      for (final recipe in bundledRecipes) recipe.id: recipe,
+    };
+    return remote.map((recipe) {
+      final bundled = bundledById[recipe.id];
+      if (bundled == null) {
+        return recipe;
+      }
+      return NutritionRecipe(
+        id: recipe.id,
+        name: recipe.name,
+        slot: recipe.slot,
+        artwork: recipe.artwork == '🍽️' ? bundled.artwork : recipe.artwork,
+        artworkAsset: bundled.artworkAsset,
+        imageUrl: recipe.imageUrl,
+        cuisine: recipe.cuisine,
+        prepMinutes: recipe.prepMinutes,
+        yieldServings: recipe.yieldServings,
+        servingLabel: recipe.servingLabel,
+        macros: recipe.macros,
+        dietaryTags: recipe.dietaryTags,
+        allergens: recipe.allergens,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        nutritionProvenance: recipe.nutritionProvenance,
+        reviewStatus: recipe.reviewStatus,
+      );
+    }).toList(growable: false);
+  }
+
+  static String _normalizeBaseUrl(String input) {
+    var value = input.trim();
+    while (value.endsWith('/')) {
+      value = value.substring(0, value.length - 1);
+    }
+    return value;
+  }
 }

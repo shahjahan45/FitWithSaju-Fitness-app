@@ -114,9 +114,19 @@ class PressableScale extends StatefulWidget {
 
 class _PressableScaleState extends State<PressableScale> {
   bool _pressed = false;
+  bool _reduceMotion = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduceMotion = AppMotion.reducedMotion(context);
+    if (_reduceMotion && _pressed) {
+      _pressed = false;
+    }
+  }
 
   void _setPressed(bool value) {
-    if (_pressed == value || AppMotion.reducedMotion(context)) {
+    if (!mounted || _pressed == value || _reduceMotion) {
       return;
     }
     setState(() => _pressed = value);
@@ -136,7 +146,14 @@ class _PressableScaleState extends State<PressableScale> {
           onTap: widget.onTap,
           onTapDown: widget.onTap == null ? null : (_) => _setPressed(true),
           onTapCancel: widget.onTap == null ? null : () => _setPressed(false),
-          onTapUp: widget.onTap == null ? null : (_) => _setPressed(false),
+          onTapUp: widget.onTap == null
+              ? null
+              : (_) {
+                  // Only mutate this widget's local pressed state here.
+                  // Navigation callbacks run through onTap after the gesture
+                  // completes, so inherited state is never read during release.
+                  _setPressed(false);
+                },
           child: widget.child,
         ),
       ),

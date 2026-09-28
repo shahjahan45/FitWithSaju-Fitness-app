@@ -62,6 +62,7 @@ class NutritionPageBackground extends StatelessWidget {
 class NutritionArtwork extends StatelessWidget {
   final String artwork;
   final String? assetPath;
+  final String? networkUrl;
   final double size;
   final BorderRadius borderRadius;
 
@@ -69,6 +70,7 @@ class NutritionArtwork extends StatelessWidget {
     super.key,
     required this.artwork,
     this.assetPath,
+    this.networkUrl,
     this.size = 104,
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
   });
@@ -83,22 +85,64 @@ class NutritionArtwork extends StatelessWidget {
         color: NutritionPalette.tint,
         borderRadius: borderRadius,
       ),
-      child: assetPath == null
-          ? Text(
-              artwork,
-              semanticsLabel: 'Meal illustration',
-              style: TextStyle(fontSize: size * .43),
-            )
-          : ClipRRect(
-              borderRadius: borderRadius,
-              child: Image.asset(
-                assetPath!,
-                width: size,
-                height: size,
-                fit: BoxFit.cover,
-                semanticLabel: 'Meal illustration',
-              ),
-            ),
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: _NutritionImage(
+          artwork: artwork,
+          assetPath: assetPath,
+          networkUrl: networkUrl,
+          size: size,
+        ),
+      ),
+    );
+  }
+}
+
+class _NutritionImage extends StatelessWidget {
+  final String artwork;
+  final String? assetPath;
+  final String? networkUrl;
+  final double size;
+
+  const _NutritionImage({
+    required this.artwork,
+    required this.assetPath,
+    required this.networkUrl,
+    required this.size,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget fallback() {
+      if (assetPath != null && assetPath!.isNotEmpty) {
+        return Image.asset(
+          assetPath!,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          semanticLabel: 'Meal illustration',
+        );
+      }
+      return Center(
+        child: Text(
+          artwork,
+          semanticsLabel: 'Meal illustration',
+          style: TextStyle(fontSize: size * .43),
+        ),
+      );
+    }
+
+    final url = networkUrl?.trim() ?? '';
+    if (url.isEmpty) {
+      return fallback();
+    }
+    return Image.network(
+      url,
+      width: size,
+      height: size,
+      fit: BoxFit.cover,
+      semanticLabel: 'Meal illustration',
+      errorBuilder: (_, __, ___) => fallback(),
     );
   }
 }

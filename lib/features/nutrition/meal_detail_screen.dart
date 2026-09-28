@@ -4,6 +4,7 @@ import '../../core/motion/motion_widgets.dart';
 import 'data/nutrition_catalog.dart';
 import 'data/nutrition_models.dart';
 import 'data/nutrition_store.dart';
+import 'nutrition_bottom_sheet_safe_area.dart';
 import 'nutrition_widgets.dart';
 
 class MealDetailScreen extends StatefulWidget {
@@ -71,7 +72,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       context: context,
       useSafeArea: true,
       isScrollControlled: true,
-      showDragHandle: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
       builder: (sheetContext) => _SwapSheet(
         current: _recipe,
         alternatives: alternatives,
@@ -134,10 +137,11 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     final result = await showModalBottomSheet<double>(
       context: context,
       useSafeArea: true,
-      showDragHandle: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
       builder: (sheetContext) => StatefulBuilder(
-        builder: (context, setSheetState) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 26),
+        builder: (context, setSheetState) => NutritionBottomSheetSafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,8 +489,7 @@ class _SwapSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return FractionallySizedBox(
       heightFactor: .78,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+      child: NutritionBottomSheetSafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -540,6 +543,7 @@ class _SwapSheet extends StatelessWidget {
                               NutritionArtwork(
                                   artwork: recipe.artwork,
                                   assetPath: recipe.artworkAsset,
+                                  networkUrl: recipe.imageUrl,
                                   size: 72),
                               const SizedBox(width: 12),
                               Expanded(

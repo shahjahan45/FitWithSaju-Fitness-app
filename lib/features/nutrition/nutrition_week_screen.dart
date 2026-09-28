@@ -99,6 +99,7 @@ class NutritionWeekScreen extends StatelessWidget {
                                       NutritionArtwork(
                                         artwork: recipe.artwork,
                                         assetPath: recipe.artworkAsset,
+                                        networkUrl: recipe.imageUrl,
                                         size: 46,
                                       ),
                                       const SizedBox(width: 10),

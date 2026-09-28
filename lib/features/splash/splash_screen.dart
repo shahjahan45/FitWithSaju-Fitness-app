@@ -1,11 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../core/motion/app_motion.dart';
-import '../../core/storage/local_store.dart';
-import '../../core/theme/app_colors.dart';
-import '../onboarding/onboarding_screen.dart';
-import '../shell/main_shell.dart';
 
+import '../../core/motion/app_motion.dart';
+import '../../core/theme/app_colors.dart';
+
+/// Pure visual splash screen.
+///
+/// Startup routing is intentionally owned by AppRoot so this widget never
+/// removes/replaces Navigator routes while its inherited widgets are active.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -37,23 +38,6 @@ class _SplashScreenState extends State<SplashScreen>
     );
     _lift = Tween<double>(begin: 18, end: 0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
-
-    Timer(const Duration(milliseconds: 2450), _finish);
-  }
-
-  Future<void> _finish() async {
-    final done = await LocalStore.onboardingComplete();
-    if (!mounted) {
-      return;
-    }
-
-    Navigator.of(context).pushReplacement(
-      FitRoutes.route(
-        context,
-        motion: done ? FitRouteMotion.fadeScale : FitRouteMotion.horizontal,
-        builder: (_) => done ? const MainShell() : const OnboardingScreen(),
-      ),
     );
   }
 

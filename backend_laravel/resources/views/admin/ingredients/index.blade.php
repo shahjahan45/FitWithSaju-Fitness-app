@@ -1,0 +1,8 @@
+@extends('layouts.admin')
+@section('title','Ingredients · FitWithSaju Admin')
+@section('heading','Ingredients')
+@section('subheading','Manage reusable ingredient names, categories, and default units.')
+@section('content')
+<div class="toolbar"><form style="display:flex;gap:10px;flex:1;flex-wrap:wrap" method="GET"><input class="input" style="max-width:300px" name="search" value="{{ request('search') }}" placeholder="Search ingredient"><select class="select" style="max-width:180px" name="category"><option value="">All categories</option>@foreach($categories as $category)<option value="{{ $category }}" @selected(request('category')===$category)>{{ $category }}</option>@endforeach</select><button class="btn btn-light">Filter</button></form><a class="btn btn-primary" href="{{ route('admin.ingredients.create') }}">+ New ingredient</a></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>Name</th><th>Category</th><th>Default unit</th><th>Recipes</th><th>Status</th><th></th></tr></thead><tbody>@forelse($ingredients as $ingredient)<tr><td><strong>{{ $ingredient->name }}</strong></td><td>{{ $ingredient->category }}</td><td>{{ $ingredient->default_unit ?: '—' }}</td><td>{{ $ingredient->recipes_count }}</td><td><span class="badge {{ $ingredient->is_active ? 'on':'off' }}">{{ $ingredient->is_active ? 'Active':'Hidden' }}</span></td><td><a class="btn btn-light" href="{{ route('admin.ingredients.edit',$ingredient) }}">Edit</a></td></tr>@empty<tr><td colspan="6" class="muted">No ingredients found.</td></tr>@endforelse</tbody></table></div><div style="margin-top:16px">{{ $ingredients->links() }}</div>
+@endsection

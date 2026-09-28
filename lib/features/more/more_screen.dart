@@ -85,7 +85,7 @@ class MoreScreen extends StatelessWidget {
                 ),
                 _ActionTile(
                   icon: Icons.cloud_sync_outlined,
-                  title: 'Exercise Content Sync',
+                  title: 'Content Sync',
                   onTap: () => _open(context, const ContentSyncScreen()),
                 ),
                 _ActionTile(

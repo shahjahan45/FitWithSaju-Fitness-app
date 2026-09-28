@@ -88,6 +88,7 @@ class SavedMealsScreen extends StatelessWidget {
                           NutritionArtwork(
                               artwork: recipe.artwork,
                               assetPath: recipe.artworkAsset,
+                              networkUrl: recipe.imageUrl,
                               size: 78),
                           const SizedBox(width: 12),
                           Expanded(

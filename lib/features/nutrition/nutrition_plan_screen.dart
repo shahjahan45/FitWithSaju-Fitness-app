@@ -8,6 +8,7 @@ import 'data/nutrition_store.dart';
 import 'meal_detail_screen.dart';
 import 'nutrition_preferences_screen.dart';
 import 'nutrition_week_screen.dart';
+import 'nutrition_bottom_sheet_safe_area.dart';
 import 'nutrition_widgets.dart';
 import 'saved_meals_screen.dart';
 import 'shopping_list_screen.dart';
@@ -358,64 +359,70 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     final chosen = await showModalBottomSheet<NutritionRecipe>(
       context: context,
       useSafeArea: true,
-      showDragHandle: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
       isScrollControlled: true,
       builder: (context) => FractionallySizedBox(
         heightFactor: .68,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
-          children: [
-            const Text('Choose an alternative',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 4),
-            const Text('Allergy restrictions remain enforced.',
-                style: TextStyle(color: NutritionPalette.muted)),
-            const SizedBox(height: 14),
-            ...alternatives.map((recipe) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    child: InkWell(
+        child: NutritionBottomSheetSafeArea(
+          contentPadding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const Text('Choose an alternative',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 4),
+              const Text('Allergy restrictions remain enforced.',
+                  style: TextStyle(color: NutritionPalette.muted)),
+              const SizedBox(height: 14),
+              ...alternatives.map((recipe) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Material(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
-                      onTap: () => Navigator.of(context).pop(recipe),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: NutritionPalette.line),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: Row(
-                          children: [
-                            NutritionArtwork(
-                                artwork: recipe.artwork,
-                                assetPath: recipe.artworkAsset,
-                                size: 64),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(recipe.name,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(18),
+                        onTap: () => Navigator.of(context).pop(recipe),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: NutritionPalette.line),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Row(
+                            children: [
+                              NutritionArtwork(
+                                  artwork: recipe.artwork,
+                                  assetPath: recipe.artworkAsset,
+                                  networkUrl: recipe.imageUrl,
+                                  size: 64),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(recipe.name,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w900)),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${recipe.prepMinutes} min · ${recipe.macros.calories.round()} kcal · ${recipe.macros.protein.round()}g protein',
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.w900)),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${recipe.prepMinutes} min · ${recipe.macros.calories.round()} kcal · ${recipe.macros.protein.round()}g protein',
-                                    style: const TextStyle(
-                                        color: NutritionPalette.muted,
-                                        fontSize: 11),
-                                  ),
-                                ],
+                                          color: NutritionPalette.muted,
+                                          fontSize: 11),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )),
-          ],
+                  )),
+            ],
+          ),
         ),
       ),
     );
@@ -451,10 +458,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     final selected = await showModalBottomSheet<double>(
       context: context,
       useSafeArea: true,
-      showDragHandle: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
       builder: (sheetContext) => StatefulBuilder(
-        builder: (context, setSheetState) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        builder: (context, setSheetState) => NutritionBottomSheetSafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -581,9 +589,10 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     await showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
-      showDragHandle: true,
-      builder: (sheetContext) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
+      builder: (sheetContext) => NutritionBottomSheetSafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -882,7 +891,8 @@ class _MealCard extends StatelessWidget {
                     color: Colors.transparent,
                     child: NutritionArtwork(
                         artwork: recipe.artwork,
-                        assetPath: recipe.artworkAsset),
+                        assetPath: recipe.artworkAsset,
+                        networkUrl: recipe.imageUrl),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1184,9 +1194,10 @@ class _HydrationCard extends StatelessWidget {
     await showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
-      showDragHandle: true,
-      builder: (sheetContext) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      showDragHandle: false,
+      builder: (sheetContext) => NutritionBottomSheetSafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

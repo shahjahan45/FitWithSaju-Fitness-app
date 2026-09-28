@@ -1,47 +1,26 @@
-# FitWithSaju v15
+# FitWithSaju v17.2
 
-FitWithSaju is a no-login, offline-first Flutter workout tracker with an optional Laravel-managed public exercise catalog.
+Laravel PHP 8.5 / Composer compatibility fixes are included in `backend_laravel/`.
 
-## v15 highlights
+# FitWithSaju v17.1
 
-- Keeps the user-provided 30-exercise GIF library bundled in the mobile app
-- Adds optional Laravel exercise content synchronization
-- Remote exercise data is cached locally for offline use
-- Configured API refreshes automatically in the background after app startup
-- Network GIF/WebP media falls back to the matching bundled GIF when available
-- **More -> Exercise Content Sync** shows Live / Cached / Offline state
-- API URL can be tested and saved directly from the mobile app
-- Explore shows current catalog source status
-- Workout planner/custom workouts resolve against the active catalog
-- Existing legacy exercise IDs remain supported
-- Android local HTTP is permitted only in debug builds for LAN testing
-- Release builds remain intended for HTTPS
+FitWithSaju is a no-login, offline-first Flutter fitness app with workout tracking, an animated exercise library, Diet & Meal Plan, local progress/backup, and an optional Laravel content-management backend.
 
-## Laravel admin starter
+## This corrective release
 
-`backend_laravel_starter/` now includes:
+- Fixes onboarding/level-completion navigation instability that could produce Flutter's `_dependents.isEmpty` red-screen assertion.
+- Guards onboarding transitions against rapid/double submission.
+- Disposes the onboarding `PageController` correctly.
+- Hardens the shared `PressableScale` gesture lifecycle so it does not register inherited dependencies during route teardown.
+- Fixes nutrition modal sheets for Android system navigation using `MediaQuery.viewPadding.bottom`.
+- The visible bottom-sheet surface now ends above the Android 3-button / gesture-navigation area.
+- `Log eaten` stays fully visible and clickable above system navigation.
+- Replaces the previous Laravel starter/patch with a complete `backend_laravel/` project source tree.
+- Adds both `backend_laravel/.env` (local development) and `backend_laravel/.env.example`.
 
-- session-based admin login
-- admin-only middleware
-- professional light dashboard
-- exercise CRUD
-- exercise activation/hiding
-- soft deletes
-- GIF/WebP media upload
-- thumbnail upload
-- searchable/filterable public exercise API
-- seed data for the same 30 supplied exercises
-- environment-controlled admin user seeder
+## Flutter
 
-See `backend_laravel_starter/README.md` for setup.
-
-## Exercise assets
-
-- `assets/exercises/data/` — supplied JSON metadata
-- `assets/exercises/thumbs/` — 360×360 bundled GIF thumbnails
-- `assets/exercises/media/` — 720×720 bundled GIF demonstrations
-
-## Run Flutter
+Run:
 
 ```bash
 flutter clean
@@ -52,32 +31,52 @@ flutter test
 flutter run
 ```
 
-For physical-device performance validation:
+For device performance testing:
 
 ```bash
 flutter run --profile
 ```
 
-Version: `1.8.0+13`
+## Laravel
 
+The complete backend is in:
 
-## Sprint 16 — Diet & Meal Plan (Flutter-first)
+```text
+backend_laravel/
+```
 
-The Figma-referenced Diet & Meal Plan module is implemented locally before backend wiring.
+Start with:
 
-Included:
-- Daily and weekly meal plans with persisted date selection
-- Planned vs consumed macro totals
-- Meal details, serving/yield controls, ingredients and instructions
-- Allergy/diet-aware meal alternatives with undo
-- Food logging with historical nutrition snapshots and duplicate protection
-- Hydration quick-add, custom/editable entries, history and undo
-- Saved meals
-- Generated shopping list with independent check state and add/edit/remove manual items
-- Nutrition preferences, user-configured macro/water targets and unit preference
-- Home shortcut + More entry
-- Existing FitWithSaju motion/navigation system
-- Four exact local nutrition illustrations exported from the supplied Figma design
-- Backup & Restore includes nutrition state
+```powershell
+cd backend_laravel
+composer install
+php artisan storage:link
+php artisan migrate
+php artisan db:seed
+php artisan serve --host=0.0.0.0 --port=8000
+```
 
-The Laravel nutrition API/admin portion is intentionally deferred. Existing backend files are retained unchanged.
+Before physical-phone content sync, update `APP_URL` in `backend_laravel/.env` to your PC LAN IPv4 address.
+
+See `backend_laravel/README.md` for full setup and the local development admin credentials.
+
+## Bundled content
+
+- 30 exercise definitions with local animated GIF demonstrations
+- 12 nutrition recipes with local Figma artwork fallback
+- Offline workout plans and nutrition data
+- Optional Laravel exercise/recipe/meal-template content sync
+
+Version: `1.9.1+16`
+
+## v17.3 onboarding lifecycle fix
+
+The startup/onboarding chain no longer uses Navigator route replacement/removal.
+`AppRoot` owns Splash -> Onboarding -> Main as application state, and onboarding
+uses an `IndexedStack` rather than `PageView`. This keeps the four setup steps
+mounted and avoids the inherited-widget teardown condition that could surface as:
+
+`framework.dart: '_dependents.isEmpty': is not true`
+
+When testing this corrective build on Android, uninstall the previous debug app
+once before reinstalling to ensure stale hot-reload state is not retained.

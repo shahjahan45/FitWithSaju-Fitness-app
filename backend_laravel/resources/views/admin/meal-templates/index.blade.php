@@ -1,0 +1,8 @@
+@extends('layouts.admin')
+@section('title','Meal Plan Templates · FitWithSaju Admin')
+@section('heading','Meal plan templates')
+@section('subheading','Publish reusable weekly plan structures using stable recipe IDs.')
+@section('content')
+<div class="toolbar"><form style="display:flex;gap:10px;flex:1" method="GET"><input class="input" style="max-width:320px" name="search" value="{{ request('search') }}" placeholder="Search template"><select class="select" style="max-width:160px" name="status"><option value="">All statuses</option>@foreach(['draft','published','inactive'] as $status)<option value="{{ $status }}" @selected(request('status')===$status)>{{ ucfirst($status) }}</option>@endforeach</select><button class="btn btn-light">Filter</button></form><a class="btn btn-primary" href="{{ route('admin.meal-templates.create') }}">+ New template</a></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>Name</th><th>Goal</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>@forelse($templates as $template)<tr><td><strong>{{ $template->name }}</strong><div class="muted" style="font-size:12px">{{ $template->slug }}</div></td><td>{{ $template->goal }}</td><td><span class="badge {{ $template->status==='published' ? 'on':'off' }}">{{ ucfirst($template->status) }}</span></td><td>{{ $template->updated_at?->diffForHumans() }}</td><td><a class="btn btn-light" href="{{ route('admin.meal-templates.edit',$template) }}">Edit</a></td></tr>@empty<tr><td colspan="5" class="muted">No meal plan templates.</td></tr>@endforelse</tbody></table></div><div style="margin-top:16px">{{ $templates->links() }}</div>
+@endsection

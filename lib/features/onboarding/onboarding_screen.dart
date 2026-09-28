@@ -1,66 +1,126 @@
 import 'package:flutter/material.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/widgets/primary_button.dart';
-import '../shell/main_shell.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  final VoidCallback onComplete;
+
+  const OnboardingScreen({
+    super.key,
+    required this.onComplete,
+  });
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  final _controller = PageController();
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _stepController;
   int _page = 0;
+  bool _completing = false;
+  bool _reduceMotion = false;
   String goal = 'Build Muscle';
   String level = 'Beginner';
   String place = 'Gym';
 
+  @override
+  void initState() {
+    super.initState();
+    _stepController = AnimationController(
+      vsync: this,
+      duration: AppMotion.onboarding,
+      value: 1,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduceMotion = AppMotion.reducedMotion(context);
+    _stepController.duration =
+        _reduceMotion ? Duration.zero : AppMotion.onboarding;
+  }
+
   Future<void> _next() async {
+    if (_completing) {
+      return;
+    }
+
     if (_page < 3) {
-      if (AppMotion.reducedMotion(context)) {
-        _controller.jumpToPage(_page + 1);
-      } else {
-        await _controller.nextPage(
-          duration: AppMotion.onboarding,
-          curve: AppMotion.enterCurve,
-        );
+      FocusManager.instance.primaryFocus?.unfocus();
+      if (!_reduceMotion) {
+        _stepController.value = 0;
       }
-    } else {
+      setState(() => _page += 1);
+      if (!_reduceMotion && mounted) {
+        _stepController.forward();
+      } else {
+        _stepController.value = 1;
+      }
+      return;
+    }
+
+    setState(() => _completing = true);
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    try {
       await LocalStore.saveProfile(goal: goal, level: level, place: place);
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pushReplacement(
-        FitRoutes.route(
-          context,
-          motion: FitRouteMotion.fadeScale,
-          builder: (_) => const MainShell(),
+      widget.onComplete();
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _completing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to save setup. Please try again.'),
         ),
       );
     }
   }
 
   Future<void> _skip() async {
-    await LocalStore.skipOnboarding();
-    if (!mounted) {
+    if (_completing) {
       return;
     }
-    Navigator.of(context).pushReplacement(
-      FitRoutes.route(
-        context,
-        motion: FitRouteMotion.fadeScale,
-        builder: (_) => const MainShell(),
-      ),
-    );
+
+    setState(() => _completing = true);
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    try {
+      await LocalStore.skipOnboarding();
+      if (!mounted) {
+        return;
+      }
+      widget.onComplete();
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _completing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to finish setup. Please try again.'),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _stepController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
+    final pages = <Widget>[
       _IntroPage(onStart: _next),
       _SelectionPage(
         eyebrow: 'YOUR GOAL',
@@ -76,7 +136,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           'Home Training',
         ],
         selected: goal,
-        onSelected: (v) => setState(() => goal = v),
+        onSelected: (v) {
+          if (goal != v) {
+            setState(() => goal = v);
+          }
+        },
       ),
       _SelectionPage(
         eyebrow: 'YOUR LEVEL',
@@ -85,7 +149,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'We will keep every workout simple, practical, and motivating.',
         options: const ['Beginner', 'Intermediate', 'Advanced'],
         selected: level,
-        onSelected: (v) => setState(() => level = v),
+        onSelected: (v) {
+          if (level != v) {
+            setState(() => level = v);
+          }
+        },
       ),
       _SelectionPage(
         eyebrow: 'TRAINING PLACE',
@@ -93,7 +161,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         subtitle: 'Choose the place that matches your daily routine.',
         options: const ['Gym', 'Home', 'Both'],
         selected: place,
-        onSelected: (v) => setState(() => place = v),
+        onSelected: (v) {
+          if (place != v) {
+            setState(() => place = v);
+          }
+        },
       ),
     ];
 
@@ -102,9 +174,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         actions: [
           if (_page > 0)
             TextButton(
-              onPressed: _skip,
-              child:
-                  const Text('Skip', style: TextStyle(color: AppColors.muted)),
+              onPressed: _completing ? null : _skip,
+              child: const Text(
+                'Skip',
+                style: TextStyle(color: AppColors.muted),
+              ),
             ),
           const SizedBox(width: 8),
         ],
@@ -121,11 +195,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: Column(
             children: [
               Expanded(
-                child: PageView(
-                  controller: _controller,
-                  physics: const NeverScrollableScrollPhysics(),
-                  onPageChanged: (v) => setState(() => _page = v),
-                  children: pages,
+                child: AnimatedBuilder(
+                  animation: _stepController,
+                  builder: (context, child) {
+                    final t = _reduceMotion
+                        ? 1.0
+                        : AppMotion.enterCurve.transform(
+                            _stepController.value,
+                          );
+                    return Opacity(
+                      opacity: _reduceMotion ? 1 : .82 + (.18 * t),
+                      child: Transform.translate(
+                        offset: Offset(_reduceMotion ? 0 : 14 * (1 - t), 0),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: IndexedStack(
+                    index: _page,
+                    sizing: StackFit.expand,
+                    children: List.generate(
+                      pages.length,
+                      (index) {
+                        final active = index == _page;
+                        return TickerMode(
+                          enabled: active,
+                          child: ExcludeSemantics(
+                            excluding: !active,
+                            child: ExcludeFocus(
+                              excluding: !active,
+                              child: IgnorePointer(
+                                ignoring: !active,
+                                child: pages[index],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -137,7 +245,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       children: List.generate(
                         4,
                         (i) => AnimatedContainer(
-                          duration: AppMotion.reducedMotion(context)
+                          duration: _reduceMotion
                               ? Duration.zero
                               : AppMotion.internalTab,
                           width: i == _page ? 26 : 10,
@@ -154,10 +262,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     const SizedBox(height: 22),
                     if (_page > 0)
-                      PrimaryButton(
-                        label: _page == 3 ? 'Start My Journey' : 'Continue',
-                        icon: Icons.arrow_forward_rounded,
-                        onPressed: _next,
+                      SizedBox(
+                        width: double.infinity,
+                        height: 62,
+                        child: FilledButton.icon(
+                          onPressed: _completing ? null : _next,
+                          icon: _completing
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(Icons.arrow_forward_rounded),
+                          label: Text(
+                            _completing
+                                ? 'Starting…'
+                                : (_page == 3
+                                    ? 'Start My Journey'
+                                    : 'Continue'),
+                          ),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            disabledBackgroundColor:
+                                AppColors.primary.withValues(alpha: .68),
+                            disabledForegroundColor: Colors.white,
+                            shape: const StadiumBorder(),
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
                       ),
                   ],
                 ),
