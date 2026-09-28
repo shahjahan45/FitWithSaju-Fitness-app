@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ExerciseController as AdminExerciseController;
 use App\Http\Controllers\Admin\IngredientController as AdminIngredientController;
 use App\Http\Controllers\Admin\MealPlanTemplateController as AdminMealPlanTemplateController;
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
+use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Auth\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,7 @@ Route::post('/admin/logout', [AdminAuthController::class, 'destroy'])
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/search', SearchController::class)->name('search');
 
     Route::patch('/exercises/{exercise}/toggle', [AdminExerciseController::class, 'toggle'])->name('exercises.toggle');
     Route::resource('exercises', AdminExerciseController::class)->except('show');

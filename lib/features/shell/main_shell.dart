@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/settings/app_preferences.dart';
 import '../../core/theme/app_colors.dart';
 import '../explore/explore_screen.dart';
 import '../home/home_screen.dart';
@@ -69,6 +70,8 @@ class _MainShellState extends State<MainShell>
       return;
     }
 
+    FocusManager.instance.primaryFocus?.unfocus();
+    AppPreferences.selectionFeedback();
     _contentController.stop();
     _direction = value > index ? 1 : -1;
     setState(() => index = value);
@@ -106,20 +109,11 @@ class _MainShellState extends State<MainShell>
                   pages.length,
                   (pageIndex) {
                     final active = pageIndex == index;
-                    return KeyedSubtree(
-                      key: ValueKey('main-page-$pageIndex'),
-                      child: TickerMode(
-                        enabled: active,
-                        child: ExcludeSemantics(
-                          excluding: !active,
-                          child: ExcludeFocus(
-                            excluding: !active,
-                            child: IgnorePointer(
-                              ignoring: !active,
-                              child: pages[pageIndex],
-                            ),
-                          ),
-                        ),
+                    return TickerMode(
+                      enabled: active,
+                      child: IgnorePointer(
+                        ignoring: !active,
+                        child: pages[pageIndex],
                       ),
                     );
                   },

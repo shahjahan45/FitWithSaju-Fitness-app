@@ -117,7 +117,12 @@ void main() {
     expect(await LocalStore.activeWorkout(), isNull);
   });
 
-  test('backup export can be imported into a clean store', () async {
+  test('backup export can restore profile and local fitness data', () async {
+    await LocalStore.saveProfile(
+      goal: 'Increase Strength',
+      level: 'Intermediate',
+      place: 'Both',
+    );
     await LocalStore.saveCustomWorkout(
       name: 'Backup Workout',
       exerciseIds: ['squat'],
@@ -130,8 +135,13 @@ void main() {
 
     final workouts = await LocalStore.customWorkouts();
     final weights = await LocalStore.weightEntries();
+    final profile = await LocalStore.profile();
     expect(workouts.first['name'], 'Backup Workout');
     expect(weights.first['value'], 77.5);
+    expect(profile['goal'], 'Increase Strength');
+    expect(profile['level'], 'Intermediate');
+    expect(profile['place'], 'Both');
+    expect(await LocalStore.onboardingComplete(), isTrue);
   });
 
   test('estimated 1RM uses the Epley estimate', () {

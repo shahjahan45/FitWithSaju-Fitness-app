@@ -191,3 +191,20 @@ php -m | findstr /I "pdo_mysql openssl mbstring fileinfo"
 ```
 
 `pdo_mysql` must be enabled before running migrations.
+
+## SaaS administration UI (v17.4)
+
+The admin shell is intentionally dependency-light and does not require a Tailwind/Vite build to render correctly. The primary admin styling is embedded in the Blade layout so a fresh `composer install` + `php artisan serve` has a complete interface immediately.
+
+The v17.4 admin includes:
+
+- Collapsible desktop sidebar and responsive mobile drawer.
+- Sticky workspace top bar and global content search (`/admin/search`).
+- Responsive dashboard cards driven by real database counts.
+- Content health indicators for publishing, exercise media and nutrition review coverage.
+- Custom paginator view used by all content lists. This avoids Laravel's default Tailwind paginator rendering oversized SVG arrows when Tailwind utilities are unavailable.
+- Responsive content tables with horizontal scrolling on narrow screens.
+- Sectioned forms for exercises, recipes, ingredients and meal-plan templates.
+- Redesigned login and account/logout controls.
+
+No existing content schema or public API contract was changed for this visual/admin-workflow upgrade.

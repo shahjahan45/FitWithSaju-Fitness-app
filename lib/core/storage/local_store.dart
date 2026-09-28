@@ -34,6 +34,15 @@ class LocalStore {
     return prefs.getBool(_onboardingKey) ?? false;
   }
 
+  static Future<Map<String, String>> profile() async {
+    final prefs = await SharedPreferences.getInstance();
+    return <String, String>{
+      'goal': prefs.getString(_goalKey) ?? 'Build Muscle',
+      'level': prefs.getString(_levelKey) ?? 'Beginner',
+      'place': prefs.getString(_placeKey) ?? 'Gym',
+    };
+  }
+
   static Future<void> saveProfile({
     required String goal,
     required String level,
@@ -44,11 +53,13 @@ class LocalStore {
     await prefs.setString(_levelKey, level);
     await prefs.setString(_placeKey, place);
     await prefs.setBool(_onboardingKey, true);
+    _notify();
   }
 
   static Future<void> skipOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_onboardingKey, true);
+    _notify();
   }
 
   static Future<Set<String>> favorites() async {
@@ -367,8 +378,10 @@ class LocalStore {
   static Future<Map<String, dynamic>> exportData() async {
     return <String, dynamic>{
       'app': 'FitWithSaju',
-      'formatVersion': 2,
+      'formatVersion': 3,
       'exportedAt': DateTime.now().toIso8601String(),
+      'onboardingComplete': await onboardingComplete(),
+      'profile': await profile(),
       'weeklyPlan': await weeklyPlan(),
       'customWorkouts': await customWorkouts(),
       'favorites': (await favorites()).toList(),
@@ -385,6 +398,31 @@ class LocalStore {
     }
 
     final prefs = await SharedPreferences.getInstance();
+    final profileValue = data['profile'];
+    if (profileValue is Map) {
+      final profileMap = Map<String, dynamic>.from(profileValue);
+      await prefs.setString(
+        _goalKey,
+        profileMap['goal']?.toString() ?? 'Build Muscle',
+      );
+      await prefs.setString(
+        _levelKey,
+        profileMap['level']?.toString() ?? 'Beginner',
+      );
+      await prefs.setString(
+        _placeKey,
+        profileMap['place']?.toString() ?? 'Gym',
+      );
+    }
+    if (data['onboardingComplete'] is bool) {
+      await prefs.setBool(
+        _onboardingKey,
+        data['onboardingComplete'] as bool,
+      );
+    } else if (profileValue is Map) {
+      await prefs.setBool(_onboardingKey, true);
+    }
+
     final weekly = _mapList(data['weeklyPlan']);
     final custom = _mapList(data['customWorkouts']);
     final historyItems = _mapList(data['workoutHistory']);

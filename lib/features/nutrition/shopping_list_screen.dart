@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/navigation/settled_dialog.dart';
+
 import 'data/nutrition_catalog.dart';
 import 'data/nutrition_store.dart';
 import 'nutrition_widgets.dart';
@@ -71,7 +73,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
 
   Future<void> _addManual() async {
     final controller = TextEditingController();
-    final value = await showDialog<String>(
+    final value = await showSettledDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add shopping item'),
@@ -106,7 +108,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     final controller = TextEditingController(
       text: item['name']?.toString() ?? '',
     );
-    final value = await showDialog<String>(
+    final value = await showSettledDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Edit shopping item'),

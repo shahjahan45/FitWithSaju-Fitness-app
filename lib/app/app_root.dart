@@ -9,10 +9,12 @@ import '../features/splash/splash_screen.dart';
 
 enum _AppPhase { splash, onboarding, main }
 
-/// Owns the startup/onboarding state without creating/removing Navigator routes.
+/// Stable application gate for startup, onboarding and the main app.
 ///
-/// Keeping this flow route-free avoids tearing down Navigator/Overlay inherited
-/// elements while onboarding buttons or page transitions are still settling.
+/// All three phase trees remain mounted for the lifetime of the application.
+/// Switching phase only changes the visible IndexedStack child, so Flutter does
+/// not have to deactivate Focus/MediaQuery/Ticker inherited dependents while a
+/// tap, animation or text-field update is still completing.
 class AppRoot extends StatefulWidget {
   const AppRoot({super.key});
 
@@ -57,7 +59,6 @@ class _AppRootState extends State<AppRoot> {
       if (!mounted) {
         return;
       }
-      // A storage-read failure should never strand the user on splash.
       setState(() => _phase = _AppPhase.onboarding);
     } finally {
       _resolving = false;
@@ -74,12 +75,27 @@ class _AppRootState extends State<AppRoot> {
 
   @override
   Widget build(BuildContext context) {
-    return switch (_phase) {
-      _AppPhase.splash => const SplashScreen(),
-      _AppPhase.onboarding => OnboardingScreen(
-          onComplete: _finishOnboarding,
-        ),
-      _AppPhase.main => const MainShell(),
-    };
+    final activeIndex = _phase.index;
+    final children = <Widget>[
+      const SplashScreen(),
+      OnboardingScreen(onComplete: _finishOnboarding),
+      const MainShell(),
+    ];
+
+    return IndexedStack(
+      key: const ValueKey('app-phase-stack'),
+      index: activeIndex,
+      sizing: StackFit.expand,
+      children: List.generate(children.length, (index) {
+        final active = index == activeIndex;
+        return TickerMode(
+          enabled: active,
+          child: IgnorePointer(
+            ignoring: !active,
+            child: children[index],
+          ),
+        );
+      }),
+    );
   }
 }

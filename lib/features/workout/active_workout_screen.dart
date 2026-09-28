@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/settings/app_preferences.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
@@ -203,6 +204,11 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
 
     _sessionSets.add(setEntry);
     _updateRecord(exercise, weight, reps, volume, completedAt);
+    if (isPr) {
+      AppPreferences.successFeedback();
+    } else {
+      AppPreferences.selectionFeedback();
+    }
 
     setState(() {
       completedSets = _sessionSets.length;
@@ -568,6 +574,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       return;
     }
 
+    AppPreferences.successFeedback();
     FocusManager.instance.primaryFocus?.unfocus();
 
     final sheetController = AnimationController(

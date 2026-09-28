@@ -1,116 +1,55 @@
-# FitWithSaju Development Status
+# FitWithSaju Development Status — v17.5
 
-## Started in this ZIP
-
-### Sprint 01 — Project Setup
-- [x] Flutter project source structure
-- [x] Theme
-- [x] Feature-first folders
-- [x] Android manifest/project scaffold
-- [x] Backend starter structure
-
-### Sprint 02 — Design System
-- [x] Dark performance palette
-- [x] Primary button
-- [x] Reusable card
-- [x] Bottom navigation style
-- [x] Motion foundations
-
-### Sprint 03 — Splash + Onboarding
-- [x] Animated splash
-- [x] Goal selection
-- [x] Experience level
-- [x] Training location
-- [ ] Persist onboarding state locally
-
-### Sprint 04 — Navigation + Home
-- [x] Five-tab navigation
-- [x] Today workout
-- [x] Weekly strip
-- [x] Quick workouts
-- [x] Motivation
-
-### Sprint 05 — Local Database
-- [ ] Add Isar/SQLite
-- [ ] Save custom plans
-- [ ] Save workout history
-- [ ] Save body metrics
-- [ ] Save favorites
-
-### Sprint 06 — Exercise Library
-- [x] Sample exercise model
-- [x] Search
-- [x] Details
-- [x] Animation placeholder
-- [ ] Real media from backend
-- [ ] Filters
-
-### Sprint 09/10 — Active Workout Foundation
-- [x] Workout session screen
-- [x] Set progression
-- [x] Rest countdown
-- [x] Workout completion UI
-- [ ] Editable input persistence
-- [ ] Session history persistence
-- [ ] Haptics/sound
-
-### Laravel Backend
-- [x] Exercise migration/model/controller
-- [x] Workout migration/model/controller
-- [x] Public API routes
-- [ ] Admin authentication
-- [ ] Admin dashboard
-- [ ] CRUD UI
-- [ ] Media manager
-
-
-## Sprint 07-12 continuation — v2
-- [x] Official FitWithSaju logo applied to splash and in-app branding
-- [x] Android launcher icon generated from supplied logo
-- [x] Onboarding completion persisted
-- [x] Fitness goal/level/training-place preferences persisted
-- [x] Exercise favorites persisted
-- [x] Editable reps and weight during workout
-- [x] Workout completion history saved locally
-- [x] Workout history screen
-- [x] Custom workout builder foundation
-- [x] Orange/blue visual system aligned to official logo
-
-## Sprint 12 — Recovery & Strength Trends
-- [x] Resume interrupted workouts
+## Core mobile app
+- [x] Professional light design system and reusable motion system
+- [x] Transparent FitWithSaju splash/logo/app icon
+- [x] Stable startup + onboarding flow
+- [x] Goal, level and training-place persistence/editing
+- [x] Five-tab state-preserving navigation
+- [x] Home dashboard and today plan
+- [x] Editable seven-day workout planner
+- [x] Custom workout create/edit/delete/start
+- [x] Resume interrupted workout
+- [x] Per-set weight/reps persistence
 - [x] Rest timer recovery
-- [x] Edit/delete active completed sets
-- [x] Edit/delete historical sets
-- [x] Recalculate volume and PR flags after history edits
-- [x] Exercise strength history
-- [x] Estimated 1RM trend
-- [x] Backup import/restore
+- [x] Edit/delete active and historical sets
+- [x] Workout history details
+- [x] Personal records and estimated 1RM
+- [x] Weight and body measurement tracking
+- [x] Favorites
+- [x] Backup & restore
+- [x] Settings: profile, haptics, sound, reduced motion, auto-sync
 
+## Exercise library
+- [x] User-supplied 30-exercise catalog
+- [x] 360×360 thumbnails and 720×720 animated demonstrations
+- [x] Search, body-part filters and equipment filters
+- [x] Hero-connected detail screens
+- [x] Exercise strength-history charts
+- [x] Optional Laravel exercise sync with cache/offline fallback
 
-## Sprint 14 — Real Exercise Media Library
-- [x] User-provided 30-exercise catalog integrated
-- [x] Supplied 360×360 GIF thumbnails integrated
-- [x] Supplied 720×720 GIF demonstrations integrated
-- [x] Search across exercise metadata
-- [x] Body-part filters
-- [x] Equipment filters
-- [x] Animated exercise cards
-- [x] Hero-connected detail media
-- [x] Real exercise media during active workout
-- [x] Backward compatibility for saved legacy exercise IDs
-- [x] TickerMode.valuesOf migration
+## Diet & Meal Plan
+- [x] Home shortcut + More entry
+- [x] Daily and weekly planning
+- [x] Planned vs consumed nutrition
+- [x] Meal details, serving/yield calculations and instructions
+- [x] Safe allergy/dietary filtering for meal swaps
+- [x] Saved meals
+- [x] Food logging with historical nutrition snapshots
+- [x] Hydration logging/edit/undo
+- [x] Shopping-list generation, independent checks and manual items
+- [x] Nutrition preferences
+- [x] Android bottom-sheet system-navigation SafeArea handling
+- [x] Optional Laravel recipe sync with cache/offline fallback
 
-## Sprint 15 — Exercise Admin + API Sync
-- [x] Optional Laravel exercise catalog sync
-- [x] Cached remote catalog with bundled offline fallback
-- [x] Automatic background refresh when an API URL is configured
-- [x] Network exercise GIF/WebP with bundled media fallback
-- [x] Content Sync settings/status screen
-- [x] Stable exercise IDs across local and server catalogs
-- [x] Laravel admin authentication starter
-- [x] Laravel admin dashboard
-- [x] Exercise CRUD UI
-- [x] Exercise activation/hiding + soft delete
-- [x] GIF/WebP media + thumbnail upload
-- [x] 30-exercise Laravel seeder generated from the user-provided catalog
-- [x] Public exercise API search/filter/pagination
+## Laravel content backend
+- [x] Runnable Laravel project structure
+- [x] PHP 8.5/XAMPP compatibility configuration
+- [x] Admin authentication
+- [x] Responsive SaaS admin shell
+- [x] Exercise CRUD/media/status
+- [x] Recipe CRUD/nutrition/review/media/status
+- [x] Ingredients and meal-plan templates
+- [x] Public exercise/recipe/meal-plan content APIs
+
+Personal workout, body and nutrition-log data remains local to the device by design; no mobile user login is required.

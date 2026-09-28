@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/settings/app_preferences.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -16,61 +17,34 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _stepController;
+class _OnboardingScreenState extends State<OnboardingScreen> {
   int _page = 0;
   bool _completing = false;
-  bool _reduceMotion = false;
   String goal = 'Build Muscle';
   String level = 'Beginner';
   String place = 'Gym';
-
-  @override
-  void initState() {
-    super.initState();
-    _stepController = AnimationController(
-      vsync: this,
-      duration: AppMotion.onboarding,
-      value: 1,
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _reduceMotion = AppMotion.reducedMotion(context);
-    _stepController.duration =
-        _reduceMotion ? Duration.zero : AppMotion.onboarding;
-  }
 
   Future<void> _next() async {
     if (_completing) {
       return;
     }
 
+    FocusManager.instance.primaryFocus?.unfocus();
+    AppPreferences.selectionFeedback();
+
     if (_page < 3) {
-      FocusManager.instance.primaryFocus?.unfocus();
-      if (!_reduceMotion) {
-        _stepController.value = 0;
-      }
       setState(() => _page += 1);
-      if (!_reduceMotion && mounted) {
-        _stepController.forward();
-      } else {
-        _stepController.value = 1;
-      }
       return;
     }
 
     setState(() => _completing = true);
-    FocusManager.instance.primaryFocus?.unfocus();
 
     try {
       await LocalStore.saveProfile(goal: goal, level: level, place: place);
       if (!mounted) {
         return;
       }
+      AppPreferences.successFeedback();
       widget.onComplete();
     } catch (_) {
       if (!mounted) {
@@ -90,8 +64,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       return;
     }
 
-    setState(() => _completing = true);
     FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _completing = true);
 
     try {
       await LocalStore.skipOnboarding();
@@ -112,17 +86,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     }
   }
 
-  @override
-  void dispose() {
-    _stepController.dispose();
-    super.dispose();
-  }
+  Widget _currentContent() {
+    if (_page == 0) {
+      return _IntroPage(onStart: _next);
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    final pages = <Widget>[
-      _IntroPage(onStart: _next),
-      _SelectionPage(
+    if (_page == 1) {
+      return _SelectionPage(
         eyebrow: 'YOUR GOAL',
         title: 'What are you training for?',
         subtitle:
@@ -136,38 +106,50 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           'Home Training',
         ],
         selected: goal,
-        onSelected: (v) {
-          if (goal != v) {
-            setState(() => goal = v);
+        onSelected: (value) {
+          if (goal != value) {
+            AppPreferences.selectionFeedback();
+            setState(() => goal = value);
           }
         },
-      ),
-      _SelectionPage(
+      );
+    }
+
+    if (_page == 2) {
+      return _SelectionPage(
         eyebrow: 'YOUR LEVEL',
         title: 'Where are you starting?',
         subtitle:
             'We will keep every workout simple, practical, and motivating.',
         options: const ['Beginner', 'Intermediate', 'Advanced'],
         selected: level,
-        onSelected: (v) {
-          if (level != v) {
-            setState(() => level = v);
+        onSelected: (value) {
+          if (level != value) {
+            AppPreferences.selectionFeedback();
+            setState(() => level = value);
           }
         },
-      ),
-      _SelectionPage(
-        eyebrow: 'TRAINING PLACE',
-        title: 'Where do you usually train?',
-        subtitle: 'Choose the place that matches your daily routine.',
-        options: const ['Gym', 'Home', 'Both'],
-        selected: place,
-        onSelected: (v) {
-          if (place != v) {
-            setState(() => place = v);
-          }
-        },
-      ),
-    ];
+      );
+    }
+
+    return _SelectionPage(
+      eyebrow: 'TRAINING PLACE',
+      title: 'Where do you usually train?',
+      subtitle: 'Choose the place that matches your daily routine.',
+      options: const ['Gym', 'Home', 'Both'],
+      selected: place,
+      onSelected: (value) {
+        if (place != value) {
+          AppPreferences.selectionFeedback();
+          setState(() => place = value);
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion = AppMotion.reducedMotion(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -194,48 +176,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         child: SafeArea(
           child: Column(
             children: [
-              Expanded(
-                child: AnimatedBuilder(
-                  animation: _stepController,
-                  builder: (context, child) {
-                    final t = _reduceMotion
-                        ? 1.0
-                        : AppMotion.enterCurve.transform(
-                            _stepController.value,
-                          );
-                    return Opacity(
-                      opacity: _reduceMotion ? 1 : .82 + (.18 * t),
-                      child: Transform.translate(
-                        offset: Offset(_reduceMotion ? 0 : 14 * (1 - t), 0),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: IndexedStack(
-                    index: _page,
-                    sizing: StackFit.expand,
-                    children: List.generate(
-                      pages.length,
-                      (index) {
-                        final active = index == _page;
-                        return TickerMode(
-                          enabled: active,
-                          child: ExcludeSemantics(
-                            excluding: !active,
-                            child: ExcludeFocus(
-                              excluding: !active,
-                              child: IgnorePointer(
-                                ignoring: !active,
-                                child: pages[index],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
+              Expanded(child: _currentContent()),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
                 child: Column(
@@ -245,7 +186,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       children: List.generate(
                         4,
                         (i) => AnimatedContainer(
-                          duration: _reduceMotion
+                          duration: reduceMotion
                               ? Duration.zero
                               : AppMotion.internalTab,
                           width: i == _page ? 26 : 10,

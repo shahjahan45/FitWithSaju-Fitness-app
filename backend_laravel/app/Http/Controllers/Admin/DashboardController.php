@@ -20,6 +20,8 @@ class DashboardController extends Controller
             'publishedRecipeCount' => Recipe::published()->count(),
             'ingredientCount' => Ingredient::count(),
             'templateCount' => MealPlanTemplate::count(),
+            'publishedTemplateCount' => MealPlanTemplate::published()->count(),
+            'reviewedRecipeCount' => Recipe::where('review_status', 'reviewed')->count(),
             'recentExercises' => Exercise::latest('updated_at')->limit(4)->get(),
             'recentRecipes' => Recipe::latest('updated_at')->limit(4)->get(),
         ]);

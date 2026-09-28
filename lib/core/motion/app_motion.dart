@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../settings/app_preferences.dart';
+
 /// Central motion tokens for FitWithSaju.
 ///
 /// Keep navigation motion calm and short. All custom movement respects the
@@ -32,7 +34,8 @@ class AppMotion {
 
   static bool reducedMotion(BuildContext context) {
     final media = MediaQuery.maybeOf(context);
-    return media?.disableAnimations ?? false;
+    return (media?.disableAnimations ?? false) ||
+        AppPreferences.current.reduceMotion;
   }
 
   static Duration duration(BuildContext context, Duration normal) {

@@ -9,6 +9,7 @@ import 'data_export_screen.dart';
 import 'favorites_screen.dart';
 import 'measurements_screen.dart';
 import 'personal_records_screen.dart';
+import 'settings_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -80,8 +81,7 @@ class MoreScreen extends StatelessWidget {
                 _ActionTile(
                   icon: Icons.settings_rounded,
                   title: 'Settings',
-                  onTap: () => _info(context, 'Settings',
-                      'Units, haptics, sound, and appearance controls are scheduled for the settings sprint.'),
+                  onTap: () => _open(context, const SettingsScreen()),
                 ),
                 _ActionTile(
                   icon: Icons.cloud_sync_outlined,
@@ -120,7 +120,7 @@ class MoreScreen extends StatelessWidget {
                   onTap: () => _info(
                     context,
                     'Privacy',
-                    'Workout plans, favorites, body metrics, and history in this starter are stored locally on your device.',
+                    'Workout plans, favorites, body metrics, history, and nutrition logs are stored locally on your device. The optional server only supplies public exercise and recipe content.',
                   ),
                 ),
               ],

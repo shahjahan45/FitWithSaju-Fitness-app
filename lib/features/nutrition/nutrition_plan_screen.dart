@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
+import '../../core/navigation/settled_dialog.dart';
 import 'data/nutrition_catalog.dart';
 import 'data/nutrition_models.dart';
 import 'data/nutrition_store.dart';
@@ -325,7 +326,6 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               goalMl: data.preferences.waterTargetMl,
               units: data.preferences.units,
               entries: data.waterEntries,
-              onRefresh: () => setState(() {}),
             ),
           ],
         ),
@@ -541,7 +541,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   ) async {
     final current = (log['servings'] as num?)?.toDouble() ?? 1.0;
     final controller = TextEditingController(text: formatAmount(current));
-    final value = await showDialog<double>(
+    final value = await showSettledDialog<double>(
       context: dialogContext,
       builder: (context) => AlertDialog(
         title: const Text('Edit consumed portion'),
@@ -1008,7 +1008,6 @@ class _HydrationCard extends StatelessWidget {
   final int goalMl;
   final String units;
   final List<Map<String, dynamic>> entries;
-  final VoidCallback onRefresh;
 
   const _HydrationCard({
     required this.date,
@@ -1016,7 +1015,6 @@ class _HydrationCard extends StatelessWidget {
     required this.goalMl,
     required this.units,
     required this.entries,
-    required this.onRefresh,
   });
 
   @override
@@ -1102,12 +1100,11 @@ class _HydrationCard extends StatelessWidget {
 
   Future<void> _add(int ml) async {
     await NutritionStore.addWater(date, ml);
-    onRefresh();
   }
 
   Future<void> _custom(BuildContext context) async {
     final controller = TextEditingController();
-    final value = await showDialog<int>(
+    final value = await showSettledDialog<int>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add water'),
@@ -1147,7 +1144,7 @@ class _HydrationCard extends StatelessWidget {
     final us = units == 'US customary';
     final currentDisplay = us ? (currentMl / 29.5735).round() : currentMl;
     final controller = TextEditingController(text: '$currentDisplay');
-    final value = await showDialog<int>(
+    final value = await showSettledDialog<int>(
       context: dialogContext,
       builder: (context) => AlertDialog(
         title: const Text('Edit water entry'),
@@ -1186,7 +1183,6 @@ class _HydrationCard extends StatelessWidget {
       entry['id']?.toString() ?? '',
       ml,
     );
-    onRefresh();
     return true;
   }
 

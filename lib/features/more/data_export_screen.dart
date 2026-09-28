@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/motion/app_motion.dart';
+import '../../core/settings/app_preferences.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../nutrition/data/nutrition_store.dart';
@@ -27,6 +28,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
   Future<String> _buildExport() async {
     final data = await LocalStore.exportData();
     data['nutrition'] = await NutritionStore.exportData();
+    data['settings'] = AppPreferences.exportData();
     return const JsonEncoder.withIndent('  ').convert(data);
   }
 
@@ -231,6 +233,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
     try {
       await LocalStore.importData(decoded);
       await NutritionStore.importData(decoded['nutrition']);
+      await AppPreferences.importData(decoded['settings']);
       if (!mounted) {
         return;
       }
