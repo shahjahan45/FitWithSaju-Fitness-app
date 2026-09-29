@@ -84,3 +84,28 @@ Version: `1.11.2+25`
 - Hydration lifecycle widget test now uses stable widget keys and `tester.ensureVisible()` instead of an ambiguous global `scrollUntilVisible()`.
 - Added stable keys for the custom water amount field and submit button.
 - No runtime hydration behavior or UI design changed.
+
+## v20 · Startup Branding & Performance
+
+- Added Android mask-safe native splash artwork so the full FitWithSaju runner, wordmark and tagline remain visible.
+- Separated adaptive launcher artwork from native splash artwork.
+- Improved Flutter splash sizing with `BoxFit.contain` and responsive layout.
+- Moved non-critical catalog/cache startup work behind the first Flutter frame for a faster handoff from the Android splash.
+
+## v21 · Workout Programs
+
+- Added Foundation 3-Day, Strength 4-Day and Hypertrophy 5-Day weekly training structures.
+- Program application safely replaces the Monday–Sunday weekly plan without deleting workout history, PRs, measurements or nutrition data.
+- Hydration lifecycle regression coverage now tests the reusable custom-water dialog directly.
+
+## v22 · Active Program Tracking
+
+- Workout programs are now multi-week enrollments instead of one-time templates.
+- Added persistent active-program state, start date, duration, training-day count and archived program history.
+- Program workouts use stable `program_<program>_<day>` session IDs for real progress attribution.
+- Added Active Program dashboard with week number, adherence, total completion, weekly schedule, next session and start-today action.
+- Added Active Program cards to Workout and Progress.
+- Program switching archives the previous enrollment; ending/finishing a program preserves the weekly plan and all workout history.
+- Backup format v4 includes active-program state and program history.
+
+Version: `1.14.0+29`

@@ -6,6 +6,7 @@ import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
+import 'active_program_screen.dart';
 import 'active_workout_screen.dart';
 import 'custom_workout_screen.dart';
 import 'day_plan_editor_screen.dart';
@@ -22,6 +23,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   List<Map<String, dynamic>> _plan = [];
   List<Map<String, dynamic>> _custom = [];
   Map<String, dynamic>? _activeDraft;
+  Map<String, dynamic>? _activeProgram;
   bool _loading = true;
 
   @override
@@ -34,6 +36,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     final plan = await LocalStore.weeklyPlan();
     final custom = await LocalStore.customWorkouts();
     final activeDraft = await LocalStore.activeWorkout();
+    final activeProgram = await LocalStore.activeProgram();
     if (!mounted) {
       return;
     }
@@ -41,6 +44,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       _plan = plan;
       _custom = custom;
       _activeDraft = activeDraft;
+      _activeProgram = activeProgram;
       _loading = false;
     });
   }
@@ -64,6 +68,19 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         context,
         motion: FitRouteMotion.detail,
         builder: (_) => const WorkoutProgramsScreen(),
+      ),
+    );
+    if (changed == true) {
+      await _load();
+    }
+  }
+
+  Future<void> _openActiveProgram() async {
+    final changed = await Navigator.of(context).push<bool>(
+      FitRoutes.route(
+        context,
+        motion: FitRouteMotion.detail,
+        builder: (_) => const ActiveProgramScreen(),
       ),
     );
     if (changed == true) {
@@ -192,6 +209,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
+                if (_activeProgram != null) ...[
+                  MotionReveal(
+                    delay: const Duration(milliseconds: 40),
+                    child: _ActiveProgramCard(
+                      program: _activeProgram!,
+                      onTap: _openActiveProgram,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 if (_activeDraft != null) ...[
                   MotionReveal(
                     delay: const Duration(milliseconds: 55),
@@ -462,6 +489,80 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ),
               ],
             ),
+    );
+  }
+}
+
+class _ActiveProgramCard extends StatelessWidget {
+  final Map<String, dynamic> program;
+  final VoidCallback onTap;
+
+  const _ActiveProgramCard({required this.program, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final startedAt = DateTime.tryParse(program['startedAt']?.toString() ?? '');
+    final weeks = (program['durationWeeks'] as num?)?.toInt() ?? 1;
+    final elapsed = startedAt == null
+        ? 0
+        : DateTime.now().difference(startedAt).inDays.clamp(0, 9999);
+    final week = (elapsed ~/ 7 + 1).clamp(1, weeks);
+    return Material(
+      color: AppColors.text,
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: .18),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child:
+                    const Icon(Icons.route_rounded, color: AppColors.primary),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'ACTIVE PROGRAM',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      program['name']?.toString() ?? 'Workout Program',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'Week $week of $weeks • ${program['trainingDays']} days/week',
+                      style:
+                          const TextStyle(color: Colors.white60, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, color: Colors.white70),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

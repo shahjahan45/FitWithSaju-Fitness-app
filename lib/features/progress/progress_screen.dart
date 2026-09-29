@@ -5,6 +5,8 @@ import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
+import '../../data/workout_program_catalog.dart';
+import '../workout/active_program_screen.dart';
 import '../more/achievements_screen.dart';
 import 'history_screen.dart';
 import 'weight_tracker_screen.dart';
@@ -20,6 +22,7 @@ class ProgressScreen extends StatelessWidget {
         future: Future.wait<dynamic>([
           LocalStore.history(),
           LocalStore.weightEntries(),
+          LocalStore.activeProgram(),
         ]),
         builder: (context, snapshot) {
           final history = snapshot.hasData
@@ -28,7 +31,14 @@ class ProgressScreen extends StatelessWidget {
           final weights = snapshot.hasData
               ? snapshot.data![1] as List<Map<String, dynamic>>
               : <Map<String, dynamic>>[];
-          return _ProgressContent(history: history, weights: weights);
+          final activeProgram = snapshot.hasData
+              ? snapshot.data![2] as Map<String, dynamic>?
+              : null;
+          return _ProgressContent(
+            history: history,
+            weights: weights,
+            activeProgram: activeProgram,
+          );
         },
       ),
     );
@@ -38,8 +48,13 @@ class ProgressScreen extends StatelessWidget {
 class _ProgressContent extends StatelessWidget {
   final List<Map<String, dynamic>> history;
   final List<Map<String, dynamic>> weights;
+  final Map<String, dynamic>? activeProgram;
 
-  const _ProgressContent({required this.history, required this.weights});
+  const _ProgressContent({
+    required this.history,
+    required this.weights,
+    required this.activeProgram,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +101,13 @@ class _ProgressContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+          if (activeProgram != null) ...[
+            _ProgramProgressCard(
+              activeProgram: activeProgram!,
+              history: history,
+            ),
+            const SizedBox(height: 16),
+          ],
           MotionReveal(
             delay: const Duration(milliseconds: 55),
             child: Container(
@@ -486,6 +508,89 @@ class _LinkRow extends StatelessWidget {
         ),
         const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
       ],
+    );
+  }
+}
+
+class _ProgramProgressCard extends StatelessWidget {
+  final Map<String, dynamic> activeProgram;
+  final List<Map<String, dynamic>> history;
+
+  const _ProgramProgressCard({
+    required this.activeProgram,
+    required this.history,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = WorkoutProgramProgress.calculate(
+      activeProgram: activeProgram,
+      history: history,
+    );
+    return MotionReveal(
+      delay: const Duration(milliseconds: 40),
+      child: FitCard(
+        onTap: () => Navigator.of(context).push(
+          FitRoutes.route(
+            context,
+            motion: FitRouteMotion.detail,
+            builder: (_) => const ActiveProgramScreen(),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 54,
+              height: 54,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: progress.completion,
+                    strokeWidth: 6,
+                    backgroundColor: AppColors.surfaceAlt,
+                    color: AppColors.primary,
+                  ),
+                  Text(
+                    '${(progress.completion * 100).round()}%',
+                    style: const TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'ACTIVE PROGRAM',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    activeProgram['name']?.toString() ?? 'Workout Program',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w900),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Week ${progress.currentWeek}/${progress.durationWeeks} • ${progress.completedSessions}/${progress.totalSessions} sessions',
+                    style:
+                        const TextStyle(color: AppColors.muted, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
+          ],
+        ),
+      ),
     );
   }
 }

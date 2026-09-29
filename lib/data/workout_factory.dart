@@ -19,8 +19,10 @@ class WorkoutFactory {
   static Workout fromPlan(Map<String, dynamic> map) {
     final exercises =
         exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    final programId = map['programId']?.toString() ?? '';
+    final day = (map['day'] ?? 'day').toString().toLowerCase();
     return Workout(
-      id: 'plan_${map['day'] ?? 'day'}',
+      id: programId.isEmpty ? 'plan_$day' : 'program_${programId}_$day',
       title: (map['title'] ?? 'Workout').toString(),
       subtitle: muscleSummary(exercises),
       durationMinutes: (map['durationMinutes'] as num?)?.toInt() ??

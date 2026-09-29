@@ -84,6 +84,12 @@ class _DayPlanEditorScreenState extends State<DayPlanEditorScreen> {
       'isRest': _isRest,
       'durationMinutes': _isRest ? 0 : duration.clamp(10, 180),
       'exerciseIds': _isRest ? <String>[] : _selected.toList(),
+      if (widget.plan['programId'] != null)
+        'programId': widget.plan['programId'],
+      if (widget.plan['programName'] != null)
+        'programName': widget.plan['programName'],
+      if (widget.plan['programDayKey'] != null)
+        'programDayKey': widget.plan['programDayKey'],
     });
     if (!mounted) {
       return;

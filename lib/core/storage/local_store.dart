@@ -18,6 +18,8 @@ class LocalStore {
   static const _weightEntriesKey = 'weight_entries_v1';
   static const _measurementEntriesKey = 'measurement_entries_v1';
   static const _activeWorkoutKey = 'active_workout_v1';
+  static const _activeProgramKey = 'active_program_v1';
+  static const _programHistoryKey = 'program_history_v1';
 
   static const List<String> weekDays = [
     'Monday',
@@ -169,13 +171,126 @@ class LocalStore {
   }
 
   static Future<void> setRestDay(String day) async {
+    final plan = await weeklyPlan();
+    Map<String, dynamic>? existing;
+    for (final item in plan) {
+      if (item['day'] == day) {
+        existing = item;
+        break;
+      }
+    }
     await saveDayPlan(<String, dynamic>{
       'day': day,
       'title': 'Rest',
       'isRest': true,
       'durationMinutes': 0,
       'exerciseIds': <String>[],
+      if (existing?['programId'] != null) 'programId': existing!['programId'],
+      if (existing?['programName'] != null)
+        'programName': existing!['programName'],
+      if (existing?['programDayKey'] != null)
+        'programDayKey': existing!['programDayKey'],
     });
+  }
+
+  static Future<Map<String, dynamic>?> activeProgram() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_activeProgramKey);
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final decoded = jsonDecode(raw);
+    if (decoded is! Map) {
+      return null;
+    }
+    return Map<String, dynamic>.from(decoded);
+  }
+
+  static Future<List<Map<String, dynamic>>> programHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    return _decodeList(prefs.getString(_programHistoryKey));
+  }
+
+  static Future<void> startWorkoutProgram({
+    required String programId,
+    required String name,
+    required String level,
+    required int durationWeeks,
+    required int trainingDays,
+    required List<Map<String, dynamic>> weeklyPlan,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = await activeProgram();
+    if (existing != null) {
+      final archive = await programHistory();
+      archive.insert(0, <String, dynamic>{
+        ...existing,
+        'status': 'switched',
+        'endedAt': DateTime.now().toIso8601String(),
+      });
+      await prefs.setString(
+        _programHistoryKey,
+        jsonEncode(archive.take(20).toList()),
+      );
+    }
+
+    final normalized = weekDays.map((day) {
+      Map<String, dynamic>? match;
+      for (final item in weeklyPlan) {
+        if (item['day'] == day) {
+          match = item;
+          break;
+        }
+      }
+      if (match == null) {
+        return <String, dynamic>{
+          'day': day,
+          'title': 'Rest',
+          'isRest': true,
+          'durationMinutes': 0,
+          'exerciseIds': <String>[],
+          'programId': programId,
+          'programName': name,
+          'programDayKey': '${programId}_${day.toLowerCase()}',
+        };
+      }
+      return Map<String, dynamic>.from(match);
+    }).toList();
+
+    await prefs.setString(_weeklyPlanKey, jsonEncode(normalized));
+    await prefs.setString(
+      _activeProgramKey,
+      jsonEncode(<String, dynamic>{
+        'programId': programId,
+        'name': name,
+        'level': level,
+        'durationWeeks': durationWeeks,
+        'trainingDays': trainingDays,
+        'startedAt': DateTime.now().toIso8601String(),
+        'status': 'active',
+      }),
+    );
+    _notify();
+  }
+
+  static Future<void> endActiveProgram({String status = 'ended'}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = await activeProgram();
+    if (existing == null) {
+      return;
+    }
+    final archive = await programHistory();
+    archive.insert(0, <String, dynamic>{
+      ...existing,
+      'status': status,
+      'endedAt': DateTime.now().toIso8601String(),
+    });
+    await prefs.setString(
+      _programHistoryKey,
+      jsonEncode(archive.take(20).toList()),
+    );
+    await prefs.remove(_activeProgramKey);
+    _notify();
   }
 
   static Future<List<Map<String, dynamic>>> customWorkouts() async {
@@ -416,7 +531,7 @@ class LocalStore {
   static Future<Map<String, dynamic>> exportData() async {
     return <String, dynamic>{
       'app': 'FitWithSaju',
-      'formatVersion': 3,
+      'formatVersion': 4,
       'exportedAt': DateTime.now().toIso8601String(),
       'onboardingComplete': await onboardingComplete(),
       'profile': await profile(),
@@ -427,6 +542,8 @@ class LocalStore {
       'weightEntries': await weightEntries(),
       'measurements': await measurementEntries(),
       'activeWorkout': await activeWorkout(),
+      'activeProgram': await activeProgram(),
+      'programHistory': await programHistory(),
     };
   }
 
@@ -467,6 +584,8 @@ class LocalStore {
     final weights = _mapList(data['weightEntries']);
     final measurements = _mapList(data['measurements']);
     final activeWorkoutValue = data['activeWorkout'];
+    final activeProgramValue = data['activeProgram'];
+    final programHistoryItems = _mapList(data['programHistory']);
     final favoritesValue = data['favorites'];
     final favoriteIds = favoritesValue is List
         ? favoritesValue.map((item) => item.toString()).toList()
@@ -491,6 +610,18 @@ class LocalStore {
     } else {
       await prefs.remove(_activeWorkoutKey);
     }
+    if (activeProgramValue is Map) {
+      await prefs.setString(
+        _activeProgramKey,
+        jsonEncode(Map<String, dynamic>.from(activeProgramValue)),
+      );
+    } else {
+      await prefs.remove(_activeProgramKey);
+    }
+    await prefs.setString(
+      _programHistoryKey,
+      jsonEncode(programHistoryItems.take(20).toList()),
+    );
     _notify();
   }
 
