@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/pro_empty_state.dart';
@@ -128,7 +130,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
               onPrimary: _add,
             )
           : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+              padding: fitPagePadding(context, bottom: 100),
               itemCount: _entries.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {

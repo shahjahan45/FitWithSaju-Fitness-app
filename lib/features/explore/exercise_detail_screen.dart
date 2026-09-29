@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
@@ -76,7 +78,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+        padding: fitPagePadding(context, bottom: 32),
         children: [
           MotionReveal(
             child: Stack(

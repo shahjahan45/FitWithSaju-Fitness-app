@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/navigation/settled_dialog.dart';
 
 import '../../core/motion/motion_widgets.dart';
@@ -71,7 +73,7 @@ class _NutritionDayEditorScreenState extends State<NutritionDayEditorScreen> {
       body: plan == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+              padding: fitPagePadding(context, bottom: 32),
               children: [
                 MotionReveal(
                   child: Container(

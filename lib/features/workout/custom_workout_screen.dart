@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/exercise_catalog.dart';
@@ -83,7 +85,7 @@ class _CustomWorkoutScreenState extends State<CustomWorkoutScreen> {
         title: Text(isEditing ? 'Edit Workout' : 'Create Workout'),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+        padding: fitPagePadding(context, bottom: 30),
         children: [
           TextField(
             controller: _nameController,

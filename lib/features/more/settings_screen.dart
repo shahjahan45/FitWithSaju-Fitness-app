@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/settings/app_preferences.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/app_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -78,8 +79,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : ValueListenableBuilder<AppPreferenceState>(
               valueListenable: AppPreferences.listenable,
               builder: (context, preferences, _) {
-                return ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                return FitScrollableScreen(
+                  bottomSpacing: 24,
                   children: [
                     const _Header(
                       title: 'Training profile',
@@ -219,17 +220,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(height: 14),
                     const _Card(
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.lock_outline_rounded,
-                          color: AppColors.primary,
-                        ),
-                        title: Text(
-                          'Local-first personal data',
-                          style: TextStyle(fontWeight: FontWeight.w800),
-                        ),
-                        subtitle: Text(
-                          'The optional Laravel server manages public exercise and recipe content; it does not receive your personal logs in this version.',
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 2),
+                              child: Icon(
+                                Icons.lock_outline_rounded,
+                                color: AppColors.primary,
+                                size: 28,
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Local-first personal data',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(height: 7),
+                                  Text(
+                                    'The optional Laravel server manages public exercise and recipe content; it does not receive your personal logs in this version.',
+                                    style: TextStyle(
+                                      color: AppColors.muted,
+                                      height: 1.45,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

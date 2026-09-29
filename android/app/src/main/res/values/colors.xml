@@ -2,4 +2,5 @@
 <resources>
     <color name="fitwithsaju_launch_bg">#F9FBF7</color>
     <color name="fitwithsaju_app_bg">#F6F8F4</color>
+    <color name="fitwithsaju_icon_bg">#F9FBF7</color>
 </resources>

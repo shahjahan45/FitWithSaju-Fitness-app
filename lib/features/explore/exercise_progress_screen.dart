@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/pro_empty_state.dart';
@@ -55,7 +57,7 @@ class ExerciseProgressScreen extends StatelessWidget {
               : calculatedPoints;
 
           return ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: fitPagePadding(context, bottom: 28),
             children: [
               Text(
                 exercise.name,

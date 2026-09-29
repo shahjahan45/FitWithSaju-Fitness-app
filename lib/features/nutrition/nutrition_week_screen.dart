@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import 'data/nutrition_catalog.dart';
@@ -25,7 +27,7 @@ class NutritionWeekScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Weekly meal plan')),
       body: SafeArea(
         child: ListView.separated(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+          padding: fitPagePadding(context, bottom: 28),
           itemCount: 7,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {

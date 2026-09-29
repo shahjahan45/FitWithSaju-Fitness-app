@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/motion_widgets.dart';
 import '../../core/navigation/settled_dialog.dart';
 import 'data/nutrition_catalog.dart';
@@ -30,7 +32,7 @@ class NutritionPlanTemplatesScreen extends StatelessWidget {
               valueListenable: NutritionPlanCatalog.listenable,
               builder: (context, templates, _) {
                 return ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+                  padding: fitPagePadding(context, bottom: 32),
                   children: [
                     MotionReveal(
                       child: _PlanLibraryHero(monday: monday),

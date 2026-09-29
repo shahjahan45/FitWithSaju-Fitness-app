@@ -66,3 +66,21 @@ Version: `1.9.5+20`
 - Added measurement-entry deletion.
 - Improved empty Shopping List and Nutrition Day Editor states.
 - Added profile summary card in More and Achievements shortcut in Progress.
+
+## v19.2 · Global Android Safe-Area Layout
+
+- Added `FitScrollableScreen`, `FitSafeBody`, and `fitPagePadding()` as reusable safe-area layout primitives.
+- Bottom content spacing now uses the real `MediaQuery.viewPadding.bottom` plus normal visual breathing room instead of fixed bottom-only padding.
+- Fixed Settings so the Local-first personal data card has natural content height and can scroll fully above Android system navigation.
+- Rebuilt Backup & Restore as a fully scrollable page with a bounded internal JSON viewer and responsive Import/Copy actions.
+- Import Backup now uses a keyboard-safe body and responsive action layout.
+- Applied safe bottom padding to standalone Nutrition, More, Progress, Workout, and Explore detail screens so the same Android navigation-bar overlap does not reappear elsewhere.
+- Added safe-area regression tests for both 3-button-style and gesture-style bottom insets.
+
+Version: `1.11.2+25`
+
+
+## v19.3 test stabilization
+- Hydration lifecycle widget test now uses stable widget keys and `tester.ensureVisible()` instead of an ambiguous global `scrollUntilVisible()`.
+- Added stable keys for the custom water amount field and submit button.
+- No runtime hydration behavior or UI design changed.

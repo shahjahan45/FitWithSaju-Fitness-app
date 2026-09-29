@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
@@ -65,7 +67,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: fitPagePadding(context, bottom: 28),
             itemCount: items.length,
             itemBuilder: (context, index) {
               final exercise = items[index];

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/settings/app_preferences.dart';
 import '../../core/motion/motion_widgets.dart';
@@ -657,7 +659,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+        padding: fitPagePadding(context, bottom: 28),
         children: [
           AnimatedLinearProgress(
             value: (exerciseIndex + 1) / widget.workout.exercises.length,

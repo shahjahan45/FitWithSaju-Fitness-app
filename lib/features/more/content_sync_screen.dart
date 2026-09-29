@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/motion_widgets.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/exercise_catalog.dart';
@@ -125,7 +127,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                   valueListenable: NutritionCatalog.source,
                   builder: (context, nutritionSource, _) {
                     return ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+                      padding: fitPagePadding(context, bottom: 32),
                       children: [
                         MotionReveal(
                           child: _StatusCard(

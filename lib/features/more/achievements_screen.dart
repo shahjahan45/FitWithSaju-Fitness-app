@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -109,7 +111,7 @@ class AchievementsScreen extends StatelessWidget {
             final unlocked = items.where((item) => item.unlocked).length;
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+              padding: fitPagePadding(context, bottom: 32),
               children: [
                 _SummaryCard(unlocked: unlocked, total: items.length),
                 const SizedBox(height: 24),

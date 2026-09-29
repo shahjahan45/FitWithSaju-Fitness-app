@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/motion_widgets.dart';
 import 'data/nutrition_models.dart';
 import 'data/nutrition_store.dart';
@@ -152,7 +154,7 @@ class _NutritionPreferencesScreenState
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                padding: fitPagePadding(context, bottom: 28),
                 children: [
                   const MotionReveal(
                     child: Text(

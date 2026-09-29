@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/navigation/settled_dialog.dart';
 
 import '../../core/motion/motion_widgets.dart';
@@ -255,7 +257,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 6, 20, 30),
+          padding: fitPagePadding(context, top: 6, bottom: 30),
           children: [
             MotionReveal(
               child: Hero(

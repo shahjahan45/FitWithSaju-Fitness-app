@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/pro_empty_state.dart';
@@ -109,7 +111,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+              padding: fitPagePadding(context, bottom: 100),
               children: [
                 if (_entries.isNotEmpty) _Summary(entries: _entries),
                 if (_entries.isNotEmpty) const SizedBox(height: 20),

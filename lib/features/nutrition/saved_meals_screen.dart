@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/widgets/pro_empty_state.dart';
 import 'data/nutrition_catalog.dart';
@@ -38,7 +40,7 @@ class SavedMealsScreen extends StatelessWidget {
               );
             }
             return ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              padding: fitPagePadding(context, bottom: 28),
               itemCount: recipes.length,
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {

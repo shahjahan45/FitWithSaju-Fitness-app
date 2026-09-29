@@ -6,6 +6,7 @@ import '../core/storage/local_store.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/shell/main_shell.dart';
 import '../features/splash/splash_screen.dart';
+import 'startup_bootstrap.dart';
 
 enum _AppPhase { splash, onboarding, main }
 
@@ -41,9 +42,10 @@ class _AppRootState extends State<AppRoot> {
     try {
       final results = await Future.wait<Object>([
         Future<Object>.delayed(
-          const Duration(milliseconds: 2450),
+          const Duration(milliseconds: 2050),
           () => true,
         ),
+        StartupBootstrap.ensureInitialized().then<Object>((_) => true),
         LocalStore.onboardingComplete(),
       ]);
 
@@ -51,7 +53,7 @@ class _AppRootState extends State<AppRoot> {
         return;
       }
 
-      final onboardingComplete = results[1] as bool;
+      final onboardingComplete = results[2] as bool;
       setState(() {
         _phase = onboardingComplete ? _AppPhase.main : _AppPhase.onboarding;
       });

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -192,7 +194,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Workout Summary')),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+        padding: fitPagePadding(context, bottom: 28),
         children: [
           Text(
             _session['title']?.toString() ?? 'Workout',

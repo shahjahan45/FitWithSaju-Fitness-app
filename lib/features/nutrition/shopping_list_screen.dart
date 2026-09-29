@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../core/widgets/app_screen.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/navigation/settled_dialog.dart';
@@ -193,7 +195,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
             }
             final data = snapshot.data!;
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              padding: fitPagePadding(context, bottom: 28),
               children: [
                 const Text(
                   'Plan the shop',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
@@ -62,7 +64,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           );
 
           return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: fitPagePadding(context, bottom: 28),
             itemCount: items.length + 1,
             itemBuilder: (_, index) {
               if (index == 0) {

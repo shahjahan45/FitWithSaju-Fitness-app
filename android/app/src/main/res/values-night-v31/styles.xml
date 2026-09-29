@@ -5,11 +5,13 @@
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@color/fitwithsaju_launch_bg</item>
     </style>
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">@color/fitwithsaju_app_bg</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@color/fitwithsaju_app_bg</item>
     </style>
 </resources>

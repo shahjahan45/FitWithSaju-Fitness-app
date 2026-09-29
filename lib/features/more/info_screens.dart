@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/theme/app_colors.dart';
 
 class AboutFitWithSajuScreen extends StatelessWidget {
@@ -10,7 +12,7 @@ class AboutFitWithSajuScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('About FitWithSaju')),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+        padding: fitPagePadding(context, bottom: 32),
         children: const [
           _BrandHero(),
           SizedBox(height: 18),
@@ -52,7 +54,7 @@ class PrivacyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Privacy & Data')),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+        padding: fitPagePadding(context, bottom: 32),
         children: const [
           _PrivacyHero(),
           SizedBox(height: 18),
@@ -104,7 +106,7 @@ class AppGuideScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('FitWithSaju Guide')),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+        padding: fitPagePadding(context, bottom: 32),
         children: const [
           _GuideHero(),
           SizedBox(height: 18),

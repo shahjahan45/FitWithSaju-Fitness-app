@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/app_screen.dart';
+
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/navigation/settled_dialog.dart';
@@ -165,7 +167,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       child: SafeArea(
         top: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+          key: const Key('nutrition-plan-scroll'),
+          padding: fitPagePadding(context, bottom: 30),
           children: [
             const MotionReveal(
               child: Column(
@@ -1283,6 +1286,7 @@ class _HydrationCard extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text('Add water'),
         content: TextField(
+          key: const Key('hydration-custom-water-field'),
           controller: controller,
           autofocus: true,
           keyboardType: TextInputType.number,
@@ -1296,9 +1300,11 @@ class _HydrationCard extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel')),
           FilledButton(
-              onPressed: () =>
-                  Navigator.of(context).pop(int.tryParse(controller.text)),
-              child: const Text('Add')),
+            key: const Key('hydration-custom-water-add'),
+            onPressed: () =>
+                Navigator.of(context).pop(int.tryParse(controller.text)),
+            child: const Text('Add'),
+          ),
         ],
       ),
     );
