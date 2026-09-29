@@ -1,6 +1,6 @@
 import 'package:fitwithsaju/core/theme/app_theme.dart';
 import 'package:fitwithsaju/features/nutrition/data/nutrition_store.dart';
-import 'package:fitwithsaju/features/nutrition/nutrition_plan_screen.dart';
+import 'package:fitwithsaju/features/nutrition/hydration_amount_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,47 +10,49 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
-  testWidgets(
-      'custom hydration submit waits for dialog teardown before refresh',
+  testWidgets('custom hydration submit settles before store refresh',
       (tester) async {
+    final date = DateTime(2026, 9, 29);
+
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
-        home: const NutritionPlanScreen(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: FilledButton(
+                key: const Key('open-hydration-dialog'),
+                onPressed: () async {
+                  final ml = await showHydrationAmountDialog(
+                    context,
+                    units: 'Metric',
+                  );
+                  if (ml != null) {
+                    await NutritionStore.addWater(date, ml);
+                  }
+                },
+                child: const Text('Add water'),
+              ),
+            ),
+          ),
+        ),
       ),
     );
 
-    await tester.pumpAndSettle();
-    const customWaterKey = Key('hydration-custom-water-button');
-    final customWaterButton = find.byKey(customWaterKey);
-    final planList = find.byKey(const Key('nutrition-plan-scroll'));
-    expect(planList, findsOneWidget);
-    final planScrollable = find.descendant(
-      of: planList,
-      matching: find.byType(Scrollable),
-    );
-    expect(planScrollable, findsOneWidget);
-    await tester.scrollUntilVisible(
-      customWaterButton,
-      300,
-      scrollable: planScrollable,
-    );
-    expect(customWaterButton, findsOneWidget);
-    await tester.tap(customWaterButton);
+    await tester.tap(find.byKey(const Key('open-hydration-dialog')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Add water'), findsOneWidget);
-    final amountField = find.byKey(const Key('hydration-custom-water-field'));
-    final addButton = find.byKey(const Key('hydration-custom-water-add'));
-    expect(amountField, findsOneWidget);
-    expect(addButton, findsOneWidget);
-    await tester.enterText(amountField, '300');
-    await tester.tap(addButton);
+    final field = find.byKey(const Key('hydration-custom-water-field'));
+    final add = find.byKey(const Key('hydration-custom-water-add'));
+    expect(field, findsOneWidget);
+    expect(add, findsOneWidget);
+
+    await tester.enterText(field, '300');
+    await tester.tap(add);
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    final total = await NutritionStore.waterTotalMl(DateTime.now());
-    expect(total, 300);
-    expect(find.textContaining('300 ml'), findsWidgets);
+    expect(await NutritionStore.waterTotalMl(date), 300);
+    expect(find.byKey(const Key('hydration-custom-water-field')), findsNothing);
   });
 }

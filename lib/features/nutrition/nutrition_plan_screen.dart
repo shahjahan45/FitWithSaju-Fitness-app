@@ -15,6 +15,7 @@ import 'nutrition_plan_templates_screen.dart';
 import 'data/nutrition_plan_catalog.dart';
 import 'nutrition_week_screen.dart';
 import 'nutrition_bottom_sheet_safe_area.dart';
+import 'hydration_amount_dialog.dart';
 import 'nutrition_widgets.dart';
 import 'saved_meals_screen.dart';
 import 'shopping_list_screen.dart';
@@ -1280,39 +1281,10 @@ class _HydrationCard extends StatelessWidget {
   }
 
   Future<void> _custom(BuildContext context) async {
-    final controller = TextEditingController();
-    final value = await showSettledDialog<int>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add water'),
-        content: TextField(
-          key: const Key('hydration-custom-water-field'),
-          controller: controller,
-          autofocus: true,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-              labelText: 'Amount',
-              suffixText: units == 'US customary' ? 'fl oz' : 'ml'),
-          onSubmitted: (text) => Navigator.of(context).pop(int.tryParse(text)),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel')),
-          FilledButton(
-            key: const Key('hydration-custom-water-add'),
-            onPressed: () =>
-                Navigator.of(context).pop(int.tryParse(controller.text)),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (value == null || value <= 0) {
+    final ml = await showHydrationAmountDialog(context, units: units);
+    if (ml == null) {
       return;
     }
-    final ml = units == 'US customary' ? (value * 29.5735).round() : value;
     await _add(ml);
   }
 

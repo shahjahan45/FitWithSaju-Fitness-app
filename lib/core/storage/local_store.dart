@@ -134,6 +134,33 @@ class LocalStore {
     _notify();
   }
 
+  static Future<void> replaceWeeklyPlan(
+    List<Map<String, dynamic>> weeklyPlan,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final normalized = weekDays.map((day) {
+      Map<String, dynamic>? match;
+      for (final item in weeklyPlan) {
+        if (item['day'] == day) {
+          match = item;
+          break;
+        }
+      }
+      if (match == null) {
+        return <String, dynamic>{
+          'day': day,
+          'title': 'Rest',
+          'isRest': true,
+          'durationMinutes': 0,
+          'exerciseIds': <String>[],
+        };
+      }
+      return Map<String, dynamic>.from(match);
+    }).toList();
+    await prefs.setString(_weeklyPlanKey, jsonEncode(normalized));
+    _notify();
+  }
+
   static Future<void> copyDayPlan(String fromDay, String toDay) async {
     final plan = await weeklyPlan();
     final source = plan.firstWhere((item) => item['day'] == fromDay);

@@ -9,6 +9,7 @@ import '../../data/workout_factory.dart';
 import 'active_workout_screen.dart';
 import 'custom_workout_screen.dart';
 import 'day_plan_editor_screen.dart';
+import 'workout_programs_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -50,6 +51,19 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         context,
         motion: FitRouteMotion.detail,
         builder: (_) => DayPlanEditorScreen(plan: item),
+      ),
+    );
+    if (changed == true) {
+      await _load();
+    }
+  }
+
+  Future<void> _openPrograms() async {
+    final changed = await Navigator.of(context).push<bool>(
+      FitRoutes.route(
+        context,
+        motion: FitRouteMotion.detail,
+        builder: (_) => const WorkoutProgramsScreen(),
       ),
     );
     if (changed == true) {
@@ -209,18 +223,27 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   child: Row(
                     children: [
                       const Expanded(
-                        child: Text(
-                          'Weekly plan',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w900),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Weekly plan',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w900),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Tap a day to edit',
+                              style: TextStyle(
+                                  color: AppColors.muted, fontSize: 11),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        'Tap a day to edit',
-                        style: TextStyle(
-                          color: AppColors.muted.withValues(alpha: .9),
-                          fontSize: 12,
-                        ),
+                      TextButton.icon(
+                        onPressed: _openPrograms,
+                        icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+                        label: const Text('Programs'),
                       ),
                     ],
                   ),
