@@ -6,6 +6,10 @@ class Workout {
   final String subtitle;
   final int durationMinutes;
   final List<Exercise> exercises;
+  final String? programSessionKey;
+  final String? scheduledDate;
+  final int? programWeek;
+  final bool isDeload;
 
   const Workout({
     required this.id,
@@ -13,5 +17,9 @@ class Workout {
     required this.subtitle,
     required this.durationMinutes,
     required this.exercises,
+    this.programSessionKey,
+    this.scheduledDate,
+    this.programWeek,
+    this.isDeload = false,
   });
 }

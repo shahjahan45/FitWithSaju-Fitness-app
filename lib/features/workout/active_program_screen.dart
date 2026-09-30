@@ -9,7 +9,9 @@ import '../../core/widgets/app_screen.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
 import '../../data/workout_program_catalog.dart';
+import '../../data/workout_program_schedule.dart';
 import 'active_workout_screen.dart';
+import 'workout_calendar_screen.dart';
 
 class ActiveProgramScreen extends StatefulWidget {
   const ActiveProgramScreen({super.key});
@@ -23,6 +25,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
   WorkoutProgramDefinition? _definition;
   List<Map<String, dynamic>> _history = const [];
   List<Map<String, dynamic>> _plan = const [];
+  List<Map<String, dynamic>> _overrides = const [];
   WorkoutProgramProgress? _progress;
   bool _loading = true;
 
@@ -36,6 +39,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
     final active = await LocalStore.activeProgram();
     final history = await LocalStore.history();
     final plan = await LocalStore.weeklyPlan();
+    final overrides = await LocalStore.programScheduleOverrides();
     final definition = active == null
         ? null
         : WorkoutProgramCatalog.find(active['programId']?.toString() ?? '');
@@ -52,6 +56,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
       _active = active;
       _history = history;
       _plan = plan;
+      _overrides = overrides;
       _definition = definition;
       _progress = progress;
       _loading = false;
@@ -59,15 +64,28 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
   }
 
   Future<void> _startToday() async {
-    final today = LocalStore.weekDays[DateTime.now().weekday - 1];
-    Map<String, dynamic>? todayPlan;
-    for (final item in _plan) {
-      if (item['day'] == today) {
-        todayPlan = item;
+    final active = _active;
+    if (active == null) {
+      return;
+    }
+    final schedule = WorkoutProgramSchedule.build(
+      activeProgram: active,
+      weeklyPlan: _plan,
+      history: _history,
+      overrides: _overrides,
+    );
+    final now = DateTime.now();
+    ProgramCalendarEntry? todayEntry;
+    for (final entry in schedule) {
+      if (!entry.isRest &&
+          ProgramCalendarEntry.sameDate(entry.scheduledDate, now) &&
+          !entry.isCompleted &&
+          !entry.isSkipped) {
+        todayEntry = entry;
         break;
       }
     }
-    if (todayPlan == null || todayPlan['isRest'] == true) {
+    if (todayEntry == null) {
       return;
     }
 
@@ -101,7 +119,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
       await LocalStore.clearActiveWorkout();
     }
 
-    final workout = WorkoutFactory.fromPlan(todayPlan);
+    final workout = WorkoutFactory.fromPlan(todayEntry.planForWorkout());
     if (workout.exercises.isEmpty || !mounted) {
       return;
     }
@@ -110,6 +128,17 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
         context,
         motion: FitRouteMotion.fullScreen,
         builder: (_) => ActiveWorkoutScreen(workout: workout),
+      ),
+    );
+    await _load();
+  }
+
+  Future<void> _openCalendar() async {
+    await Navigator.of(context).push(
+      FitRoutes.route(
+        context,
+        motion: FitRouteMotion.detail,
+        builder: (_) => const WorkoutCalendarScreen(),
       ),
     );
     await _load();
@@ -155,7 +184,9 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
 
   bool _completedThisWeek(String day) {
     final active = _active;
-    if (active == null) return false;
+    if (active == null) {
+      return false;
+    }
     final programId = active['programId']?.toString() ?? '';
     final now = DateTime.now();
     final monday = DateTime(now.year, now.month, now.day)
@@ -163,7 +194,9 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
     final nextMonday = monday.add(const Duration(days: 7));
     final workoutId = 'program_${programId}_${day.toLowerCase()}';
     return _history.any((session) {
-      if (session['workoutId']?.toString() != workoutId) return false;
+      if (session['workoutId']?.toString() != workoutId) {
+        return false;
+      }
       final date = DateTime.tryParse(session['date']?.toString() ?? '');
       return date != null &&
           !date.isBefore(monday) &&
@@ -171,21 +204,33 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
     });
   }
 
-  Map<String, dynamic>? _nextSession() {
-    if (_plan.isEmpty) return null;
-    final todayIndex = DateTime.now().weekday - 1;
-    for (var offset = 0; offset < 7; offset++) {
-      final targetDay = LocalStore.weekDays[(todayIndex + offset) % 7];
-      for (final item in _plan) {
-        if (item['day'] == targetDay && item['isRest'] != true) {
-          if (offset == 0 && _completedThisWeek(targetDay)) {
-            continue;
-          }
-          return <String, dynamic>{...item, 'offset': offset};
-        }
-      }
+  ProgramCalendarEntry? _nextSession() {
+    final active = _active;
+    if (active == null) {
+      return null;
     }
-    return null;
+    final schedule = WorkoutProgramSchedule.build(
+      activeProgram: active,
+      weeklyPlan: _plan,
+      history: _history,
+      overrides: _overrides,
+    );
+    final actionable = schedule
+        .where((entry) =>
+            !entry.isRest &&
+            !entry.isCompleted &&
+            !entry.isSkipped &&
+            entry.status != 'prestart')
+        .toList()
+      ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+    if (actionable.isEmpty) {
+      return null;
+    }
+    final missed = actionable.where((entry) => entry.isMissed).toList();
+    if (missed.isNotEmpty) {
+      return missed.last;
+    }
+    return actionable.first;
   }
 
   @override
@@ -227,14 +272,24 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
         active['name']?.toString() ?? _definition?.name ?? 'Workout Program';
     final next = _nextSession();
     final today = LocalStore.weekDays[DateTime.now().weekday - 1];
-    Map<String, dynamic>? todayPlan;
-    for (final item in _plan) {
-      if (item['day'] == today) {
-        todayPlan = item;
+    final schedule = WorkoutProgramSchedule.build(
+      activeProgram: active,
+      weeklyPlan: _plan,
+      history: _history,
+      overrides: _overrides,
+    );
+    ProgramCalendarEntry? todayEntry;
+    for (final entry in schedule) {
+      if (!entry.isRest &&
+          ProgramCalendarEntry.sameDate(entry.scheduledDate, DateTime.now()) &&
+          !entry.isCompleted &&
+          !entry.isSkipped &&
+          entry.status != 'prestart') {
+        todayEntry = entry;
         break;
       }
     }
-    final canStartToday = todayPlan != null && todayPlan['isRest'] != true;
+    final canStartToday = todayEntry != null;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -355,6 +410,12 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: _openCalendar,
+            icon: const Icon(Icons.calendar_month_rounded),
+            label: const Text('Open training calendar'),
+          ),
           const SizedBox(height: 22),
           const Text(
             'This week',
@@ -449,15 +510,22 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          next['title'].toString(),
+                          next.title,
                           style: const TextStyle(fontWeight: FontWeight.w900),
                         ),
                         Text(
-                          (next['offset'] as int) == 0
-                              ? 'Today'
-                              : 'In ${next['offset']} day${(next['offset'] as int) == 1 ? '' : 's'} • ${next['day']}',
-                          style: const TextStyle(
-                              color: AppColors.muted, fontSize: 12),
+                          next.isMissed
+                              ? 'Missed • open the calendar to reschedule'
+                              : ProgramCalendarEntry.sameDate(
+                                      next.scheduledDate, DateTime.now())
+                                  ? 'Today${next.isDeload ? ' • Deload' : ''}'
+                                  : '${next.day} • ${next.scheduledDate.month}/${next.scheduledDate.day}${next.isDeload ? ' • Deload' : ''}',
+                          style: TextStyle(
+                            color: next.isMissed
+                                ? const Color(0xFFC5532F)
+                                : AppColors.muted,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),

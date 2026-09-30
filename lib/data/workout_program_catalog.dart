@@ -273,7 +273,21 @@ class WorkoutProgramProgress {
     final elapsedDays =
         today.difference(startDay).inDays.clamp(0, 9999).toInt();
     final currentWeek = (elapsedDays ~/ 7 + 1).clamp(1, durationWeeks).toInt();
-    final totalSessions = trainingDays * durationWeeks;
+    final rawWeekdays = activeProgram['trainingWeekdays'];
+    final trainingWeekdays = rawWeekdays is List
+        ? rawWeekdays
+            .map((item) => int.tryParse(item.toString()))
+            .whereType<int>()
+            .where((day) => day >= 1 && day <= 7)
+            .toSet()
+            .toList()
+        : <int>[];
+    final preStartSessions = trainingWeekdays.isEmpty
+        ? 0
+        : trainingWeekdays.where((day) => day < startDay.weekday).length;
+    final totalSessions = (trainingDays * durationWeeks - preStartSessions)
+        .clamp(0, trainingDays * durationWeeks)
+        .toInt();
 
     final monday = today.subtract(Duration(days: today.weekday - 1));
     final nextMonday = monday.add(const Duration(days: 7));
@@ -302,7 +316,9 @@ class WorkoutProgramProgress {
       completedSessions: cappedCompleted.toInt(),
       totalSessions: totalSessions,
       thisWeekCompleted: thisWeekCompleted.clamp(0, trainingDays).toInt(),
-      thisWeekPlanned: trainingDays,
+      thisWeekPlanned: currentWeek == 1 && trainingWeekdays.isNotEmpty
+          ? trainingWeekdays.where((day) => day >= startDay.weekday).length
+          : trainingDays,
       completion: totalSessions == 0 ? 0 : cappedCompleted / totalSessions,
       durationElapsed: elapsedDays >= durationWeeks * 7,
     );

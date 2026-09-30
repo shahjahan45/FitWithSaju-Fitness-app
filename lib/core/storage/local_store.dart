@@ -20,6 +20,8 @@ class LocalStore {
   static const _activeWorkoutKey = 'active_workout_v1';
   static const _activeProgramKey = 'active_program_v1';
   static const _programHistoryKey = 'program_history_v1';
+  static const _programScheduleOverridesKey = 'program_schedule_overrides_v1';
+  static const _readinessCheckInsKey = 'readiness_check_ins_v1';
 
   static const List<String> weekDays = [
     'Monday',
@@ -258,6 +260,7 @@ class LocalStore {
     }).toList();
 
     await prefs.setString(_weeklyPlanKey, jsonEncode(normalized));
+    await prefs.remove(_programScheduleOverridesKey);
     await prefs.setString(
       _activeProgramKey,
       jsonEncode(<String, dynamic>{
@@ -266,8 +269,14 @@ class LocalStore {
         'level': level,
         'durationWeeks': durationWeeks,
         'trainingDays': trainingDays,
+        'trainingWeekdays': weeklyPlan
+            .where((item) => item['isRest'] != true)
+            .map((item) => weekDays.indexOf(item['day']?.toString() ?? '') + 1)
+            .where((value) => value > 0)
+            .toList(),
         'startedAt': DateTime.now().toIso8601String(),
         'status': 'active',
+        'deloadWeeks': <int>[],
       }),
     );
     _notify();
@@ -290,6 +299,182 @@ class LocalStore {
       jsonEncode(archive.take(20).toList()),
     );
     await prefs.remove(_activeProgramKey);
+    await prefs.remove(_programScheduleOverridesKey);
+    _notify();
+  }
+
+  static Future<List<Map<String, dynamic>>> programScheduleOverrides() async {
+    final prefs = await SharedPreferences.getInstance();
+    return _decodeList(prefs.getString(_programScheduleOverridesKey));
+  }
+
+  static Future<void> rescheduleProgramSession({
+    required String programId,
+    required String sessionKey,
+    required DateTime scheduledDate,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await programScheduleOverrides();
+    final normalizedDate = DateTime(
+      scheduledDate.year,
+      scheduledDate.month,
+      scheduledDate.day,
+    );
+    final entry = <String, dynamic>{
+      'programId': programId,
+      'sessionKey': sessionKey,
+      'scheduledDate': normalizedDate.toIso8601String(),
+      'status': 'rescheduled',
+      'updatedAt': DateTime.now().toIso8601String(),
+    };
+    final index = items.indexWhere((item) => item['sessionKey'] == sessionKey);
+    if (index >= 0) {
+      items[index] = entry;
+    } else {
+      items.add(entry);
+    }
+    await prefs.setString(_programScheduleOverridesKey, jsonEncode(items));
+    _notify();
+  }
+
+  static Future<void> skipProgramSession({
+    required String programId,
+    required String sessionKey,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await programScheduleOverrides();
+    final existingIndex =
+        items.indexWhere((item) => item['sessionKey'] == sessionKey);
+    final scheduledDate =
+        existingIndex >= 0 ? items[existingIndex]['scheduledDate'] : null;
+    final entry = <String, dynamic>{
+      'programId': programId,
+      'sessionKey': sessionKey,
+      if (scheduledDate != null) 'scheduledDate': scheduledDate,
+      'status': 'skipped',
+      'updatedAt': DateTime.now().toIso8601String(),
+    };
+    if (existingIndex >= 0) {
+      items[existingIndex] = entry;
+    } else {
+      items.add(entry);
+    }
+    await prefs.setString(_programScheduleOverridesKey, jsonEncode(items));
+    _notify();
+  }
+
+  static Future<void> resetProgramSessionSchedule(String sessionKey) async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await programScheduleOverrides();
+    items.removeWhere((item) => item['sessionKey'] == sessionKey);
+    await prefs.setString(_programScheduleOverridesKey, jsonEncode(items));
+    _notify();
+  }
+
+  static Future<void> setProgramWeekDeload(int week, bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    final active = await activeProgram();
+    if (active == null) {
+      return;
+    }
+    final current = <int>{};
+    final raw = active['deloadWeeks'];
+    if (raw is List) {
+      for (final item in raw) {
+        final value = int.tryParse(item.toString());
+        if (value != null && value > 0) {
+          current.add(value);
+        }
+      }
+    }
+    if (enabled) {
+      current.add(week);
+    } else {
+      current.remove(week);
+    }
+    active['deloadWeeks'] = current.toList()..sort();
+    await prefs.setString(_activeProgramKey, jsonEncode(active));
+    _notify();
+  }
+
+  static String localDateKey(DateTime date) {
+    final local = date.toLocal();
+    final year = local.year.toString().padLeft(4, '0');
+    final month = local.month.toString().padLeft(2, '0');
+    final day = local.day.toString().padLeft(2, '0');
+    return '$year-$month-$day';
+  }
+
+  static DateTime? dateFromLocalKey(String key) {
+    final parts = key.split('-');
+    if (parts.length != 3) {
+      return null;
+    }
+    final year = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final day = int.tryParse(parts[2]);
+    if (year == null || month == null || day == null) {
+      return null;
+    }
+    return DateTime(year, month, day);
+  }
+
+  static Future<List<Map<String, dynamic>>> readinessCheckIns() async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = _decodeList(prefs.getString(_readinessCheckInsKey));
+    items.sort((a, b) => (b['dateKey']?.toString() ?? '')
+        .compareTo(a['dateKey']?.toString() ?? ''));
+    return items;
+  }
+
+  static Future<Map<String, dynamic>?> readinessCheckInForDate(
+    DateTime date,
+  ) async {
+    final key = localDateKey(date);
+    final items = await readinessCheckIns();
+    for (final item in items) {
+      if (item['dateKey']?.toString() == key) {
+        return Map<String, dynamic>.from(item);
+      }
+    }
+    return null;
+  }
+
+  static Future<void> saveReadinessCheckIn({
+    required DateTime date,
+    required int sleepQuality,
+    required int energy,
+    required int soreness,
+    required int stress,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = await readinessCheckIns();
+    final key = localDateKey(date);
+    final now = DateTime.now().toIso8601String();
+    final index =
+        items.indexWhere((item) => item['dateKey']?.toString() == key);
+    final previousCreatedAt =
+        index >= 0 ? items[index]['createdAt']?.toString() : null;
+    final entry = <String, dynamic>{
+      'dateKey': key,
+      'sleepQuality': sleepQuality.clamp(1, 5).toInt(),
+      'energy': energy.clamp(1, 5).toInt(),
+      'soreness': soreness.clamp(1, 5).toInt(),
+      'stress': stress.clamp(1, 5).toInt(),
+      'createdAt': previousCreatedAt ?? now,
+      'updatedAt': now,
+    };
+    if (index >= 0) {
+      items[index] = entry;
+    } else {
+      items.add(entry);
+    }
+    items.sort((a, b) => (b['dateKey']?.toString() ?? '')
+        .compareTo(a['dateKey']?.toString() ?? ''));
+    await prefs.setString(
+      _readinessCheckInsKey,
+      jsonEncode(items.take(730).toList()),
+    );
     _notify();
   }
 
@@ -531,7 +716,7 @@ class LocalStore {
   static Future<Map<String, dynamic>> exportData() async {
     return <String, dynamic>{
       'app': 'FitWithSaju',
-      'formatVersion': 4,
+      'formatVersion': 6,
       'exportedAt': DateTime.now().toIso8601String(),
       'onboardingComplete': await onboardingComplete(),
       'profile': await profile(),
@@ -544,6 +729,8 @@ class LocalStore {
       'activeWorkout': await activeWorkout(),
       'activeProgram': await activeProgram(),
       'programHistory': await programHistory(),
+      'programScheduleOverrides': await programScheduleOverrides(),
+      'readinessCheckIns': await readinessCheckIns(),
     };
   }
 
@@ -586,6 +773,9 @@ class LocalStore {
     final activeWorkoutValue = data['activeWorkout'];
     final activeProgramValue = data['activeProgram'];
     final programHistoryItems = _mapList(data['programHistory']);
+    final programScheduleOverrideItems =
+        _mapList(data['programScheduleOverrides']);
+    final readinessCheckInItems = _mapList(data['readinessCheckIns']);
     final favoritesValue = data['favorites'];
     final favoriteIds = favoritesValue is List
         ? favoritesValue.map((item) => item.toString()).toList()
@@ -621,6 +811,14 @@ class LocalStore {
     await prefs.setString(
       _programHistoryKey,
       jsonEncode(programHistoryItems.take(20).toList()),
+    );
+    await prefs.setString(
+      _programScheduleOverridesKey,
+      jsonEncode(programScheduleOverrideItems.take(500).toList()),
+    );
+    await prefs.setString(
+      _readinessCheckInsKey,
+      jsonEncode(readinessCheckInItems.take(730).toList()),
     );
     _notify();
   }

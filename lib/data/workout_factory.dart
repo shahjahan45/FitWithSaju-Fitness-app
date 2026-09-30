@@ -28,6 +28,10 @@ class WorkoutFactory {
       durationMinutes: (map['durationMinutes'] as num?)?.toInt() ??
           (exercises.length * 10).clamp(10, 90).toInt(),
       exercises: exercises,
+      programSessionKey: map['programSessionKey']?.toString(),
+      scheduledDate: map['scheduledDate']?.toString(),
+      programWeek: (map['programWeek'] as num?)?.toInt(),
+      isDeload: map['isDeload'] == true,
     );
   }
 
@@ -41,6 +45,10 @@ class WorkoutFactory {
       durationMinutes: (map['durationMinutes'] as num?)?.toInt() ??
           (exercises.length * 10).clamp(10, 90).toInt(),
       exercises: exercises,
+      programSessionKey: map['programSessionKey']?.toString(),
+      scheduledDate: map['scheduledDate']?.toString(),
+      programWeek: (map['programWeek'] as num?)?.toInt(),
+      isDeload: map['isDeload'] == true,
     );
   }
 

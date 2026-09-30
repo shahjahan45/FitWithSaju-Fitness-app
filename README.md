@@ -109,3 +109,11 @@ Version: `1.11.2+25`
 - Backup format v4 includes active-program state and program history.
 
 Version: `1.14.0+29`
+
+## v24 — Daily Readiness & Recovery
+
+FitWithSaju v24 adds a local-first daily readiness system without changing workouts automatically. Users can save or edit one check-in per local calendar date for sleep quality, energy, muscle soreness, and stress. A transparent 0–100 fitness/recovery guidance score combines those inputs with hydration progress, recent workout frequency, seven-day training volume, and active-program/recovery-day context.
+
+The new Recovery & Readiness screen includes an animated score ring, guidance, score breakdown, hydration and training-load context, seven-day readiness history, average/best/lowest recovery summaries, today's active-program session, Training Calendar access, and a user-confirmed quick reschedule option when readiness is low. Home, Workout, and Progress now surface live readiness cards. Readiness check-ins are included in Backup & Restore format version 6.
+
+The readiness score is fitness guidance only. It is not medical or clinical advice and never cancels, skips, or changes a workout automatically.

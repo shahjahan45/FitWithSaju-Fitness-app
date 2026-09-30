@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
 import '../nutrition/nutrition_home_shortcut.dart';
+import '../recovery/readiness_summary_card.dart';
 import '../workout/active_workout_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -99,6 +100,11 @@ class _HomeContent extends StatelessWidget {
               ),
               const SizedBox(height: 14),
             ],
+            const MotionReveal(
+              delay: Duration(milliseconds: 75),
+              child: ReadinessSummaryCard(),
+            ),
+            const SizedBox(height: 14),
             MotionReveal(
               delay: const Duration(milliseconds: 90),
               child: BreathingGlow(

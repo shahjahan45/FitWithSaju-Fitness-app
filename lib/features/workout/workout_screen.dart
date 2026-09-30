@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
+import '../../core/navigation/settled_dialog.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
+import '../recovery/readiness_summary_card.dart';
 import 'active_program_screen.dart';
 import 'active_workout_screen.dart';
 import 'custom_workout_screen.dart';
 import 'day_plan_editor_screen.dart';
 import 'workout_programs_screen.dart';
+import 'workout_calendar_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -88,8 +91,19 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     }
   }
 
+  Future<void> _openCalendar() async {
+    await Navigator.of(context).push(
+      FitRoutes.route(
+        context,
+        motion: FitRouteMotion.detail,
+        builder: (_) => const WorkoutCalendarScreen(),
+      ),
+    );
+    await _load();
+  }
+
   Future<void> _copyDay(String fromDay) async {
-    final toDay = await showModalBottomSheet<String>(
+    final toDay = await showSettledModalBottomSheet<String>(
       context: context,
       useSafeArea: true,
       builder: (sheetContext) => SafeArea(
@@ -138,7 +152,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     bool custom = false,
   }) async {
     if (_activeDraft != null) {
-      final discard = await showDialog<bool>(
+      final discard = await showSettledDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
           title: const Text('Workout already in progress'),
@@ -209,12 +223,33 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
+                const MotionReveal(
+                  delay: Duration(milliseconds: 25),
+                  child:
+                      ReadinessSummaryCard(eyebrow: 'RECOVERY BEFORE TRAINING'),
+                ),
+                const SizedBox(height: 16),
                 if (_activeProgram != null) ...[
                   MotionReveal(
                     delay: const Duration(milliseconds: 40),
                     child: _ActiveProgramCard(
                       program: _activeProgram!,
                       onTap: _openActiveProgram,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  MotionReveal(
+                    delay: const Duration(milliseconds: 55),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _openCalendar,
+                            icon: const Icon(Icons.calendar_month_rounded),
+                            label: const Text('Training calendar'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),

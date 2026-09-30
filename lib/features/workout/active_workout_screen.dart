@@ -129,6 +129,13 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       'weight': weightController.text,
       'reps': repsController.text,
       'restEndAt': _restEndAt?.toIso8601String(),
+      if (widget.workout.programSessionKey != null)
+        'programSessionKey': widget.workout.programSessionKey,
+      if (widget.workout.scheduledDate != null)
+        'scheduledDate': widget.workout.scheduledDate,
+      if (widget.workout.programWeek != null)
+        'programWeek': widget.workout.programWeek,
+      'isDeload': widget.workout.isDeload,
       'updatedAt': DateTime.now().toIso8601String(),
     });
   }
@@ -153,9 +160,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       _previousSet = previous;
       _loadingPrevious = false;
       if (prefill || previous != null && weightController.text.isEmpty) {
-        weightController.text = previous == null
-            ? _defaultWeight(exercise).toStringAsFixed(0)
-            : _formatNumber((previous['weight'] as num?)?.toDouble() ?? 0);
+        final suggestedWeight = previous == null
+            ? _defaultWeight(exercise)
+            : ((previous['weight'] as num?)?.toDouble() ?? 0);
+        final adjustedWeight =
+            widget.workout.isDeload ? suggestedWeight * .85 : suggestedWeight;
+        weightController.text = _formatNumber(adjustedWeight);
         repsController.text = previous == null
             ? _targetReps(exercise).toString()
             : ((previous['reps'] as num?)?.toInt() ?? _targetReps(exercise))
@@ -230,7 +240,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       );
     }
 
-    if (setIndex < exercise.sets) {
+    if (setIndex < _targetSetCount(exercise)) {
       setState(() {
         rest = exercise.restSeconds;
         setIndex++;
@@ -557,6 +567,13 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         'totalVolume': totalVolume,
         'prCount': _prCount,
         'sets': _sessionSets,
+        if (widget.workout.programSessionKey != null)
+          'programSessionKey': widget.workout.programSessionKey,
+        if (widget.workout.scheduledDate != null)
+          'scheduledDate': widget.workout.scheduledDate,
+        if (widget.workout.programWeek != null)
+          'programWeek': widget.workout.programWeek,
+        'isDeload': widget.workout.isDeload,
       });
       _finishedOrDiscarded = true;
       await LocalStore.clearActiveWorkout();
@@ -666,7 +683,33 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
             color: AppColors.primary,
             backgroundColor: AppColors.surfaceAlt,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 18),
+          if (widget.workout.isDeload) ...[
+            Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: AppColors.primarySoft,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.self_improvement_rounded,
+                      color: AppColors.primary),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Deload session • one fewer set per exercise and a 15% lighter starting load. Keep every rep controlled and stop well before failure.',
+                      style:
+                          TextStyle(height: 1.4, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+          ] else
+            const SizedBox(height: 6),
           Container(
             height: 230,
             decoration: BoxDecoration(
@@ -712,7 +755,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                   ],
                 ),
               ),
-              _SetBadge(current: setIndex, total: exercise.sets),
+              _SetBadge(current: setIndex, total: _targetSetCount(exercise)),
             ],
           ),
           const SizedBox(height: 20),
@@ -846,6 +889,13 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         ],
       ),
     );
+  }
+
+  int _targetSetCount(Exercise exercise) {
+    if (!widget.workout.isDeload) {
+      return exercise.sets;
+    }
+    return (exercise.sets - 1).clamp(1, exercise.sets).toInt();
   }
 
   static double _defaultWeight(Exercise exercise) {

@@ -233,7 +233,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Restore this backup?'),
         content: const Text(
-          'Saved workout data, body metrics, and Diet & Meal Plan data on this device will be replaced by the backup.',
+          'Saved workout data, recovery/readiness history, body metrics, and Diet & Meal Plan data on this device will be replaced by the backup.',
         ),
         actions: [
           TextButton(
