@@ -213,7 +213,10 @@ class _BreathingGlowState extends State<BreathingGlow>
   @override
   Widget build(BuildContext context) {
     if (AppMotion.reducedMotion(context)) {
-      return widget.child;
+      return Material(
+        type: MaterialType.transparency,
+        child: widget.child,
+      );
     }
     return AnimatedBuilder(
       animation: _controller,
@@ -232,7 +235,10 @@ class _BreathingGlowState extends State<BreathingGlow>
               ),
             ],
           ),
-          child: child,
+          child: Material(
+            type: MaterialType.transparency,
+            child: child,
+          ),
         );
       },
     );

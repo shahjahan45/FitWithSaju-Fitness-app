@@ -427,34 +427,17 @@ class _TodayWorkoutCard extends StatelessWidget {
               Text(subtitle, style: const TextStyle(color: Colors.white70)),
               if (!isRest) ...[
                 const SizedBox(height: 15),
-                Row(
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
                   children: [
-                    const Icon(
-                      Icons.schedule_rounded,
-                      color: Colors.white70,
-                      size: 16,
+                    _WorkoutMetaItem(
+                      icon: Icons.schedule_rounded,
+                      label: '$durationMinutes min',
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$durationMinutes min',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Icon(
-                      Icons.fitness_center_rounded,
-                      color: Colors.white70,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$exerciseCount exercises',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    _WorkoutMetaItem(
+                      icon: Icons.fitness_center_rounded,
+                      label: '$exerciseCount exercises',
                     ),
                   ],
                 ),
@@ -491,6 +474,31 @@ class _TodayWorkoutCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _WorkoutMetaItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _WorkoutMetaItem({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: Colors.white70, size: 16),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 }

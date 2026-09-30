@@ -45,8 +45,14 @@ class ProgramCalendarEntry {
       if (!baseTitle.toLowerCase().startsWith('deload')) {
         copy['title'] = 'Deload • $baseTitle';
       }
-      final duration = (copy['durationMinutes'] as num?)?.toInt() ?? 45;
-      copy['durationMinutes'] = (duration * .75).round().clamp(15, duration);
+      final rawDuration = copy['durationMinutes'];
+      final duration = (rawDuration is num
+              ? rawDuration.toInt()
+              : int.tryParse(rawDuration?.toString() ?? '') ?? 45)
+          .clamp(1, 600)
+          .toInt();
+      copy['durationMinutes'] =
+          (duration * .75).round().clamp(1, duration).toInt();
     }
     return copy;
   }
@@ -73,7 +79,7 @@ class WorkoutProgramSchedule {
     final todayRaw = now ?? DateTime.now();
     final today = DateTime(todayRaw.year, todayRaw.month, todayRaw.day);
     final start = startMonday(activeProgram);
-    final duration = ((activeProgram['durationWeeks'] as num?)?.toInt() ?? 1)
+    final duration = _safeInt(activeProgram['durationWeeks'], fallback: 1)
         .clamp(1, 52)
         .toInt();
     final week = today.difference(start).inDays ~/ 7 + 1;
@@ -104,10 +110,9 @@ class WorkoutProgramSchedule {
     final todayRaw = now ?? DateTime.now();
     final today = DateTime(todayRaw.year, todayRaw.month, todayRaw.day);
     final programId = activeProgram['programId']?.toString() ?? '';
-    final durationWeeks =
-        ((activeProgram['durationWeeks'] as num?)?.toInt() ?? 1)
-            .clamp(1, 52)
-            .toInt();
+    final durationWeeks = _safeInt(activeProgram['durationWeeks'], fallback: 1)
+        .clamp(1, 52)
+        .toInt();
     final start = startMonday(activeProgram);
     final deload = deloadWeeks(activeProgram).toSet();
 
@@ -232,6 +237,13 @@ class WorkoutProgramSchedule {
       }
     }
     return false;
+  }
+
+  static int _safeInt(dynamic value, {required int fallback}) {
+    if (value is num) {
+      return value.toInt();
+    }
+    return int.tryParse(value?.toString() ?? '') ?? fallback;
   }
 
   static DateTime? _parseDateOnly(dynamic value) {

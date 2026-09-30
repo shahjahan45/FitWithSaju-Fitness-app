@@ -42,8 +42,9 @@ class ReadinessService {
                 programSession?.isDeload == true,
           );
 
-    final recentHistory = await _recentHistory(
+    final recentHistory = await _history(
       anchor: target,
+      days: 7,
       workoutHistory: history,
       activeProgram: activeProgram,
       weeklyPlan: weeklyPlan,
@@ -60,6 +61,28 @@ class ReadinessService {
       trainingLoad: load,
       programSession: programSession,
       history: recentHistory,
+    );
+  }
+
+  static Future<List<ReadinessHistoryPoint>> historyFor({
+    DateTime? anchor,
+    int days = 28,
+  }) async {
+    final targetRaw = anchor ?? DateTime.now();
+    final target = DateTime(targetRaw.year, targetRaw.month, targetRaw.day);
+    final history = await LocalStore.history();
+    final activeProgram = await LocalStore.activeProgram();
+    final weeklyPlan = await LocalStore.weeklyPlan();
+    final overrides = await LocalStore.programScheduleOverrides();
+    final nutritionPreferences = await NutritionStore.preferences();
+    return _history(
+      anchor: target,
+      days: days.clamp(1, 365).toInt(),
+      workoutHistory: history,
+      activeProgram: activeProgram,
+      weeklyPlan: weeklyPlan,
+      overrides: overrides,
+      waterTargetMl: nutritionPreferences.waterTargetMl,
     );
   }
 
@@ -100,8 +123,9 @@ class ReadinessService {
     );
   }
 
-  static Future<List<ReadinessHistoryPoint>> _recentHistory({
+  static Future<List<ReadinessHistoryPoint>> _history({
     required DateTime anchor,
+    required int days,
     required List<Map<String, dynamic>> workoutHistory,
     required Map<String, dynamic>? activeProgram,
     required List<Map<String, dynamic>> weeklyPlan,
@@ -109,7 +133,7 @@ class ReadinessService {
     required int waterTargetMl,
   }) async {
     final all = await LocalStore.readinessCheckIns();
-    final start = anchor.subtract(const Duration(days: 6));
+    final start = anchor.subtract(Duration(days: days - 1));
     final points = <ReadinessHistoryPoint>[];
     for (final item in all) {
       final date =
@@ -177,13 +201,23 @@ class ReadinessService {
   }
 
   static double _sessionVolume(Map<String, dynamic> session) {
-    final stored = (session['totalVolume'] as num?)?.toDouble();
+    final stored = _asFiniteDouble(session['totalVolume']);
     if (stored != null) {
       return stored;
     }
     return LocalStore.sessionSets(session).fold<double>(
       0,
-      (sum, set) => sum + ((set['volume'] as num?)?.toDouble() ?? 0),
+      (sum, set) => sum + (_asFiniteDouble(set['volume']) ?? 0),
     );
+  }
+
+  static double? _asFiniteDouble(dynamic value) {
+    final parsed = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '');
+    if (parsed == null || !parsed.isFinite || parsed < 0) {
+      return null;
+    }
+    return parsed;
   }
 }

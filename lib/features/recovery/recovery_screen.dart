@@ -12,6 +12,8 @@ import '../nutrition/data/nutrition_store.dart';
 import '../workout/workout_calendar_screen.dart';
 import 'data/readiness_models.dart';
 import 'data/readiness_service.dart';
+import 'data/recovery_insights_calculator.dart';
+import 'recovery_insights_screen.dart';
 
 class RecoveryScreen extends StatefulWidget {
   const RecoveryScreen({super.key});
@@ -118,23 +120,26 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (_, index) {
                     final date = base.add(Duration(days: index + 1));
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: AppColors.primarySoft,
-                        foregroundColor: AppColors.primary,
-                        child: Text(
-                          '${date.day}',
-                          style: const TextStyle(fontWeight: FontWeight.w900),
+                    return Material(
+                      type: MaterialType.transparency,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: AppColors.primarySoft,
+                          foregroundColor: AppColors.primary,
+                          child: Text(
+                            '${date.day}',
+                            style: const TextStyle(fontWeight: FontWeight.w900),
+                          ),
                         ),
+                        title: Text(
+                          _weekday(date.weekday),
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
+                        subtitle: Text(_dateLabel(date)),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: () => Navigator.of(sheetContext).pop(date),
                       ),
-                      title: Text(
-                        _weekday(date.weekday),
-                        style: const TextStyle(fontWeight: FontWeight.w800),
-                      ),
-                      subtitle: Text(_dateLabel(date)),
-                      trailing: const Icon(Icons.chevron_right_rounded),
-                      onTap: () => Navigator.of(sheetContext).pop(date),
                     );
                   },
                 ),
@@ -171,6 +176,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
         builder: (context, _) => FutureBuilder<ReadinessSnapshot>(
           future: _future,
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return _RecoveryLoadError(onRetry: _reload);
+            }
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -184,6 +192,53 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   : null,
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _RecoveryLoadError extends StatelessWidget {
+  final VoidCallback onRetry;
+
+  const _RecoveryLoadError({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: FitCard(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircleAvatar(
+                  backgroundColor: AppColors.primarySoft,
+                  foregroundColor: AppColors.primary,
+                  child: Icon(Icons.refresh_rounded),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Recovery data could not be loaded',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Your saved workout and nutrition data is unchanged. Retry after the screen refreshes.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.muted, height: 1.4),
+                ),
+                const SizedBox(height: 14),
+                FilledButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -248,7 +303,7 @@ class _RecoveryContent extends StatelessWidget {
         if (assessment != null) ...[
           MotionReveal(
             delay: const Duration(milliseconds: 125),
-            child: _RecommendationCard(assessment: assessment),
+            child: _RecommendationCard(data: data),
           ),
           const SizedBox(height: 16),
           MotionReveal(
@@ -507,11 +562,18 @@ class _SignalData {
 }
 
 class _RecommendationCard extends StatelessWidget {
-  final ReadinessAssessment assessment;
-  const _RecommendationCard({required this.assessment});
+  final ReadinessSnapshot data;
+  const _RecommendationCard({required this.data});
 
   @override
   Widget build(BuildContext context) {
+    final assessment = data.assessment!;
+    final session = data.programSession;
+    final guidance = RecoveryInsightsCalculator.guidance(
+      assessment: assessment,
+      hasProgramSessionToday: session != null && !session.isRest,
+      isRestOrDeloadDay: session?.isRest == true || session?.isDeload == true,
+    );
     return FitCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,7 +588,7 @@ class _RecommendationCard extends StatelessWidget {
               SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Today’s guidance',
+                  'Today’s smart guidance',
                   style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
                 ),
               ),
@@ -534,7 +596,7 @@ class _RecommendationCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            assessment.label,
+            guidance.title,
             style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
           ),
           const SizedBox(height: 6),
@@ -542,10 +604,84 @@ class _RecommendationCard extends StatelessWidget {
             assessment.recommendation,
             style: const TextStyle(color: AppColors.muted, height: 1.45),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: _GuidanceMetric(
+                  label: 'Effort',
+                  value: guidance.effortLabel,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _GuidanceMetric(
+                  label: 'Volume',
+                  value: guidance.volumeLabel,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ...guidance.actions.take(3).map(
+                (action) => Padding(
+                  padding: const EdgeInsets.only(bottom: 7),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.check_circle_outline_rounded,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          action,
+                          style: const TextStyle(fontSize: 12, height: 1.35),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          const SizedBox(height: 5),
           const Text(
-            'FitWithSaju never cancels, skips, or changes a workout automatically.',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+            'Optional fitness guidance only. FitWithSaju never cancels, skips, or changes a workout automatically.',
+            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GuidanceMetric extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _GuidanceMetric({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: const TextStyle(color: AppColors.muted, fontSize: 9.5)),
+          const SizedBox(height: 3),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11.5),
           ),
         ],
       ),
@@ -867,6 +1003,22 @@ class _ReadinessHistoryCard extends StatelessWidget {
                   ),
                 ),
           ],
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              key: const Key('open-recovery-insights'),
+              onPressed: () => Navigator.of(context).push(
+                FitRoutes.route(
+                  context,
+                  motion: FitRouteMotion.detail,
+                  builder: (_) => const RecoveryInsightsScreen(),
+                ),
+              ),
+              icon: const Icon(Icons.insights_rounded),
+              label: const Text('View 28-day recovery insights'),
+            ),
+          ),
         ],
       ),
     );

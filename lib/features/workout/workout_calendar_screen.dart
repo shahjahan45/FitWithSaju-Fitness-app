@@ -146,20 +146,24 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (_, index) {
                     final date = base.add(Duration(days: index));
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: AppColors.primarySoft,
-                        foregroundColor: AppColors.primary,
-                        child: Text('${date.day}',
+                    return Material(
+                      type: MaterialType.transparency,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: AppColors.primarySoft,
+                          foregroundColor: AppColors.primary,
+                          child: Text('${date.day}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w900)),
+                        ),
+                        title: Text(_weekday(date),
                             style:
-                                const TextStyle(fontWeight: FontWeight.w900)),
+                                const TextStyle(fontWeight: FontWeight.w800)),
+                        subtitle: Text(_shortDate(date)),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: () => Navigator.of(sheetContext).pop(date),
                       ),
-                      title: Text(_weekday(date),
-                          style: const TextStyle(fontWeight: FontWeight.w800)),
-                      subtitle: Text(_shortDate(date)),
-                      trailing: const Icon(Icons.chevron_right_rounded),
-                      onTap: () => Navigator.of(sheetContext).pop(date),
                     );
                   },
                 ),

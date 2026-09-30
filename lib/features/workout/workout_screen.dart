@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
 import '../recovery/readiness_summary_card.dart';
+import '../recovery/smart_training_guidance_card.dart';
 import 'active_program_screen.dart';
 import 'active_workout_screen.dart';
 import 'custom_workout_screen.dart';
@@ -117,10 +118,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             ),
             const SizedBox(height: 8),
             ...LocalStore.weekDays.where((day) => day != fromDay).map(
-                  (day) => ListTile(
-                    title: Text(day),
-                    trailing: const Icon(Icons.chevron_right_rounded),
-                    onTap: () => Navigator.of(sheetContext).pop(day),
+                  (day) => Material(
+                    type: MaterialType.transparency,
+                    child: ListTile(
+                      title: Text(day),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => Navigator.of(sheetContext).pop(day),
+                    ),
                   ),
                 ),
           ],
@@ -227,6 +231,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   delay: Duration(milliseconds: 25),
                   child:
                       ReadinessSummaryCard(eyebrow: 'RECOVERY BEFORE TRAINING'),
+                ),
+                const SizedBox(height: 12),
+                const MotionReveal(
+                  delay: Duration(milliseconds: 40),
+                  child: SmartTrainingGuidanceCard(),
                 ),
                 const SizedBox(height: 16),
                 if (_activeProgram != null) ...[

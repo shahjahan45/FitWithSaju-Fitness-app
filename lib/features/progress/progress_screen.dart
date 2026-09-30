@@ -8,6 +8,7 @@ import '../../core/widgets/fit_card.dart';
 import '../../data/workout_program_catalog.dart';
 import '../workout/active_program_screen.dart';
 import '../recovery/readiness_summary_card.dart';
+import '../recovery/recovery_insights_summary_card.dart';
 import '../more/achievements_screen.dart';
 import 'history_screen.dart';
 import 'weight_tracker_screen.dart';
@@ -105,6 +106,11 @@ class _ProgressContent extends StatelessWidget {
           const MotionReveal(
             delay: Duration(milliseconds: 25),
             child: ReadinessSummaryCard(eyebrow: 'RECOVERY TREND'),
+          ),
+          const SizedBox(height: 12),
+          const MotionReveal(
+            delay: Duration(milliseconds: 40),
+            child: RecoveryInsightsSummaryCard(),
           ),
           const SizedBox(height: 16),
           if (activeProgram != null) ...[
