@@ -1,4 +1,4 @@
-# FitWithSaju Development Status — v17.5
+# FitWithSaju Development Status — v27
 
 ## Core mobile app
 - [x] Professional light design system and reusable motion system
@@ -53,3 +53,13 @@
 - [x] Public exercise/recipe/meal-plan content APIs
 
 Personal workout, body and nutrition-log data remains local to the device by design; no mobile user login is required.
+
+
+## Recovery & training guidance
+- [x] Daily readiness check-in and transparent 0–100 fitness guidance score
+- [x] Recovery dashboard, 7-day history and 28-day insights
+- [x] Weekly Recovery Review and Smart Training Guidance
+- [x] 7-day training volume compared with previous 3-week personal baseline
+- [x] Next 7-day plan preview from active program calendar or weekly planner
+- [x] Rest, deload and rescheduled-session context preserved
+- [x] Guidance remains user-controlled and never changes workouts automatically

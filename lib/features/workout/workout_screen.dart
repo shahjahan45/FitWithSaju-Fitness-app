@@ -9,6 +9,7 @@ import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
 import '../recovery/readiness_summary_card.dart';
 import '../recovery/smart_training_guidance_card.dart';
+import '../recovery/training_balance_summary_card.dart';
 import 'active_program_screen.dart';
 import 'active_workout_screen.dart';
 import 'custom_workout_screen.dart';
@@ -236,6 +237,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 const MotionReveal(
                   delay: Duration(milliseconds: 40),
                   child: SmartTrainingGuidanceCard(),
+                ),
+                const SizedBox(height: 12),
+                const MotionReveal(
+                  delay: Duration(milliseconds: 55),
+                  child: TrainingBalanceSummaryCard(
+                    eyebrow: 'WEEKLY TRAINING BALANCE',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 if (_activeProgram != null) ...[

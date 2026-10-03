@@ -12,6 +12,7 @@ import '../nutrition/data/nutrition_store.dart';
 import 'data/readiness_models.dart';
 import 'data/recovery_insights_models.dart';
 import 'data/recovery_insights_service.dart';
+import 'training_balance_summary_card.dart';
 
 class RecoveryInsightsScreen extends StatefulWidget {
   final DateTime? anchorDate;
@@ -140,9 +141,16 @@ class _InsightsContent extends StatelessWidget {
           delay: const Duration(milliseconds: 70),
           child: _WeeklyRecoveryReviewCard(data: data),
         ),
+        const SizedBox(height: 12),
+        const MotionReveal(
+          delay: Duration(milliseconds: 85),
+          child: TrainingBalanceSummaryCard(
+            eyebrow: 'TRAINING LOAD CONTEXT',
+          ),
+        ),
         const SizedBox(height: 16),
         MotionReveal(
-          delay: const Duration(milliseconds: 95),
+          delay: const Duration(milliseconds: 105),
           child: _ReadinessChartCard(data: data),
         ),
         const SizedBox(height: 16),
