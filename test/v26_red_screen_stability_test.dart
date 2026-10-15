@@ -45,8 +45,7 @@ void main() {
     expect(result.volume28, closeTo(2000.5, .001));
   });
 
-  test('program calendar tolerates string duration fields from older backups',
-      () {
+  test('program calendar tolerates string duration fields from older backups', () {
     final entries = WorkoutProgramSchedule.build(
       activeProgram: <String, dynamic>{
         'programId': 'foundation',
@@ -75,8 +74,7 @@ void main() {
     expect(deloadMonday.planForWorkout()['durationMinutes'], 9);
   });
 
-  testWidgets('breathing glow supplies a Material ancestor safely',
-      (tester) async {
+  testWidgets('breathing glow supplies a Material ancestor safely', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
@@ -92,8 +90,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('home layout stays safe on a narrow Android-size viewport',
-      (tester) async {
+  testWidgets('home layout stays safe on a narrow Android-size viewport', (tester) async {
     tester.view.physicalSize = const Size(320, 760);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);

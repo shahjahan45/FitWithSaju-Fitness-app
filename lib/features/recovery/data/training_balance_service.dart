@@ -14,8 +14,7 @@ class TrainingBalanceService {
     final weeklyPlan = await LocalStore.weeklyPlan();
     final activeProgram = await LocalStore.activeProgram();
     final overrides = await LocalStore.programScheduleOverrides();
-    final readiness =
-        await ReadinessService.historyFor(anchor: anchor, days: 7);
+    final readiness = await ReadinessService.historyFor(anchor: anchor, days: 7);
     final readinessAverage = readiness.isEmpty
         ? null
         : (readiness.fold<int>(0, (sum, item) => sum + item.score) /

@@ -73,6 +73,7 @@ class RecoveryInsights {
     return 'Build your check-in baseline';
   }
 
+
   double? get weeklyVolumeRatio {
     if (previous7Volume <= 0) {
       return null;

@@ -62,8 +62,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
           }
           final json = snapshot.data!;
           final screenHeight = MediaQuery.sizeOf(context).height;
-          final jsonHeight =
-              (screenHeight * .42).clamp(260.0, 480.0).toDouble();
+          final jsonHeight = (screenHeight * .42).clamp(260.0, 480.0).toDouble();
 
           return FitScrollableScreen(
             listKey: const Key('backup-restore-scroll'),
@@ -285,90 +284,90 @@ class _DataImportScreenState extends State<DataImportScreen> {
       body: FitSafeBody(
         bottomSpacing: 20,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Paste your JSON backup',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'The backup is validated before anything is restored.',
-              style: TextStyle(color: AppColors.muted),
-            ),
-            const SizedBox(height: 14),
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                expands: true,
-                minLines: null,
-                maxLines: null,
-                textAlignVertical: TextAlignVertical.top,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-                decoration: const InputDecoration(
-                  hintText: '{\n  "app": "FitWithSaju",\n  ...\n}',
-                  alignLabelWithHint: true,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Paste your JSON backup',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'The backup is validated before anything is restored.',
+                style: TextStyle(color: AppColors.muted),
+              ),
+              const SizedBox(height: 14),
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  expands: true,
+                  minLines: null,
+                  maxLines: null,
+                  textAlignVertical: TextAlignVertical.top,
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                  decoration: const InputDecoration(
+                    hintText: '{\n  "app": "FitWithSaju",\n  ...\n}',
+                    alignLabelWithHint: true,
+                  ),
                 ),
               ),
-            ),
-            if (_error != null) ...[
-              const SizedBox(height: 10),
-              Text(
-                _error!,
-                style: const TextStyle(color: AppColors.danger, fontSize: 12),
-              ),
-            ],
-            const SizedBox(height: 14),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final stackButtons = constraints.maxWidth < 350;
-                final pasteButton = SizedBox(
-                  height: 54,
-                  child: OutlinedButton.icon(
-                    onPressed: _importing ? null : _paste,
-                    icon: const Icon(Icons.content_paste_rounded),
-                    label: const Text('Paste'),
-                  ),
-                );
-                final restoreButton = SizedBox(
-                  height: 54,
-                  child: FilledButton.icon(
-                    onPressed: _importing ? null : _import,
-                    icon: _importing
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.restore_rounded),
-                    label: const Text(
-                      'Restore',
-                      style: TextStyle(fontWeight: FontWeight.w900),
+              if (_error != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  _error!,
+                  style: const TextStyle(color: AppColors.danger, fontSize: 12),
+                ),
+              ],
+              const SizedBox(height: 14),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final stackButtons = constraints.maxWidth < 350;
+                  final pasteButton = SizedBox(
+                    height: 54,
+                    child: OutlinedButton.icon(
+                      onPressed: _importing ? null : _paste,
+                      icon: const Icon(Icons.content_paste_rounded),
+                      label: const Text('Paste'),
                     ),
-                  ),
-                );
-                if (stackButtons) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  );
+                  final restoreButton = SizedBox(
+                    height: 54,
+                    child: FilledButton.icon(
+                      onPressed: _importing ? null : _import,
+                      icon: _importing
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.restore_rounded),
+                      label: const Text(
+                        'Restore',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  );
+                  if (stackButtons) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        pasteButton,
+                        const SizedBox(height: 12),
+                        restoreButton,
+                      ],
+                    );
+                  }
+                  return Row(
                     children: [
-                      pasteButton,
-                      const SizedBox(height: 12),
-                      restoreButton,
+                      Expanded(child: pasteButton),
+                      const SizedBox(width: 12),
+                      Expanded(child: restoreButton),
                     ],
                   );
-                }
-                return Row(
-                  children: [
-                    Expanded(child: pasteButton),
-                    const SizedBox(width: 12),
-                    Expanded(child: restoreButton),
-                  ],
-                );
-              },
-            ),
-          ],
+                },
+              ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/navigation/settled_dialog.dart';
 import '../../core/widgets/app_screen.dart';
-
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/pro_empty_state.dart';
@@ -35,64 +35,152 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
     final controllers = {
       for (final field in fields) field: TextEditingController(),
     };
-    final values = await showModalBottomSheet<Map<String, double>>(
+    final values = await showSettledModalBottomSheet<Map<String, double>>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (sheetContext) => Padding(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          24,
-          20,
-          MediaQuery.viewInsetsOf(sheetContext).bottom + 24,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Add measurements',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
-              ),
-              const SizedBox(height: 16),
-              ...fields.map(
-                (field) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: TextField(
-                    controller: controllers[field],
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    decoration:
-                        InputDecoration(labelText: field, suffixText: 'CM'),
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final media = MediaQuery.of(sheetContext);
+        final keyboardInset = media.viewInsets.bottom;
+        final availableHeight = media.size.height - keyboardInset;
+        final desiredHeight = availableHeight * .88;
+        final sheetHeight = desiredHeight > 720 ? 720.0 : desiredHeight;
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final canSave = controllers.values.any(
+              (controller) {
+                final value = double.tryParse(controller.text.trim());
+                return value != null && value > 0;
+              },
+            );
+
+            return AnimatedPadding(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOutCubic,
+              padding: EdgeInsets.only(bottom: keyboardInset),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: sheetHeight,
+                  child: Material(
+                    color: AppColors.surface,
+                    elevation: 0,
+                    clipBehavior: Clip.antiAlias,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
+                    child: SafeArea(
+                      top: false,
+                      maintainBottomViewPadding: true,
+                      minimum: const EdgeInsets.only(bottom: 14),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10),
+                          Container(
+                            width: 42,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.border,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(20, 18, 20, 8),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Add measurements',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Record any measurements you want to track today.',
+                                        style: TextStyle(
+                                          color: AppColors.muted,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.straighten_rounded,
+                                  color: AppColors.primary,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView(
+                              keyboardDismissBehavior:
+                                  ScrollViewKeyboardDismissBehavior.onDrag,
+                              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                              children: [
+                                ...fields.map(
+                                  (field) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: TextField(
+                                      controller: controllers[field],
+                                      keyboardType: const TextInputType
+                                          .numberWithOptions(decimal: true),
+                                      textInputAction: field == fields.last
+                                          ? TextInputAction.done
+                                          : TextInputAction.next,
+                                      onChanged: (_) => setSheetState(() {}),
+                                      decoration: InputDecoration(
+                                        labelText: field,
+                                        suffixText: 'cm',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 6, 20, 4),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 54,
+                              child: FilledButton(
+                                onPressed: canSave
+                                    ? () {
+                                        final result = <String, double>{};
+                                        for (final field in fields) {
+                                          final parsed = double.tryParse(
+                                            controllers[field]!.text.trim(),
+                                          );
+                                          if (parsed != null && parsed > 0) {
+                                            result[field.toLowerCase()] = parsed;
+                                          }
+                                        }
+                                        Navigator.of(sheetContext).pop(result);
+                                      }
+                                    : null,
+                                child: const Text('Save Measurements'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: FilledButton(
-                  onPressed: () {
-                    final result = <String, double>{};
-                    for (final field in fields) {
-                      final parsed =
-                          double.tryParse(controllers[field]!.text.trim());
-                      if (parsed != null && parsed > 0) {
-                        result[field.toLowerCase()] = parsed;
-                      }
-                    }
-                    if (result.isNotEmpty) {
-                      Navigator.of(sheetContext).pop(result);
-                    }
-                  },
-                  child: const Text('Save Measurements'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
     for (final controller in controllers.values) {
       controller.dispose();
@@ -103,6 +191,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
     await LocalStore.addMeasurements(values);
     await _load();
   }
+
 
   Future<void> _delete(int index) async {
     await LocalStore.deleteMeasurementAt(index);
@@ -160,8 +249,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
                               date == null
                                   ? 'Saved measurements'
                                   : '${date.day}/${date.month}/${date.year}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w900),
+                              style: const TextStyle(fontWeight: FontWeight.w900),
                             ),
                           ),
                           PopupMenuButton<String>(
@@ -206,6 +294,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
     );
   }
 }
+
 
 class _MeasurementSummary extends StatelessWidget {
   final List<Map<String, dynamic>> entries;
@@ -254,8 +343,7 @@ class _MeasurementSummary extends StatelessWidget {
               final old = (previous?[field] as num?)?.toDouble();
               final delta = old == null ? null : value - old;
               return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),

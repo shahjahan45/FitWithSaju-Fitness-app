@@ -282,9 +282,7 @@ class _TemplateCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
-                    isHighProtein
-                        ? Icons.fitness_center_rounded
-                        : Icons.eco_rounded,
+                    isHighProtein ? Icons.fitness_center_rounded : Icons.eco_rounded,
                     color: NutritionPalette.brand,
                   ),
                 ),
@@ -331,14 +329,10 @@ class _TemplateCard extends StatelessWidget {
               spacing: 7,
               runSpacing: 7,
               children: [
-                const _StatPill(
-                    label: '7 days', icon: Icons.calendar_month_outlined),
+                const _StatPill(label: '7 days', icon: Icons.calendar_month_outlined),
+                _StatPill(label: '${stats.mealsPerDay} meals/day', icon: Icons.restaurant_outlined),
                 _StatPill(
-                    label: '${stats.mealsPerDay} meals/day',
-                    icon: Icons.restaurant_outlined),
-                _StatPill(
-                  label:
-                      '${stats.minProtein.round()}–${stats.maxProtein.round()} g protein/day',
+                  label: '${stats.minProtein.round()}–${stats.maxProtein.round()} g protein/day',
                   icon: Icons.fitness_center_rounded,
                 ),
                 _StatPill(
@@ -357,11 +351,8 @@ class _TemplateCard extends StatelessWidget {
               height: 50,
               child: FilledButton.icon(
                 onPressed: active ? null : onApply,
-                icon: Icon(active
-                    ? Icons.check_circle_rounded
-                    : Icons.auto_awesome_rounded),
-                label: Text(
-                    active ? 'Applied to this week' : 'Apply to selected week'),
+                icon: Icon(active ? Icons.check_circle_rounded : Icons.auto_awesome_rounded),
+                label: Text(active ? 'Applied to this week' : 'Apply to selected week'),
               ),
             ),
           ],
@@ -415,8 +406,7 @@ class _ProteinWeekPreview extends StatelessWidget {
                   children: [
                     Text(
                       '${values[index]}',
-                      style: const TextStyle(
-                          fontSize: 9, fontWeight: FontWeight.w800),
+                      style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 4),
                     Container(
@@ -546,10 +536,8 @@ class _TemplateStats {
         calories.add(kcal);
       }
     }
-    final minProtein =
-        proteins.isEmpty ? 0.0 : proteins.reduce((a, b) => a < b ? a : b);
-    final maxProtein =
-        proteins.isEmpty ? 0.0 : proteins.reduce((a, b) => a > b ? a : b);
+    final minProtein = proteins.isEmpty ? 0.0 : proteins.reduce((a, b) => a < b ? a : b);
+    final maxProtein = proteins.isEmpty ? 0.0 : proteins.reduce((a, b) => a > b ? a : b);
     final averageCalories = calories.isEmpty
         ? 0.0
         : calories.reduce((a, b) => a + b) / calories.length;

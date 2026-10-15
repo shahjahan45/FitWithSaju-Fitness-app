@@ -63,10 +63,8 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
       return;
     }
 
-    final allSucceeded =
-        exerciseResult.success && nutritionResult.success && planResult.success;
-    final oneSucceeded =
-        exerciseResult.success || nutritionResult.success || planResult.success;
+    final allSucceeded = exerciseResult.success && nutritionResult.success && planResult.success;
+    final oneSucceeded = exerciseResult.success || nutritionResult.success || planResult.success;
     setState(() {
       _syncing = false;
       _success = oneSucceeded;
@@ -108,8 +106,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
       return;
     }
     setState(() {
-      _message =
-          'Using the bundled offline exercise, recipe, and meal-plan catalogs.';
+      _message = 'Using the bundled offline exercise, recipe, and meal-plan catalogs.';
       _success = true;
     });
   }
@@ -133,8 +130,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                           child: _StatusCard(
                             title: 'Exercise catalog',
                             sourceLabel: _exerciseSourceLabel(exerciseSource),
-                            countLabel:
-                                '${_exerciseCatalog.exercises.length} exercises',
+                            countLabel: '${_exerciseCatalog.exercises.length} exercises',
                             syncedAt: _exerciseCatalog.lastSyncedAt,
                             icon: Icons.fitness_center_rounded,
                           ),
@@ -145,8 +141,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                           child: _StatusCard(
                             title: 'Meal catalog',
                             sourceLabel: _nutritionSourceLabel(nutritionSource),
-                            countLabel:
-                                '${NutritionCatalog.recipes.length} published recipes',
+                            countLabel: '${NutritionCatalog.recipes.length} published recipes',
                             syncedAt: NutritionCatalog.lastSyncedAt,
                             icon: Icons.restaurant_menu_rounded,
                           ),
@@ -159,8 +154,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                             child: _StatusCard(
                               title: 'Meal plan templates',
                               sourceLabel: _planSourceLabel(planSource),
-                              countLabel:
-                                  '${NutritionPlanCatalog.templates.length} plans',
+                              countLabel: '${NutritionPlanCatalog.templates.length} plans',
                               syncedAt: NutritionPlanCatalog.lastSyncedAt,
                               icon: Icons.calendar_month_rounded,
                             ),
@@ -255,8 +249,7 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
                                 : const Icon(Icons.sync_rounded),
                             label: Text(
                               _syncing ? 'Syncing…' : 'Test & Sync Content',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w900),
+                              style: const TextStyle(fontWeight: FontWeight.w900),
                             ),
                           ),
                         ),
@@ -277,22 +270,19 @@ class _ContentSyncScreenState extends State<ContentSyncScreen> {
     );
   }
 
-  static String _exerciseSourceLabel(ExerciseCatalogSource source) =>
-      switch (source) {
+  static String _exerciseSourceLabel(ExerciseCatalogSource source) => switch (source) {
         ExerciseCatalogSource.live => 'Live API',
         ExerciseCatalogSource.cached => 'Cached API',
         ExerciseCatalogSource.bundled => 'Bundled offline',
       };
 
-  static String _nutritionSourceLabel(NutritionCatalogSource source) =>
-      switch (source) {
+  static String _nutritionSourceLabel(NutritionCatalogSource source) => switch (source) {
         NutritionCatalogSource.live => 'Live API',
         NutritionCatalogSource.cached => 'Cached API',
         NutritionCatalogSource.bundled => 'Bundled offline',
       };
 
-  static String _planSourceLabel(NutritionPlanCatalogSource source) =>
-      switch (source) {
+  static String _planSourceLabel(NutritionPlanCatalogSource source) => switch (source) {
         NutritionPlanCatalogSource.live => 'Live API',
         NutritionPlanCatalogSource.cached => 'Cached API',
         NutritionPlanCatalogSource.bundled => 'Bundled offline',

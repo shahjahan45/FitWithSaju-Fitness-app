@@ -87,8 +87,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                 Expanded(
                   child: TextField(
                     controller: weightController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: const InputDecoration(labelText: 'Weight (KG)'),
                   ),
                 ),
@@ -111,10 +110,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                     weightController.text.trim().replaceAll(',', '.'),
                   );
                   final reps = int.tryParse(repsController.text.trim());
-                  if (weight == null ||
-                      weight < 0 ||
-                      reps == null ||
-                      reps <= 0) {
+                  if (weight == null || weight < 0 || reps == null || reps <= 0) {
                     return;
                   }
                   Navigator.of(sheetContext).pop(<String, num>{
@@ -245,8 +241,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.emoji_events_rounded,
-                      color: AppColors.primary),
+                  const Icon(Icons.emoji_events_rounded, color: AppColors.primary),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -401,7 +396,8 @@ class _ExerciseSessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final volume = sets.fold<double>(
       0,
-      (sum, item) => sum + ((item.set['volume'] as num?)?.toDouble() ?? 0),
+      (sum, item) =>
+          sum + ((item.set['volume'] as num?)?.toDouble() ?? 0),
     );
 
     return Container(
@@ -489,8 +485,7 @@ class _ExerciseSessionCard extends StatelessWidget {
                           style: TextStyle(
                             color: isPr ? AppColors.primary : AppColors.muted,
                             fontSize: 10,
-                            fontWeight:
-                                isPr ? FontWeight.w800 : FontWeight.w500,
+                            fontWeight: isPr ? FontWeight.w800 : FontWeight.w500,
                           ),
                         ),
                       ],

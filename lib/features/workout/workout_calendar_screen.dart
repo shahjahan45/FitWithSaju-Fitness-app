@@ -63,10 +63,7 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
       _entries.where((entry) => entry.week == _week).toList();
 
   Future<void> _start(ProgramCalendarEntry entry) async {
-    if (entry.isRest ||
-        entry.isCompleted ||
-        entry.isSkipped ||
-        entry.status == 'prestart') {
+    if (entry.isRest || entry.isCompleted || entry.isSkipped || entry.status == 'prestart') {
       return;
     }
     final draft = await LocalStore.activeWorkout();
@@ -153,13 +150,9 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
                         leading: CircleAvatar(
                           backgroundColor: AppColors.primarySoft,
                           foregroundColor: AppColors.primary,
-                          child: Text('${date.day}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w900)),
+                          child: Text('${date.day}', style: const TextStyle(fontWeight: FontWeight.w900)),
                         ),
-                        title: Text(_weekday(date),
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w800)),
+                        title: Text(_weekday(date), style: const TextStyle(fontWeight: FontWeight.w800)),
                         subtitle: Text(_shortDate(date)),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () => Navigator.of(sheetContext).pop(date),
@@ -265,8 +258,7 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
             children: [
               Text(
                 entry.title,
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 4),
               Text(
@@ -339,8 +331,7 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
         body: const FitScrollableScreen(
           children: [
             SizedBox(height: 72),
-            Icon(Icons.calendar_month_rounded,
-                size: 64, color: AppColors.primary),
+            Icon(Icons.calendar_month_rounded, size: 64, color: AppColors.primary),
             SizedBox(height: 18),
             Text(
               'No active program',
@@ -358,13 +349,13 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
       );
     }
 
-    final durationWeeks =
-        ((active['durationWeeks'] as num?)?.toInt() ?? 1).clamp(1, 52).toInt();
+    final durationWeeks = ((active['durationWeeks'] as num?)?.toInt() ?? 1)
+        .clamp(1, 52)
+        .toInt();
     final deload = WorkoutProgramSchedule.deloadWeeks(active).contains(_week);
     final entries = _weekEntries;
     final completed = entries.where((e) => e.isCompleted).length;
-    final training =
-        entries.where((e) => !e.isRest && e.status != 'prestart').length;
+    final training = entries.where((e) => !e.isRest && e.status != 'prestart').length;
     final missed = entries.where((e) => e.isMissed).length;
 
     return Scaffold(
@@ -403,8 +394,7 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
                 const SizedBox(height: 18),
                 Row(
                   children: [
-                    _MiniMetric(
-                        value: '$completed/$training', label: 'Completed'),
+                    _MiniMetric(value: '$completed/$training', label: 'Completed'),
                     const SizedBox(width: 10),
                     _MiniMetric(value: '$missed', label: 'Missed'),
                     const SizedBox(width: 10),
@@ -444,9 +434,7 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
                 ),
               ),
               IconButton.filledTonal(
-                onPressed: _week < durationWeeks
-                    ? () => setState(() => _week++)
-                    : null,
+                onPressed: _week < durationWeeks ? () => setState(() => _week++) : null,
                 icon: const Icon(Icons.chevron_right_rounded),
               ),
             ],
@@ -457,9 +445,7 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _toggleDeload,
-                  icon: Icon(deload
-                      ? Icons.restart_alt_rounded
-                      : Icons.self_improvement_rounded),
+                  icon: Icon(deload ? Icons.restart_alt_rounded : Icons.self_improvement_rounded),
                   label: Text(deload ? 'Normal week' : 'Set deload week'),
                 ),
               ),
@@ -523,23 +509,12 @@ class _WorkoutCalendarScreenState extends State<WorkoutCalendarScreen> {
     return '${_shortDate(entries.first.scheduledDate)} – ${_shortDate(entries.last.scheduledDate)}';
   }
 
-  static String _weekday(DateTime date) =>
-      LocalStore.weekDays[date.weekday - 1];
+  static String _weekday(DateTime date) => LocalStore.weekDays[date.weekday - 1];
 
   static String _shortDate(DateTime date) {
     const months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }
@@ -562,17 +537,9 @@ class _MiniMetric extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(value,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900)),
+            Text(value, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
             const SizedBox(height: 2),
-            Text(label,
-                style: const TextStyle(
-                    color: Colors.white60,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700)),
+            Text(label, style: const TextStyle(color: Colors.white60, fontSize: 10, fontWeight: FontWeight.w700)),
           ],
         ),
       ),
@@ -605,18 +572,12 @@ class _SessionCard extends StatelessWidget {
               children: [
                 Text(
                   entry.day.substring(0, 3).toUpperCase(),
-                  style: TextStyle(
-                      color: tone.$2,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900),
+                  style: TextStyle(color: tone.$2, fontSize: 10, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${entry.scheduledDate.day}',
-                  style: TextStyle(
-                      color: tone.$2,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900),
+                  style: TextStyle(color: tone.$2, fontSize: 20, fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -631,8 +592,7 @@ class _SessionCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         entry.isRest ? 'Recovery day' : entry.title,
-                        style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w900),
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
                       ),
                     ),
                     _StatusPill(status: entry.status),
@@ -649,10 +609,7 @@ class _SessionCard extends StatelessWidget {
                   const SizedBox(height: 7),
                   Text(
                     'Moved from ${_formatShortDate(entry.originalDate)}',
-                    style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800),
+                    style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w800),
                   ),
                 ],
               ],
@@ -738,9 +695,7 @@ class _StatusPill extends StatelessWidget {
         color: color.withValues(alpha: .10),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(label,
-          style: TextStyle(
-              color: color, fontSize: 9, fontWeight: FontWeight.w900)),
+      child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w900)),
     );
   }
 }

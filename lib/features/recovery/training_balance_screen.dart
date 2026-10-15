@@ -180,8 +180,9 @@ class _BalanceHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final balance = data.balance;
     final ratio = balance.volumeRatio;
-    final progress =
-        ratio == null ? 0.0 : (ratio.clamp(0.0, 1.75) / 1.75).toDouble();
+    final progress = ratio == null
+        ? 0.0
+        : (ratio.clamp(0.0, 1.75) / 1.75).toDouble();
     final ratioLabel = ratio == null ? '—' : '${(ratio * 100).round()}%';
 
     return Container(
@@ -234,8 +235,7 @@ class _BalanceHero extends StatelessWidget {
               minHeight: 9,
               value: progress,
               backgroundColor: AppColors.primary.withValues(alpha: .10),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
           ),
           const SizedBox(height: 16),
@@ -537,8 +537,7 @@ class _PlanPreviewRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   item.dayLabel,
-                  style:
-                      const TextStyle(color: AppColors.muted, fontSize: 10.5),
+                  style: const TextStyle(color: AppColors.muted, fontSize: 10.5),
                 ),
               ],
             ),
@@ -564,15 +563,8 @@ class _PlanPreviewRow extends StatelessWidget {
     );
   }
 
-  static String _shortWeekday(int weekday) => const <String>[
-        'MON',
-        'TUE',
-        'WED',
-        'THU',
-        'FRI',
-        'SAT',
-        'SUN'
-      ][weekday - 1];
+  static String _shortWeekday(int weekday) =>
+      const <String>['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'][weekday - 1];
 }
 
 class _GuidanceNotice extends StatelessWidget {

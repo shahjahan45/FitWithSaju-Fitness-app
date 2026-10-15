@@ -15,8 +15,7 @@ class RecoveryInsightsCalculator {
     final previousEnd = anchor.subtract(const Duration(days: 28));
 
     final history = readinessHistory
-        .where((point) =>
-            !point.date.isBefore(start28) && !point.date.isAfter(anchor))
+        .where((point) => !point.date.isBefore(start28) && !point.date.isAfter(anchor))
         .toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
@@ -30,12 +29,10 @@ class RecoveryInsightsCalculator {
     final priorStart = anchor.subtract(const Duration(days: 13));
     final priorEnd = anchor.subtract(const Duration(days: 7));
     final last7 = history
-        .where((point) =>
-            !point.date.isBefore(recentStart) && !point.date.isAfter(anchor))
+        .where((point) => !point.date.isBefore(recentStart) && !point.date.isAfter(anchor))
         .toList();
     final previous7 = history
-        .where((point) =>
-            !point.date.isBefore(priorStart) && !point.date.isAfter(priorEnd))
+        .where((point) => !point.date.isBefore(priorStart) && !point.date.isAfter(priorEnd))
         .toList();
     final last7Average = _averageScore(last7);
     final previous7Average = _averageScore(previous7);
@@ -122,8 +119,7 @@ class RecoveryInsightsCalculator {
     if (score == null) {
       return const SmartTrainingGuidance(
         title: 'Check in before training',
-        subtitle:
-            'Complete today’s readiness check-in to unlock session guidance.',
+        subtitle: 'Complete today’s readiness check-in to unlock session guidance.',
         effortLabel: 'Not set',
         volumeLabel: 'Not set',
         actions: <String>[
@@ -138,8 +134,7 @@ class RecoveryInsightsCalculator {
     if (isRestOrDeloadDay) {
       return SmartTrainingGuidance(
         title: 'Protect the recovery intent',
-        subtitle:
-            'Today is already scheduled as recovery or deload work. Keep it easy unless you intentionally change the plan.',
+        subtitle: 'Today is already scheduled as recovery or deload work. Keep it easy unless you intentionally change the plan.',
         effortLabel: 'Easy / controlled',
         volumeLabel: 'Planned recovery volume',
         actions: const <String>[
@@ -154,11 +149,8 @@ class RecoveryInsightsCalculator {
 
     if (score >= 85) {
       return SmartTrainingGuidance(
-        title: hasProgramSessionToday
-            ? 'Full session looks reasonable'
-            : 'Good day to train',
-        subtitle:
-            'Your current recovery inputs support normal training. Use your warm-up as the final check.',
+        title: hasProgramSessionToday ? 'Full session looks reasonable' : 'Good day to train',
+        subtitle: 'Your current recovery inputs support normal training. Use your warm-up as the final check.',
         effortLabel: 'Normal effort',
         volumeLabel: '100% planned volume',
         actions: const <String>[
@@ -174,8 +166,7 @@ class RecoveryInsightsCalculator {
     if (score >= 70) {
       return SmartTrainingGuidance(
         title: 'Train as planned with awareness',
-        subtitle:
-            'Your recovery picture is generally supportive. Keep the plan, but let early sets confirm today’s effort.',
+        subtitle: 'Your recovery picture is generally supportive. Keep the plan, but let early sets confirm today’s effort.',
         effortLabel: 'Normal to moderate',
         volumeLabel: '90–100% planned volume',
         actions: const <String>[
@@ -191,8 +182,7 @@ class RecoveryInsightsCalculator {
     if (score >= 55) {
       return SmartTrainingGuidance(
         title: 'Consider a lighter session',
-        subtitle:
-            'A modest volume reduction may match today’s recovery signals better without changing the workout automatically.',
+        subtitle: 'A modest volume reduction may match today’s recovery signals better without changing the workout automatically.',
         effortLabel: 'Moderate',
         volumeLabel: 'About 70–85% of planned volume',
         actions: const <String>[
@@ -208,8 +198,7 @@ class RecoveryInsightsCalculator {
     if (score >= 40) {
       return SmartTrainingGuidance(
         title: 'Recovery-first training day',
-        subtitle:
-            'If you train, keep the session shorter and easier. You remain in control of whether to proceed.',
+        subtitle: 'If you train, keep the session shorter and easier. You remain in control of whether to proceed.',
         effortLabel: 'Easy to moderate',
         volumeLabel: 'About 50–70% of planned volume',
         actions: const <String>[
@@ -224,8 +213,7 @@ class RecoveryInsightsCalculator {
 
     return SmartTrainingGuidance(
       title: 'Consider recovery or rescheduling',
-      subtitle:
-          'Your current inputs are low. FitWithSaju will not cancel or change the workout for you.',
+      subtitle: 'Your current inputs are low. FitWithSaju will not cancel or change the workout for you.',
       effortLabel: 'Recovery emphasis',
       volumeLabel: 'Optional / very light',
       actions: const <String>[
@@ -242,8 +230,7 @@ class RecoveryInsightsCalculator {
     if (points.isEmpty) {
       return null;
     }
-    return (points.fold<int>(0, (sum, item) => sum + item.score) /
-            points.length)
+    return (points.fold<int>(0, (sum, item) => sum + item.score) / points.length)
         .round();
   }
 
@@ -289,14 +276,11 @@ class RecoveryInsightsCalculator {
     if (last7Average != null && previous7Average != null) {
       final delta = last7Average - previous7Average;
       if (delta >= 6) {
-        items.add(
-            'Your recent 7-day readiness average is improving versus the prior week.');
+        items.add('Your recent 7-day readiness average is improving versus the prior week.');
       } else if (delta <= -6) {
-        items.add(
-            'Your recent 7-day readiness average is lower than the prior week. Consider protecting recovery time.');
+        items.add('Your recent 7-day readiness average is lower than the prior week. Consider protecting recovery time.');
       } else {
-        items.add(
-            'Your recent readiness average is relatively stable week to week.');
+        items.add('Your recent readiness average is relatively stable week to week.');
       }
     }
 
@@ -304,8 +288,7 @@ class RecoveryInsightsCalculator {
       items.add('Sleep quality is one of your lower recent check-in signals.');
     }
     if (averageEnergy < 3) {
-      items.add(
-          'Recent energy ratings are on the lower side; use warm-up feedback before pushing effort.');
+      items.add('Recent energy ratings are on the lower side; use warm-up feedback before pushing effort.');
     }
     if (averageSoreness >= 4) {
       items.add('Muscle soreness has been high across recent check-ins.');
@@ -314,17 +297,14 @@ class RecoveryInsightsCalculator {
       items.add('Stress ratings have been high across recent check-ins.');
     }
     if (previousVolume28 > 0 && volume28 / previousVolume28 >= 1.35) {
-      items.add(
-          'Your 28-day training volume is substantially above the previous 28 days.');
+      items.add('Your 28-day training volume is substantially above the previous 28 days.');
     }
 
     if (items.isEmpty) {
-      items.add(
-          'No single recovery signal stands out strongly in your recent data.');
+      items.add('No single recovery signal stands out strongly in your recent data.');
     }
     final limited = items.take(3).toList();
-    limited.add(
-        'Use these patterns as training guidance, not as a medical assessment.');
+    limited.add('Use these patterns as training guidance, not as a medical assessment.');
     return limited;
   }
 

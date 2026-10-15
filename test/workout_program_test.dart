@@ -11,8 +11,7 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
-  test('starting a program persists active state and program day ids',
-      () async {
+  test('starting a program persists active state and program day ids', () async {
     final program = WorkoutProgramCatalog.programs.first;
     await LocalStore.startWorkoutProgram(
       programId: program.id,

@@ -17,8 +17,7 @@ class NutritionDayEditorScreen extends StatefulWidget {
   const NutritionDayEditorScreen({super.key, required this.date});
 
   @override
-  State<NutritionDayEditorScreen> createState() =>
-      _NutritionDayEditorScreenState();
+  State<NutritionDayEditorScreen> createState() => _NutritionDayEditorScreenState();
 }
 
 class _NutritionDayEditorScreenState extends State<NutritionDayEditorScreen> {
@@ -210,8 +209,7 @@ class _NutritionDayEditorScreenState extends State<NutritionDayEditorScreen> {
     plan[index] = PlannedNutritionMeal(
       slot: current.slot,
       recipeId: current.recipeId,
-      time:
-          '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
+      time: '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
       servings: current.servings,
     );
     await _save(plan);
@@ -350,13 +348,11 @@ class _EditableMealCard extends StatelessWidget {
                     ),
                     Text(
                       recipe.name,
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w900),
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
                     ),
                     Text(
                       '${macros.protein.round()} g protein · ${macros.calories.round()} kcal',
-                      style: const TextStyle(
-                          color: NutritionPalette.muted, fontSize: 11),
+                      style: const TextStyle(color: NutritionPalette.muted, fontSize: 11),
                     ),
                   ],
                 ),
@@ -386,15 +382,12 @@ class _EditableMealCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    IconButton(
-                        onPressed: onMinus,
-                        icon: const Icon(Icons.remove_rounded)),
+                    IconButton(onPressed: onMinus, icon: const Icon(Icons.remove_rounded)),
                     Text(
                       '${formatAmount(meal.servings)}×',
                       style: const TextStyle(fontWeight: FontWeight.w900),
                     ),
-                    IconButton(
-                        onPressed: onPlus, icon: const Icon(Icons.add_rounded)),
+                    IconButton(onPressed: onPlus, icon: const Icon(Icons.add_rounded)),
                   ],
                 ),
               ),

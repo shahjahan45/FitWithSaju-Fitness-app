@@ -63,12 +63,7 @@ class ReadinessBreakdown {
     required this.programPoints,
   });
 
-  double get total =>
-      checkInPoints +
-      hydrationPoints +
-      trainingLoadPoints +
-      frequencyPoints +
-      programPoints;
+  double get total => checkInPoints + hydrationPoints + trainingLoadPoints + frequencyPoints + programPoints;
 }
 
 class ReadinessAssessment {

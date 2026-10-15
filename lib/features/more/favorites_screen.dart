@@ -60,7 +60,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 FitRoutes.route(
                   context,
                   motion: FitRouteMotion.detail,
-                  builder: (_) => const ExploreScreen(),
+                  builder: (_) => const ExploreScreen(showBackButton: true),
                 ),
               ),
             );

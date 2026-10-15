@@ -102,16 +102,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             label: 'Level',
                             value: _level,
                             values: _levels,
-                            onChanged: (value) =>
-                                setState(() => _level = value),
+                            onChanged: (value) => setState(() => _level = value),
                           ),
                           const Divider(height: 1),
                           _DropdownRow(
                             label: 'Training place',
                             value: _place,
                             values: _places,
-                            onChanged: (value) =>
-                                setState(() => _place = value),
+                            onChanged: (value) => setState(() => _place = value),
                           ),
                         ],
                       ),

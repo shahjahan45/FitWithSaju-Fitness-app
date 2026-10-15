@@ -174,8 +174,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
     if (confirmed != true) {
       return;
     }
-    await LocalStore.endActiveProgram(
-        status: completed ? 'completed' : 'ended');
+    await LocalStore.endActiveProgram(status: completed ? 'completed' : 'ended');
     if (!mounted) {
       return;
     }
@@ -198,9 +197,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
         return false;
       }
       final date = DateTime.tryParse(session['date']?.toString() ?? '');
-      return date != null &&
-          !date.isBefore(monday) &&
-          date.isBefore(nextMonday);
+      return date != null && !date.isBefore(monday) && date.isBefore(nextMonday);
     });
   }
 
@@ -268,8 +265,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
       );
     }
 
-    final name =
-        active['name']?.toString() ?? _definition?.name ?? 'Workout Program';
+    final name = active['name']?.toString() ?? _definition?.name ?? 'Workout Program';
     final next = _nextSession();
     final today = LocalStore.weekDays[DateTime.now().weekday - 1];
     final schedule = WorkoutProgramSchedule.build(
@@ -336,8 +332,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(999),
@@ -373,15 +368,12 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
                     children: [
                       Text(
                         '${progress.completedSessions}/${progress.totalSessions} sessions',
-                        style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w800),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
                       ),
                       const Spacer(),
                       Text(
                         '${(progress.completion * 100).round()}%',
-                        style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w900),
+                        style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900),
                       ),
                     ],
                   ),
@@ -394,8 +386,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
             children: [
               Expanded(
                 child: _MetricCard(
-                  value:
-                      '${progress.thisWeekCompleted}/${progress.thisWeekPlanned}',
+                  value: '${progress.thisWeekCompleted}/${progress.thisWeekPlanned}',
                   label: 'This week',
                   icon: Icons.calendar_view_week_rounded,
                 ),
@@ -429,8 +420,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
             return Padding(
               padding: const EdgeInsets.only(bottom: 9),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
                 decoration: BoxDecoration(
                   color: isToday ? AppColors.primarySoft : AppColors.surface,
                   borderRadius: BorderRadius.circular(18),
@@ -461,8 +451,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
                           if (!rest)
                             Text(
                               '${((day['exerciseIds'] as Iterable?) ?? const []).length} exercises • ${day['durationMinutes']} min',
-                              style: const TextStyle(
-                                  color: AppColors.muted, fontSize: 11),
+                              style: const TextStyle(color: AppColors.muted, fontSize: 11),
                             ),
                         ],
                       ),
@@ -492,8 +481,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
                   const CircleAvatar(
                     radius: 24,
                     backgroundColor: AppColors.primarySoft,
-                    child:
-                        Icon(Icons.skip_next_rounded, color: AppColors.primary),
+                    child: Icon(Icons.skip_next_rounded, color: AppColors.primary),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -516,14 +504,11 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
                         Text(
                           next.isMissed
                               ? 'Missed • open the calendar to reschedule'
-                              : ProgramCalendarEntry.sameDate(
-                                      next.scheduledDate, DateTime.now())
+                              : ProgramCalendarEntry.sameDate(next.scheduledDate, DateTime.now())
                                   ? 'Today${next.isDeload ? ' • Deload' : ''}'
                                   : '${next.day} • ${next.scheduledDate.month}/${next.scheduledDate.day}${next.isDeload ? ' • Deload' : ''}',
                           style: TextStyle(
-                            color: next.isMissed
-                                ? const Color(0xFFC5532F)
-                                : AppColors.muted,
+                            color: next.isMissed ? const Color(0xFFC5532F) : AppColors.muted,
                             fontSize: 12,
                           ),
                         ),
@@ -553,8 +538,7 @@ class _ActiveProgramScreenState extends State<ActiveProgramScreen> {
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.self_improvement_rounded,
-                      color: AppColors.primary),
+                  Icon(Icons.self_improvement_rounded, color: AppColors.primary),
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -576,8 +560,7 @@ class _MetricCard extends StatelessWidget {
   final String label;
   final IconData icon;
 
-  const _MetricCard(
-      {required this.value, required this.label, required this.icon});
+  const _MetricCard({required this.value, required this.label, required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -587,12 +570,9 @@ class _MetricCard extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.primary, size: 21),
           const SizedBox(height: 10),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
+          Text(value, style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),
           const SizedBox(height: 2),
-          Text(label,
-              style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+          Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 11)),
         ],
       ),
     );

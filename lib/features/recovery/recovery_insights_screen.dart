@@ -33,8 +33,7 @@ class _RecoveryInsightsScreenState extends State<RecoveryInsightsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Recovery Insights')),
       body: AnimatedBuilder(
-        animation:
-            Listenable.merge([LocalStore.changes, NutritionStore.changes]),
+        animation: Listenable.merge([LocalStore.changes, NutritionStore.changes]),
         builder: (context, _) {
           final token = _reloadToken;
           return FutureBuilder<RecoveryInsights>(
@@ -181,7 +180,9 @@ class _OverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final delta = data.trendDelta;
-    final trendValue = delta == null ? '—' : '${delta > 0 ? '+' : ''}$delta';
+    final trendValue = delta == null
+        ? '—'
+        : '${delta > 0 ? '+' : ''}$delta';
     return Container(
       key: const Key('recovery-insights-overview'),
       padding: const EdgeInsets.all(20),
@@ -221,9 +222,7 @@ class _OverviewCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      data.checkInDays == 0
-                          ? 'No baseline yet'
-                          : data.trendLabel,
+                      data.checkInDays == 0 ? 'No baseline yet' : data.trendLabel,
                       style: const TextStyle(
                         fontSize: 21,
                         fontWeight: FontWeight.w900,
@@ -232,8 +231,7 @@ class _OverviewCard extends StatelessWidget {
                     const SizedBox(height: 5),
                     Text(
                       data.consistencyLabel,
-                      style:
-                          const TextStyle(color: AppColors.muted, fontSize: 12),
+                      style: const TextStyle(color: AppColors.muted, fontSize: 12),
                     ),
                   ],
                 ),
@@ -251,8 +249,7 @@ class _OverviewCard extends StatelessWidget {
                   children: [
                     Text(
                       data.checkInDays == 0 ? '—' : '${data.averageScore}',
-                      style: const TextStyle(
-                          fontSize: 23, fontWeight: FontWeight.w900),
+                      style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900),
                     ),
                     const Text(
                       'AVG',
@@ -295,8 +292,7 @@ class _OverviewCard extends StatelessWidget {
           const SizedBox(height: 12),
           const Text(
             'Readiness is fitness/recovery guidance only. It is not a medical or clinical score.',
-            style:
-                TextStyle(fontSize: 10.5, color: AppColors.muted, height: 1.35),
+            style: TextStyle(fontSize: 10.5, color: AppColors.muted, height: 1.35),
           ),
         ],
       ),
@@ -349,8 +345,7 @@ class _WeeklyRecoveryReviewCard extends StatelessWidget {
         : '${((volumeRatio - 1) * 100).abs().round()}% ${volumeRatio >= 1 ? 'more' : 'less'} volume vs last week';
     final checkInsThisWeek = data.history.where((point) {
       final start = data.anchorDate.subtract(const Duration(days: 6));
-      return !point.date.isBefore(start) &&
-          !point.date.isAfter(data.anchorDate);
+      return !point.date.isBefore(start) && !point.date.isAfter(data.anchorDate);
     }).length;
 
     return FitCard(
@@ -597,8 +592,7 @@ class _ReadinessChartPainter extends CustomPainter {
       ..strokeWidth = 1;
     for (final level in <double>[.25, .5, .75, 1]) {
       final y = top + chartHeight * (1 - level);
-      canvas.drawLine(
-          Offset(left, y), Offset(size.width - right, y), gridPaint);
+      canvas.drawLine(Offset(left, y), Offset(size.width - right, y), gridPaint);
     }
 
     if (history.isEmpty) {
@@ -623,8 +617,7 @@ class _ReadinessChartPainter extends CustomPainter {
     final offsets = <Offset>[];
     for (final point in history) {
       final day = DateTime(point.date.year, point.date.month, point.date.day);
-      final dayIndex =
-          day.difference(anchor.subtract(const Duration(days: 27))).inDays;
+      final dayIndex = day.difference(anchor.subtract(const Duration(days: 27))).inDays;
       if (dayIndex < 0 || dayIndex > 27) {
         continue;
       }
@@ -892,8 +885,7 @@ class _TrainingMetric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(color: AppColors.muted, fontSize: 10)),
+          Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 10)),
           const SizedBox(height: 5),
           Text(
             '${volume.round()} kg',

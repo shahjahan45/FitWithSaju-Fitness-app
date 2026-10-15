@@ -43,9 +43,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         }
         final scale = (meal.servings / recipe.yieldServings) * _people;
         for (final ingredient in recipe.ingredients) {
-          final id =
-              '${ingredient.category}|${ingredient.name}|${ingredient.unit}'
-                  .toLowerCase();
+          final id = '${ingredient.category}|${ingredient.name}|${ingredient.unit}'.toLowerCase();
           final existing = amounts[id];
           if (existing == null) {
             amounts[id] = _ShoppingItem(
@@ -86,12 +84,8 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
           onSubmitted: (text) => Navigator.of(context).pop(text),
         ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel')),
-          FilledButton(
-              onPressed: () => Navigator.of(context).pop(controller.text),
-              child: const Text('Add')),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(context).pop(controller.text), child: const Text('Add')),
         ],
       ),
     );
@@ -154,8 +148,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         category = item.category;
         buffer.writeln('\n$category');
       }
-      buffer.writeln(
-          '• ${formatAmount(item.quantity)} ${item.unit} ${item.name}');
+      buffer.writeln('• ${formatAmount(item.quantity)} ${item.unit} ${item.name}');
     }
     if (data.manual.isNotEmpty) {
       buffer.writeln('\nOther');
@@ -212,11 +205,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                     Expanded(
                       child: DropdownButtonFormField<int>(
                         initialValue: _days,
-                        decoration:
-                            const InputDecoration(labelText: 'Date range'),
+                        decoration: const InputDecoration(labelText: 'Date range'),
                         items: const [3, 5, 7]
-                            .map((value) => DropdownMenuItem(
-                                value: value, child: Text('$value days')))
+                            .map((value) => DropdownMenuItem(value: value, child: Text('$value days')))
                             .toList(),
                         onChanged: (value) {
                           if (value == null) {
@@ -235,8 +226,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                         initialValue: _people,
                         decoration: const InputDecoration(labelText: 'People'),
                         items: const [1, 2, 3, 4, 5, 6]
-                            .map((value) => DropdownMenuItem(
-                                value: value, child: Text('$value')))
+                            .map((value) => DropdownMenuItem(value: value, child: Text('$value')))
                             .toList(),
                         onChanged: (value) {
                           if (value == null) {
@@ -338,8 +328,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                     child: OutlinedButton.icon(
                       onPressed: () => _share(data),
                       icon: const Icon(Icons.ios_share_rounded),
-                      label: const Text('Copy shopping list',
-                          style: TextStyle(fontWeight: FontWeight.w900)),
+                      label: const Text('Copy shopping list', style: TextStyle(fontWeight: FontWeight.w900)),
                     ),
                   ),
                 ],
@@ -446,8 +435,7 @@ class _ShoppingData {
   final Map<String, bool> checked;
   final List<Map<String, dynamic>> manual;
 
-  const _ShoppingData(
-      {required this.items, required this.checked, required this.manual});
+  const _ShoppingData({required this.items, required this.checked, required this.manual});
 }
 
 class _ShoppingItem {

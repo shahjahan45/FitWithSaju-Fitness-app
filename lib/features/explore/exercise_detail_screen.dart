@@ -91,7 +91,8 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                     border: Border.all(color: AppColors.border),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF0F172A).withValues(alpha: .045),
+                        color: const Color(0xFF0F172A)
+                            .withValues(alpha: .045),
                         blurRadius: 24,
                         offset: const Offset(0, 12),
                       ),
@@ -272,7 +273,8 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                 FitRoutes.route(
                   context,
                   motion: FitRouteMotion.detail,
-                  builder: (_) => ExerciseProgressScreen(exercise: exercise),
+                  builder: (_) =>
+                      ExerciseProgressScreen(exercise: exercise),
                 ),
               ),
               borderRadius: BorderRadius.circular(24),
@@ -355,7 +357,9 @@ class _MetaChip extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 240),
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
       decoration: BoxDecoration(
-        color: highlighted ? AppColors.primarySoft : AppColors.surfaceAlt,
+        color: highlighted
+            ? AppColors.primarySoft
+            : AppColors.surfaceAlt,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -372,7 +376,9 @@ class _MetaChip extends StatelessWidget {
               label,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: highlighted ? AppColors.primary : AppColors.muted,
+                color: highlighted
+                    ? AppColors.primary
+                    : AppColors.muted,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
               ),

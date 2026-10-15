@@ -98,21 +98,11 @@ class _NutritionPreferencesScreenState
     final carbs = double.tryParse(_carbs.text.trim());
     final fat = double.tryParse(_fat.text.trim());
     final water = int.tryParse(_water.text.trim());
-    if (calories == null ||
-        calories < 1000 ||
-        calories > 6000 ||
-        protein == null ||
-        protein < 0 ||
-        protein > 400 ||
-        carbs == null ||
-        carbs < 0 ||
-        carbs > 800 ||
-        fat == null ||
-        fat < 0 ||
-        fat > 300 ||
-        water == null ||
-        water < 500 ||
-        water > 8000) {
+    if (calories == null || calories < 1000 || calories > 6000 ||
+        protein == null || protein < 0 || protein > 400 ||
+        carbs == null || carbs < 0 || carbs > 800 ||
+        fat == null || fat < 0 || fat > 300 ||
+        water == null || water < 500 || water > 8000) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please review your target values.')),
       );
@@ -201,8 +191,7 @@ class _NutritionPreferencesScreenState
                   ),
                   _PickerSection(
                     title: 'Food allergies / exclusions',
-                    subtitle:
-                        'These are never silently relaxed during meal swaps.',
+                    subtitle: 'These are never silently relaxed during meal swaps.',
                     values: const [
                       'Dairy',
                       'Eggs',
@@ -268,40 +257,21 @@ class _NutritionPreferencesScreenState
                     ),
                     child: Column(
                       children: [
-                        _NumberField(
-                            controller: _calories,
-                            label: 'Energy',
-                            suffix: 'kcal'),
+                        _NumberField(controller: _calories, label: 'Energy', suffix: 'kcal'),
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            Expanded(
-                                child: _NumberField(
-                                    controller: _protein,
-                                    label: 'Protein',
-                                    suffix: 'g')),
+                            Expanded(child: _NumberField(controller: _protein, label: 'Protein', suffix: 'g')),
                             const SizedBox(width: 10),
-                            Expanded(
-                                child: _NumberField(
-                                    controller: _carbs,
-                                    label: 'Carbs',
-                                    suffix: 'g')),
+                            Expanded(child: _NumberField(controller: _carbs, label: 'Carbs', suffix: 'g')),
                           ],
                         ),
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            Expanded(
-                                child: _NumberField(
-                                    controller: _fat,
-                                    label: 'Fat',
-                                    suffix: 'g')),
+                            Expanded(child: _NumberField(controller: _fat, label: 'Fat', suffix: 'g')),
                             const SizedBox(width: 10),
-                            Expanded(
-                                child: _NumberField(
-                                    controller: _water,
-                                    label: 'Water',
-                                    suffix: 'ml')),
+                            Expanded(child: _NumberField(controller: _water, label: 'Water', suffix: 'ml')),
                           ],
                         ),
                       ],
@@ -359,14 +329,10 @@ class _PickerSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
           if (subtitle != null) ...[
             const SizedBox(height: 4),
-            Text(subtitle!,
-                style: const TextStyle(
-                    color: NutritionPalette.muted, fontSize: 12)),
+            Text(subtitle!, style: const TextStyle(color: NutritionPalette.muted, fontSize: 12)),
           ],
           const SizedBox(height: 9),
           Wrap(
@@ -380,10 +346,7 @@ class _PickerSection extends StatelessWidget {
                 label: Text(item),
                 onSelected: (_) => onChanged(item),
                 selectedColor: NutritionPalette.tint,
-                side: BorderSide(
-                    color: active
-                        ? NutritionPalette.brand
-                        : NutritionPalette.line),
+                side: BorderSide(color: active ? NutritionPalette.brand : NutritionPalette.line),
                 labelStyle: TextStyle(
                   color: active ? NutritionPalette.brand : NutritionPalette.ink,
                   fontWeight: FontWeight.w700,
@@ -402,8 +365,7 @@ class _NumberField extends StatelessWidget {
   final String label;
   final String suffix;
 
-  const _NumberField(
-      {required this.controller, required this.label, required this.suffix});
+  const _NumberField({required this.controller, required this.label, required this.suffix});
 
   @override
   Widget build(BuildContext context) {

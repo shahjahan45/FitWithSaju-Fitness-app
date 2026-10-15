@@ -150,8 +150,9 @@ class _GlassBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reduceMotion = AppMotion.reducedMotion(context);
-    final animationDuration =
-        reduceMotion ? Duration.zero : AppMotion.mainNavigation;
+    final animationDuration = reduceMotion
+        ? Duration.zero
+        : AppMotion.mainNavigation;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
@@ -214,8 +215,7 @@ class _GlassBottomBar extends StatelessWidget {
                       items.length,
                       (itemIndex) => Expanded(
                         child: _NavButton(
-                          key: ValueKey(
-                              'nav-${items[itemIndex].label.toLowerCase()}'),
+                          key: ValueKey('nav-${items[itemIndex].label.toLowerCase()}'),
                           data: items[itemIndex],
                           selected: selectedIndex == itemIndex,
                           animationDuration: animationDuration,

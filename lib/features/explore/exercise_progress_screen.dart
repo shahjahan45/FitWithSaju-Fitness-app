@@ -123,8 +123,7 @@ class ExerciseProgressScreen extends StatelessWidget {
                     SizedBox(
                       height: 190,
                       child: CustomPaint(
-                        painter:
-                            _TrendPainter(points.map((e) => e.value).toList()),
+                        painter: _TrendPainter(points.map((e) => e.value).toList()),
                         child: const SizedBox.expand(),
                       ),
                     ),
@@ -182,8 +181,7 @@ class ExerciseProgressScreen extends StatelessWidget {
                           children: [
                             Text(
                               '${_number(weight)} KG × $reps reps',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w900),
+                              style: const TextStyle(fontWeight: FontWeight.w900),
                             ),
                             const SizedBox(height: 3),
                             Text(
@@ -233,10 +231,10 @@ class ExerciseProgressScreen extends StatelessWidget {
         daily[day] = value;
       }
     }
-    final entries = daily.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-    final trimmed =
-        entries.length > 12 ? entries.sublist(entries.length - 12) : entries;
+    final entries = daily.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+    final trimmed = entries.length > 12
+        ? entries.sublist(entries.length - 12)
+        : entries;
     return trimmed.map((entry) => _TrendPoint(entry.key, entry.value)).toList();
   }
 

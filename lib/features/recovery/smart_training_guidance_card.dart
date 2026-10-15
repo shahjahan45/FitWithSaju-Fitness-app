@@ -72,15 +72,13 @@ class SmartTrainingGuidanceCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right_rounded,
-                        color: AppColors.muted),
+                    const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Text(
                   guidance.subtitle,
-                  style: const TextStyle(
-                      color: AppColors.muted, fontSize: 12, height: 1.35),
+                  style: const TextStyle(color: AppColors.muted, fontSize: 12, height: 1.35),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -131,8 +129,7 @@ class _GuidanceMetric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(color: AppColors.muted, fontSize: 9.5)),
+          Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 9.5)),
           const SizedBox(height: 3),
           Text(
             value,

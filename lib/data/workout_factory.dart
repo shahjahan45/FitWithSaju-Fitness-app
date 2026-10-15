@@ -17,8 +17,7 @@ class WorkoutFactory {
   }
 
   static Workout fromPlan(Map<String, dynamic> map) {
-    final exercises =
-        exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    final exercises = exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
     final programId = map['programId']?.toString() ?? '';
     final day = (map['day'] ?? 'day').toString().toLowerCase();
     return Workout(
@@ -36,8 +35,7 @@ class WorkoutFactory {
   }
 
   static Workout fromDraft(Map<String, dynamic> map) {
-    final exercises =
-        exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    final exercises = exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
     return Workout(
       id: (map['workoutId'] ?? 'resumed').toString(),
       title: (map['title'] ?? 'Workout').toString(),
@@ -53,8 +51,7 @@ class WorkoutFactory {
   }
 
   static Workout fromCustom(Map<String, dynamic> map) {
-    final exercises =
-        exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
+    final exercises = exercisesFromIds(map['exerciseIds'] as Iterable? ?? const []);
     return Workout(
       id: (map['id'] ?? 'custom').toString(),
       title: (map['name'] ?? 'Custom Workout').toString(),

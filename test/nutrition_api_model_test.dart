@@ -21,8 +21,7 @@ void main() {
     );
   });
 
-  test('recipe api model parses nutrition, ingredients, and review metadata',
-      () {
+  test('recipe api model parses nutrition, ingredients, and review metadata', () {
     final recipe = NutritionRecipe.fromApi(<String, dynamic>{
       'id': 'api_recipe',
       'name': 'API Meal',

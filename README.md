@@ -117,3 +117,14 @@ FitWithSaju v24 adds a local-first daily readiness system without changing worko
 The new Recovery & Readiness screen includes an animated score ring, guidance, score breakdown, hydration and training-load context, seven-day readiness history, average/best/lowest recovery summaries, today's active-program session, Training Calendar access, and a user-confirmed quick reschedule option when readiness is low. Home, Workout, and Progress now surface live readiness cards. Readiness check-ins are included in Backup & Restore format version 6.
 
 The readiness score is fitness guidance only. It is not medical or clinical advice and never cancels, skips, or changes a workout automatically.
+
+## v29 — Weekly Review & Consistency Streaks
+
+- Added a local-first Weekly Review that compares Monday-to-today against the same point last week.
+- Added workout, training-time, volume, completed-set, PR, hydration and readiness context in one review.
+- Added current and best consecutive active-training-week streaks plus the strongest training day of the week.
+- Added Home, Progress and More integration with reduced-motion-safe UI and safe retry behavior.
+- Hardened Progress metrics for legacy numeric values stored as strings.
+- Weekly Review is derived from existing backup-covered data, so backup format remains version 7.
+
+Version: `1.21.0+38`

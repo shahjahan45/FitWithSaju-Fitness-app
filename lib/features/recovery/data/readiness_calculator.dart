@@ -16,8 +16,7 @@ class ReadinessCalculator {
     final energyPoints = _positiveRating(checkIn.energy, 20);
     final sorenessPoints = _inverseRating(checkIn.soreness, 15);
     final stressPoints = _inverseRating(checkIn.stress, 15);
-    final checkInPoints =
-        sleepPoints + energyPoints + sorenessPoints + stressPoints;
+    final checkInPoints = sleepPoints + energyPoints + sorenessPoints + stressPoints;
 
     final hydrationProgress = hydrationTargetMl <= 0
         ? 0.0

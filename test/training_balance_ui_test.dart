@@ -24,8 +24,7 @@ void main() {
     );
   });
 
-  testWidgets('training balance renders safely with reduced motion',
-      (tester) async {
+  testWidgets('training balance renders safely with reduced motion', (tester) async {
     await tester.pumpWidget(
       MediaQuery(
         data: const MediaQueryData(disableAnimations: true),
@@ -48,8 +47,7 @@ void main() {
     expect(list, findsOneWidget);
     for (var attempt = 0;
         attempt < 4 &&
-            find
-                .byKey(const Key('training-balance-plan-preview'))
+            find.byKey(const Key('training-balance-plan-preview'))
                 .evaluate()
                 .isEmpty;
         attempt++) {
@@ -57,8 +55,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    expect(
-        find.byKey(const Key('training-balance-plan-preview')), findsOneWidget);
+    expect(find.byKey(const Key('training-balance-plan-preview')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

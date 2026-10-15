@@ -45,6 +45,7 @@ void main() {
     expect(items.first['name'], 'My Test Workout');
   });
 
+
   test('set history builds previous-set data and personal records', () async {
     await LocalStore.addWorkoutHistory({
       'title': 'Push Day',
@@ -90,6 +91,7 @@ void main() {
     expect(records['bench_press']?['bestWeight'], 70.0);
     expect(records['bench_press']?['repsAtBestWeight'], 10);
   });
+
 
   test('active workout draft can be saved and cleared', () async {
     await LocalStore.saveActiveWorkout({
@@ -157,6 +159,8 @@ void main() {
     expect(LocalStore.estimatedOneRepMax(100, 10), closeTo(133.33, .02));
   });
 
+
+
   test('resume draft converts back into a workout', () {
     final workout = WorkoutFactory.fromDraft({
       'workoutId': 'resume_test',
@@ -207,7 +211,7 @@ void main() {
     final updated = (await LocalStore.historySessionById('edit_session'))!;
     expect(updated['totalVolume'], 600.0);
     expect(updated['completedSets'], 1);
-    expect(LocalStore.sessionSets(updated).first['estimated1RM'],
-        closeTo(80, .01));
+    expect(LocalStore.sessionSets(updated).first['estimated1RM'], closeTo(80, .01));
   });
+
 }

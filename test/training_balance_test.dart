@@ -2,8 +2,7 @@ import 'package:fitwithsaju/features/recovery/data/training_balance_calculator.d
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('training balance compares last 7 days with previous 3-week baseline',
-      () {
+  test('training balance compares last 7 days with previous 3-week baseline', () {
     final anchor = DateTime(2026, 10, 3);
     final workouts = <Map<String, dynamic>>[
       {'date': DateTime(2026, 10, 3).toIso8601String(), 'totalVolume': 1200},
@@ -53,8 +52,7 @@ void main() {
     expect(result.baselineWeeklyVolume, closeTo(250, .001));
   });
 
-  test('training balance builds baseline safely when prior volume is empty',
-      () {
+  test('training balance builds baseline safely when prior volume is empty', () {
     final result = TrainingBalanceCalculator.calculate(
       anchorDate: DateTime(2026, 10, 3),
       workoutHistory: <Map<String, dynamic>>[
@@ -70,8 +68,7 @@ void main() {
     expect(result.guidance, contains('Keep logging workouts'));
   });
 
-  test('low readiness and high load produce recovery-first optional guidance',
-      () {
+  test('low readiness and high load produce recovery-first optional guidance', () {
     final anchor = DateTime(2026, 10, 3);
     final workouts = <Map<String, dynamic>>[
       {'date': DateTime(2026, 10, 3).toIso8601String(), 'totalVolume': 2500},

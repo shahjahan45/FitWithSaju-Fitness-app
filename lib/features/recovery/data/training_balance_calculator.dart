@@ -36,8 +36,9 @@ class TrainingBalanceCalculator {
 
     final baselineWeeklyWorkouts = baselineWorkouts / 3;
     final baselineWeeklyVolume = baselineVolume / 3;
-    final ratio =
-        baselineWeeklyVolume > 0 ? currentVolume / baselineWeeklyVolume : null;
+    final ratio = baselineWeeklyVolume > 0
+        ? currentVolume / baselineWeeklyVolume
+        : null;
 
     final label = _label(ratio);
     final guidance = _guidance(

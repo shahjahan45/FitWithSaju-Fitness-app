@@ -95,8 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       return _SelectionPage(
         eyebrow: 'YOUR GOAL',
         title: 'What are you training for?',
-        subtitle:
-            'Choose your focus to personalize the FitWithSaju experience.',
+        subtitle: 'Choose your focus to personalize the FitWithSaju experience.',
         options: const [
           'Build Muscle',
           'Lose Weight',
@@ -119,8 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       return _SelectionPage(
         eyebrow: 'YOUR LEVEL',
         title: 'Where are you starting?',
-        subtitle:
-            'We will keep every workout simple, practical, and motivating.',
+        subtitle: 'We will keep every workout simple, practical, and motivating.',
         options: const ['Beginner', 'Intermediate', 'Advanced'],
         selected: level,
         onSelected: (value) {
@@ -354,8 +352,7 @@ class _IntroPage extends StatelessWidget {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.arrow_forward_rounded,
-                              color: Colors.white, size: 30),
+                          Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 30),
                           SizedBox(width: 12),
                           Text(
                             'Get Started',
@@ -452,14 +449,10 @@ class _SelectionPage extends StatelessWidget {
                 duration: const Duration(milliseconds: 220),
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: selected == option
-                      ? AppColors.primarySoft
-                      : AppColors.surface,
+                  color: selected == option ? AppColors.primarySoft : AppColors.surface,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: selected == option
-                        ? AppColors.primary
-                        : AppColors.border,
+                    color: selected == option ? AppColors.primary : AppColors.border,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -482,12 +475,8 @@ class _SelectionPage extends StatelessWidget {
                       ),
                     ),
                     Icon(
-                      selected == option
-                          ? Icons.check_circle_rounded
-                          : Icons.circle_outlined,
-                      color: selected == option
-                          ? AppColors.primary
-                          : AppColors.muted,
+                      selected == option ? Icons.check_circle_rounded : Icons.circle_outlined,
+                      color: selected == option ? AppColors.primary : AppColors.muted,
                     ),
                   ],
                 ),

@@ -9,7 +9,12 @@ import '../../data/models/exercise.dart';
 import 'exercise_detail_screen.dart';
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({super.key});
+  final bool showBackButton;
+
+  const ExploreScreen({
+    super.key,
+    this.showBackButton = false,
+  });
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
@@ -113,8 +118,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     final value = values[index];
                     final selected = value == _equipment;
                     return Material(
-                      color:
-                          selected ? AppColors.primarySoft : Colors.transparent,
+                      color: selected
+                          ? AppColors.primarySoft
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(18),
                       child: ListTile(
                         shape: RoundedRectangleBorder(
@@ -135,7 +141,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             selected
                                 ? Icons.check_rounded
                                 : Icons.fitness_center_rounded,
-                            color: selected ? Colors.white : AppColors.muted,
+                            color: selected
+                                ? Colors.white
+                                : AppColors.muted,
                             size: 18,
                           ),
                         ),
@@ -168,10 +176,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
     final hasFilters =
         _query.isNotEmpty || _bodyPart != 'All' || _equipment != 'All';
 
-    return SafeArea(
-      child: CustomScrollView(
-        key: const PageStorageKey('explore-scroll'),
-        slivers: [
+    return Material(
+      color: AppColors.background,
+      child: SafeArea(
+        child: CustomScrollView(
+          key: const PageStorageKey('explore-scroll'),
+          slivers: [
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
@@ -181,6 +191,23 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        if (widget.showBackButton) ...[
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 8),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: AppColors.primarySoft,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: IconButton(
+                                tooltip: 'Back',
+                                onPressed: () =>
+                                    Navigator.of(context).maybePop(),
+                                icon: const Icon(Icons.arrow_back_rounded),
+                              ),
+                            ),
+                          ),
+                        ],
                         const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,13 +269,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           _FilterChip(
                             label: 'All',
                             selected: _bodyPart == 'All',
-                            onTap: () => setState(() => _bodyPart = 'All'),
+                            onTap: () =>
+                                setState(() => _bodyPart = 'All'),
                           ),
                           ...ExerciseCatalog.instance.availableBodyParts.map(
                             (part) => _FilterChip(
                               label: _pretty(part),
                               selected: _bodyPart == part,
-                              onTap: () => setState(() => _bodyPart = part),
+                              onTap: () =>
+                                  setState(() => _bodyPart = part),
                             ),
                           ),
                         ],
@@ -339,7 +368,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

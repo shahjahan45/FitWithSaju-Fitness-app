@@ -22,6 +22,7 @@ class LocalStore {
   static const _programHistoryKey = 'program_history_v1';
   static const _programScheduleOverridesKey = 'program_schedule_overrides_v1';
   static const _readinessCheckInsKey = 'readiness_check_ins_v1';
+  static const _weeklyGoalsKey = 'weekly_goals_v1';
 
   static const List<String> weekDays = [
     'Monday',
@@ -187,13 +188,15 @@ class LocalStore {
       'isRest': true,
       'durationMinutes': 0,
       'exerciseIds': <String>[],
-      if (existing?['programId'] != null) 'programId': existing!['programId'],
+      if (existing?['programId'] != null)
+        'programId': existing!['programId'],
       if (existing?['programName'] != null)
         'programName': existing!['programName'],
       if (existing?['programDayKey'] != null)
         'programDayKey': existing!['programDayKey'],
     });
   }
+
 
   static Future<Map<String, dynamic>?> activeProgram() async {
     final prefs = await SharedPreferences.getInstance();
@@ -343,10 +346,10 @@ class LocalStore {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final items = await programScheduleOverrides();
-    final existingIndex =
-        items.indexWhere((item) => item['sessionKey'] == sessionKey);
-    final scheduledDate =
-        existingIndex >= 0 ? items[existingIndex]['scheduledDate'] : null;
+    final existingIndex = items.indexWhere((item) => item['sessionKey'] == sessionKey);
+    final scheduledDate = existingIndex >= 0
+        ? items[existingIndex]['scheduledDate']
+        : null;
     final entry = <String, dynamic>{
       'programId': programId,
       'sessionKey': sessionKey,
@@ -419,11 +422,55 @@ class LocalStore {
     return DateTime(year, month, day);
   }
 
+  static Future<Map<String, dynamic>> weeklyGoals() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_weeklyGoalsKey);
+    if (raw == null || raw.isEmpty) {
+      return _defaultWeeklyGoals();
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        return Map<String, dynamic>.from(decoded);
+      }
+    } catch (_) {
+      // A damaged/legacy preference should never red-screen the goals UI.
+    }
+    return _defaultWeeklyGoals();
+  }
+
+  static Map<String, dynamic> _defaultWeeklyGoals() => <String, dynamic>{
+        'workouts': 4,
+        'trainingMinutes': 180,
+        'hydrationDays': 5,
+        'readinessDays': 5,
+      };
+
+  static Future<void> saveWeeklyGoals({
+    required int workouts,
+    required int trainingMinutes,
+    required int hydrationDays,
+    required int readinessDays,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _weeklyGoalsKey,
+      jsonEncode(<String, dynamic>{
+        'workouts': workouts.clamp(1, 7).toInt(),
+        'trainingMinutes': trainingMinutes.clamp(30, 840).toInt(),
+        'hydrationDays': hydrationDays.clamp(1, 7).toInt(),
+        'readinessDays': readinessDays.clamp(1, 7).toInt(),
+        'updatedAt': DateTime.now().toIso8601String(),
+      }),
+    );
+    _notify();
+  }
+
   static Future<List<Map<String, dynamic>>> readinessCheckIns() async {
     final prefs = await SharedPreferences.getInstance();
     final items = _decodeList(prefs.getString(_readinessCheckInsKey));
-    items.sort((a, b) => (b['dateKey']?.toString() ?? '')
-        .compareTo(a['dateKey']?.toString() ?? ''));
+    items.sort((a, b) =>
+        (b['dateKey']?.toString() ?? '').compareTo(a['dateKey']?.toString() ?? ''));
     return items;
   }
 
@@ -451,10 +498,8 @@ class LocalStore {
     final items = await readinessCheckIns();
     final key = localDateKey(date);
     final now = DateTime.now().toIso8601String();
-    final index =
-        items.indexWhere((item) => item['dateKey']?.toString() == key);
-    final previousCreatedAt =
-        index >= 0 ? items[index]['createdAt']?.toString() : null;
+    final index = items.indexWhere((item) => item['dateKey']?.toString() == key);
+    final previousCreatedAt = index >= 0 ? items[index]['createdAt']?.toString() : null;
     final entry = <String, dynamic>{
       'dateKey': key,
       'sleepQuality': sleepQuality.clamp(1, 5).toInt(),
@@ -469,8 +514,8 @@ class LocalStore {
     } else {
       items.add(entry);
     }
-    items.sort((a, b) => (b['dateKey']?.toString() ?? '')
-        .compareTo(a['dateKey']?.toString() ?? ''));
+    items.sort((a, b) =>
+        (b['dateKey']?.toString() ?? '').compareTo(a['dateKey']?.toString() ?? ''));
     await prefs.setString(
       _readinessCheckInsKey,
       jsonEncode(items.take(730).toList()),
@@ -527,8 +572,7 @@ class LocalStore {
       'value': value,
       'date': DateTime.now().toIso8601String(),
     });
-    await prefs.setString(
-        _weightEntriesKey, jsonEncode(items.take(120).toList()));
+    await prefs.setString(_weightEntriesKey, jsonEncode(items.take(120).toList()));
     _notify();
   }
 
@@ -561,6 +605,7 @@ class LocalStore {
     _notify();
   }
 
+
   static Future<void> deleteMeasurementAt(int index) async {
     final prefs = await SharedPreferences.getInstance();
     final items = await measurementEntries();
@@ -571,6 +616,8 @@ class LocalStore {
     await prefs.setString(_measurementEntriesKey, jsonEncode(items));
     _notify();
   }
+
+
 
   static Future<Map<String, dynamic>?> activeWorkout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -603,8 +650,7 @@ class LocalStore {
   ) async {
     final prefs = await SharedPreferences.getInstance();
     final items = await history();
-    final index =
-        items.indexWhere((item) => item['id']?.toString() == sessionId);
+    final index = items.indexWhere((item) => item['id']?.toString() == sessionId);
     if (index < 0) {
       return;
     }
@@ -613,8 +659,8 @@ class LocalStore {
     _notify();
   }
 
-  static Future<Map<String, dynamic>?> historySessionById(
-      String sessionId) async {
+
+  static Future<Map<String, dynamic>?> historySessionById(String sessionId) async {
     final items = await history();
     for (final item in items) {
       if (item['id']?.toString() == sessionId) {
@@ -647,8 +693,7 @@ class LocalStore {
         final volume = weight * reps;
         final current = records[exerciseId];
         final bestWeight = (current?['bestWeight'] as num?)?.toDouble() ?? -1;
-        final repsAtBest =
-            (current?['repsAtBestWeight'] as num?)?.toInt() ?? -1;
+        final repsAtBest = (current?['repsAtBestWeight'] as num?)?.toInt() ?? -1;
         final isPr = current == null ||
             weight > bestWeight ||
             (weight == bestWeight && reps > repsAtBest);
@@ -716,7 +761,7 @@ class LocalStore {
   static Future<Map<String, dynamic>> exportData() async {
     return <String, dynamic>{
       'app': 'FitWithSaju',
-      'formatVersion': 6,
+      'formatVersion': 7,
       'exportedAt': DateTime.now().toIso8601String(),
       'onboardingComplete': await onboardingComplete(),
       'profile': await profile(),
@@ -731,6 +776,7 @@ class LocalStore {
       'programHistory': await programHistory(),
       'programScheduleOverrides': await programScheduleOverrides(),
       'readinessCheckIns': await readinessCheckIns(),
+      'weeklyGoals': await weeklyGoals(),
     };
   }
 
@@ -773,9 +819,9 @@ class LocalStore {
     final activeWorkoutValue = data['activeWorkout'];
     final activeProgramValue = data['activeProgram'];
     final programHistoryItems = _mapList(data['programHistory']);
-    final programScheduleOverrideItems =
-        _mapList(data['programScheduleOverrides']);
+    final programScheduleOverrideItems = _mapList(data['programScheduleOverrides']);
     final readinessCheckInItems = _mapList(data['readinessCheckIns']);
+    final weeklyGoalsValue = data['weeklyGoals'];
     final favoritesValue = data['favorites'];
     final favoriteIds = favoritesValue is List
         ? favoritesValue.map((item) => item.toString()).toList()
@@ -785,12 +831,9 @@ class LocalStore {
       await prefs.setString(_weeklyPlanKey, jsonEncode(weekly));
     }
     await prefs.setString(_customWorkoutsKey, jsonEncode(custom));
-    await prefs.setString(
-        _historyKey, jsonEncode(historyItems.take(100).toList()));
-    await prefs.setString(
-        _weightEntriesKey, jsonEncode(weights.take(120).toList()));
-    await prefs.setString(
-        _measurementEntriesKey, jsonEncode(measurements.take(60).toList()));
+    await prefs.setString(_historyKey, jsonEncode(historyItems.take(100).toList()));
+    await prefs.setString(_weightEntriesKey, jsonEncode(weights.take(120).toList()));
+    await prefs.setString(_measurementEntriesKey, jsonEncode(measurements.take(60).toList()));
     await prefs.setStringList(_favoritesKey, favoriteIds);
     if (activeWorkoutValue is Map) {
       await prefs.setString(
@@ -820,6 +863,12 @@ class LocalStore {
       _readinessCheckInsKey,
       jsonEncode(readinessCheckInItems.take(730).toList()),
     );
+    if (weeklyGoalsValue is Map) {
+      final goals = Map<String, dynamic>.from(weeklyGoalsValue);
+      await prefs.setString(_weeklyGoalsKey, jsonEncode(goals));
+    } else {
+      await prefs.remove(_weeklyGoalsKey);
+    }
     _notify();
   }
 
@@ -836,8 +885,7 @@ class LocalStore {
           continue;
         }
         fallback ??= set;
-        if (setNumber == null ||
-            (set['setNumber'] as num?)?.toInt() == setNumber) {
+        if (setNumber == null || (set['setNumber'] as num?)?.toInt() == setNumber) {
           return Map<String, dynamic>.from(set);
         }
       }
@@ -881,8 +929,7 @@ class LocalStore {
         final bestVolume = (current['bestSetVolume'] as num?)?.toDouble() ?? 0;
         final bestReps = (current['bestReps'] as num?)?.toInt() ?? 0;
 
-        if (weight > bestWeight ||
-            (weight == bestWeight && reps > repsAtBest)) {
+        if (weight > bestWeight || (weight == bestWeight && reps > repsAtBest)) {
           current['bestWeight'] = weight;
           current['repsAtBestWeight'] = reps;
           current['achievedAt'] = set['completedAt']?.toString() ?? sessionDate;
@@ -908,7 +955,8 @@ class LocalStore {
       }
       final calculated = _mapList(session['sets']).fold<double>(
         0,
-        (setSum, set) => setSum + ((set['volume'] as num?)?.toDouble() ?? 0),
+        (setSum, set) =>
+            setSum + ((set['volume'] as num?)?.toDouble() ?? 0),
       );
       return sum + calculated;
     });

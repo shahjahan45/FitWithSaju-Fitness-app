@@ -40,8 +40,7 @@ void main() {
     expect(wednesday.status, 'upcoming');
   });
 
-  test('rescheduled program session persists and is restored by backup',
-      () async {
+  test('rescheduled program session persists and is restored by backup', () async {
     final program = WorkoutProgramCatalog.find('foundation_3')!;
     await LocalStore.startWorkoutProgram(
       programId: program.id,
@@ -59,7 +58,7 @@ void main() {
     );
 
     final backup = await LocalStore.exportData();
-    expect(backup['formatVersion'], 6);
+    expect(backup['formatVersion'], 7);
 
     SharedPreferences.setMockInitialValues(<String, Object>{});
     await LocalStore.importData(backup);
@@ -72,12 +71,11 @@ void main() {
 
   test('deload metadata reaches generated workout', () {
     final program = WorkoutProgramCatalog.find('strength_4')!;
-    final plan =
-        Map<String, dynamic>.from(program.planWithProgramMetadata().first)
-          ..['programSessionKey'] = 'strength_4_w4_monday'
-          ..['scheduledDate'] = '2026-10-19'
-          ..['programWeek'] = 4
-          ..['isDeload'] = true;
+    final plan = Map<String, dynamic>.from(program.planWithProgramMetadata().first)
+      ..['programSessionKey'] = 'strength_4_w4_monday'
+      ..['scheduledDate'] = '2026-10-19'
+      ..['programWeek'] = 4
+      ..['isDeload'] = true;
 
     final workout = WorkoutFactory.fromPlan(plan);
 

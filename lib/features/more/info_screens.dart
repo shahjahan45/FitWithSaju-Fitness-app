@@ -136,7 +136,7 @@ class AppGuideScreen extends StatelessWidget {
             title: 'Review progress',
             icon: Icons.auto_graph_rounded,
             body:
-                'Progress combines workouts, minutes, sets, volume, history and body-weight tracking. Personal Records and Achievements turn your saved sessions into long-term milestones.',
+                'Progress combines workouts, minutes, sets, volume, weekly goals, recovery and Weekly Review. Personal Records and Achievements turn your saved sessions into long-term milestones.',
           ),
           _GuideStep(
             number: '05',
@@ -332,8 +332,7 @@ class _InfoSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.w900)),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
                 const SizedBox(height: 6),
                 Text(
                   body,
@@ -420,7 +419,7 @@ class _VersionCard extends StatelessWidget {
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              'FitWithSaju 1.11.0 • Mobile + Content Admin',
+              'FitWithSaju 1.21.0 • Mobile + Content Admin',
               style: TextStyle(fontWeight: FontWeight.w800),
             ),
           ),

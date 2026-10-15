@@ -236,8 +236,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                   separatorBuilder: (_, __) => const SizedBox(width: 7),
                   itemBuilder: (context, index) {
                     final itemDate = weekStart.add(Duration(days: index));
-                    final selected = NutritionStore.dateKey(itemDate) ==
-                        NutritionStore.dateKey(date);
+                    final selected = NutritionStore.dateKey(itemDate) == NutritionStore.dateKey(date);
                     return _DateTile(
                       date: itemDate,
                       selected: selected,
@@ -263,8 +262,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     ? 'Browse weekly meal plans'
                     : '${NutritionPlanCatalog.byId(data.activeTemplateId!)?.name ?? 'Weekly plan'}  ·  Change plan',
                 icon: Icons.auto_awesome_rounded,
-                onTap: () =>
-                    _open(NutritionPlanTemplatesScreen(anchorDate: date)),
+                onTap: () => _open(NutritionPlanTemplatesScreen(anchorDate: date)),
               ),
             ),
             const SizedBox(height: 14),
@@ -312,8 +310,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               children: [
                 Expanded(
                   child: NutritionSectionTitle(
-                    title: NutritionStore.dateKey(date) ==
-                            NutritionStore.dateKey(DateTime.now())
+                    title: NutritionStore.dateKey(date) == NutritionStore.dateKey(DateTime.now())
                         ? 'Today’s meals'
                         : nutritionLongDate(date),
                   ),
@@ -333,8 +330,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 return const SizedBox.shrink();
               }
               final logged = data.foodLogs.any(
-                (item) =>
-                    item['sourceKey']?.toString() ==
+                (item) => item['sourceKey']?.toString() ==
                     '${NutritionStore.dateKey(date)}:${meal.slot}',
               );
               return Padding(
@@ -347,8 +343,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     recipe: recipe,
                     saved: data.savedIds.contains(recipe.id),
                     logged: logged,
-                    onOpen: () =>
-                        _open(MealDetailScreen(date: date, meal: meal)),
+                    onOpen: () => _open(MealDetailScreen(date: date, meal: meal)),
                     onSave: () => NutritionStore.toggleSavedMeal(recipe.id),
                     onSwap: () => _swapDirect(date, meal, recipe),
                     onLog: () => _logDirect(date, meal, recipe),
@@ -407,57 +402,47 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const Text('Choose an alternative',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              const Text('Allergy restrictions remain enforced.',
-                  style: TextStyle(color: NutritionPalette.muted)),
-              const SizedBox(height: 14),
-              ...alternatives.map((recipe) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Material(
-                      color: Colors.white,
+            const Text('Choose an alternative', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 4),
+            const Text('Allergy restrictions remain enforced.', style: TextStyle(color: NutritionPalette.muted)),
+            const SizedBox(height: 14),
+            ...alternatives.map((recipe) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    child: InkWell(
                       borderRadius: BorderRadius.circular(18),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(18),
-                        onTap: () => Navigator.of(context).pop(recipe),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: NutritionPalette.line),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Row(
-                            children: [
-                              NutritionArtwork(
-                                  artwork: recipe.artwork,
-                                  assetPath: recipe.artworkAsset,
-                                  networkUrl: recipe.imageUrl,
-                                  size: 64),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(recipe.name,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w900)),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${recipe.prepMinutes} min · ${recipe.macros.calories.round()} kcal · ${recipe.macros.protein.round()}g protein',
-                                      style: const TextStyle(
-                                          color: NutritionPalette.muted,
-                                          fontSize: 11),
-                                    ),
-                                  ],
-                                ),
+                      onTap: () => Navigator.of(context).pop(recipe),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: NutritionPalette.line),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Row(
+                          children: [
+                            NutritionArtwork(artwork: recipe.artwork, assetPath: recipe.artworkAsset, networkUrl: recipe.imageUrl, size: 64),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(recipe.name, style: const TextStyle(fontWeight: FontWeight.w900)),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${recipe.prepMinutes} min · ${recipe.macros.calories.round()} kcal · ${recipe.macros.protein.round()}g protein',
+                                    style: const TextStyle(color: NutritionPalette.muted, fontSize: 11),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  )),
+                  ),
+                )),
             ],
           ),
         ),
@@ -466,8 +451,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     if (chosen == null || !mounted) {
       return;
     }
-    await NutritionStore.swapMeal(
-        date: date, slot: meal.slot, recipeId: chosen.id);
+    await NutritionStore.swapMeal(date: date, slot: meal.slot, recipeId: chosen.id);
     if (!mounted) {
       return;
     }
@@ -505,31 +489,24 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Log ${recipe.name}',
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w900)),
+                child: Text('Log ${recipe.name}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
                   IconButton.filledTonal(
-                    onPressed: servings > .25
-                        ? () => setSheetState(() => servings -= .25)
-                        : null,
+                    onPressed: servings > .25 ? () => setSheetState(() => servings -= .25) : null,
                     icon: const Icon(Icons.remove_rounded),
                   ),
                   Expanded(
                     child: Text(
                       '${formatAmount(servings)} serving${servings == 1 ? '' : 's'}',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w900),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                     ),
                   ),
                   IconButton.filledTonal(
-                    onPressed: servings < 4
-                        ? () => setSheetState(() => servings += .25)
-                        : null,
+                    onPressed: servings < 4 ? () => setSheetState(() => servings += .25) : null,
                     icon: const Icon(Icons.add_rounded),
                   ),
                 ],
@@ -541,11 +518,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 width: double.infinity,
                 height: 52,
                 child: FilledButton(
-                  style: FilledButton.styleFrom(
-                      backgroundColor: NutritionPalette.brand),
+                  style: FilledButton.styleFrom(backgroundColor: NutritionPalette.brand),
                   onPressed: () => Navigator.of(sheetContext).pop(servings),
-                  child: const Text('Log eaten',
-                      style: TextStyle(fontWeight: FontWeight.w900)),
+                  child: const Text('Log eaten', style: TextStyle(fontWeight: FontWeight.w900)),
                 ),
               ),
             ],
@@ -566,9 +541,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(
-              added ? 'Meal logged.' : 'This planned meal is already logged.')),
+      SnackBar(content: Text(added ? 'Meal logged.' : 'This planned meal is already logged.')),
     );
   }
 
@@ -647,8 +620,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Log ${recipe.name}',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w900),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                 ),
               ),
               const SizedBox(height: 16),
@@ -664,8 +636,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     child: Text(
                       '${formatAmount(servings)} serving${servings == 1 ? '' : 's'}',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w900),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                     ),
                   ),
                   IconButton.filledTonal(
@@ -684,8 +655,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 height: 52,
                 child: FilledButton(
                   onPressed: () => Navigator.pop(sheetContext, servings),
-                  child: const Text('Log eaten',
-                      style: TextStyle(fontWeight: FontWeight.w900)),
+                  child: const Text('Log eaten', style: TextStyle(fontWeight: FontWeight.w900)),
                 ),
               ),
             ],
@@ -771,26 +741,20 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Food log · ${nutritionLongDate(date)}',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+            Text('Food log · ${nutritionLongDate(date)}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
             const SizedBox(height: 12),
             if (logs.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 28),
-                child: Center(
-                    child: Text('Nothing logged yet.',
-                        style: TextStyle(color: NutritionPalette.muted))),
+                child: Center(child: Text('Nothing logged yet.', style: TextStyle(color: NutritionPalette.muted))),
               )
             else
               ...logs.map((log) {
                 final macros = NutritionMacros.fromJson(log['nutrition']);
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(log['recipeName']?.toString() ?? 'Meal',
-                      style: const TextStyle(fontWeight: FontWeight.w800)),
-                  subtitle: Text(
-                      '${formatAmount((log['servings'] as num?)?.toDouble() ?? 1)} servings · ${macros.calories.round()} kcal'),
+                  title: Text(log['recipeName']?.toString() ?? 'Meal', style: const TextStyle(fontWeight: FontWeight.w800)),
+                  subtitle: Text('${formatAmount((log['servings'] as num?)?.toDouble() ?? 1)} servings · ${macros.calories.round()} kcal'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -835,8 +799,7 @@ class _DateTile extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _DateTile(
-      {required this.date, required this.selected, required this.onTap});
+  const _DateTile({required this.date, required this.selected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -850,8 +813,7 @@ class _DateTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? NutritionPalette.brand : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-              color: selected ? NutritionPalette.brand : NutritionPalette.line),
+          border: Border.all(color: selected ? NutritionPalette.brand : NutritionPalette.line),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -916,21 +878,14 @@ class _NutritionSummary extends StatelessWidget {
               const Expanded(
                 child: Text(
                   'EATEN / DAILY TARGET',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: .4),
+                  style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: .4),
                 ),
               ),
               GestureDetector(
                 onTap: onLogs,
                 child: Text(
                   '$eatenMeals of $plannedMealCount meals',
-                  style: const TextStyle(
-                      color: NutritionPalette.accent,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800),
+                  style: const TextStyle(color: NutritionPalette.accent, fontSize: 11, fontWeight: FontWeight.w800),
                 ),
               ),
             ],
@@ -938,8 +893,7 @@ class _NutritionSummary extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '${consumed.calories.round()} / ${targets.calories.round()} kcal',
-            style: const TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
+            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 10),
           ClipRRect(
@@ -948,26 +902,15 @@ class _NutritionSummary extends StatelessWidget {
               minHeight: 6,
               value: progress,
               backgroundColor: NutritionPalette.brand,
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(NutritionPalette.accent),
+              valueColor: const AlwaysStoppedAnimation<Color>(NutritionPalette.accent),
             ),
           ),
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(
-                  child: _SummaryMacro(
-                      label: 'Protein',
-                      eaten: consumed.protein,
-                      target: targets.protein)),
-              Expanded(
-                  child: _SummaryMacro(
-                      label: 'Carbs',
-                      eaten: consumed.carbs,
-                      target: targets.carbs)),
-              Expanded(
-                  child: _SummaryMacro(
-                      label: 'Fat', eaten: consumed.fat, target: targets.fat)),
+              Expanded(child: _SummaryMacro(label: 'Protein', eaten: consumed.protein, target: targets.protein)),
+              Expanded(child: _SummaryMacro(label: 'Carbs', eaten: consumed.carbs, target: targets.carbs)),
+              Expanded(child: _SummaryMacro(label: 'Fat', eaten: consumed.fat, target: targets.fat)),
             ],
           ),
           const SizedBox(height: 13),
@@ -980,10 +923,7 @@ class _NutritionSummary extends StatelessWidget {
             ),
             child: Text(
               'Planned today: ${planned.calories.round()} kcal · ${planned.protein.round()}g protein',
-              style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700),
+              style: const TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -997,21 +937,18 @@ class _SummaryMacro extends StatelessWidget {
   final double eaten;
   final double target;
 
-  const _SummaryMacro(
-      {required this.label, required this.eaten, required this.target});
+  const _SummaryMacro({required this.label, required this.eaten, required this.target});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 11)),
+        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
         const SizedBox(height: 3),
         Text(
           '${eaten.round()} / ${target.round()} g',
-          style: const TextStyle(
-              color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
         ),
       ],
     );
@@ -1059,14 +996,10 @@ class _MealCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Hero(
-                  tag:
-                      'nutrition-meal-${NutritionStore.dateKey(date)}-${meal.slot}',
+                  tag: 'nutrition-meal-${NutritionStore.dateKey(date)}-${meal.slot}',
                   child: Material(
                     color: Colors.transparent,
-                    child: NutritionArtwork(
-                        artwork: recipe.artwork,
-                        assetPath: recipe.artworkAsset,
-                        networkUrl: recipe.imageUrl),
+                    child: NutritionArtwork(artwork: recipe.artwork, assetPath: recipe.artworkAsset, networkUrl: recipe.imageUrl),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1079,31 +1012,19 @@ class _MealCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               '${meal.slot.toUpperCase()} · ${meal.time}',
-                              style: const TextStyle(
-                                  color: NutritionPalette.brand,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900),
+                              style: const TextStyle(color: NutritionPalette.brand, fontSize: 10, fontWeight: FontWeight.w900),
                             ),
                           ),
                           if (logged)
-                            const Icon(Icons.check_circle_rounded,
-                                color: NutritionPalette.brand, size: 18),
+                            const Icon(Icons.check_circle_rounded, color: NutritionPalette.brand, size: 18),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(recipe.name,
-                          style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w900,
-                              height: 1.15)),
+                      Text(recipe.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, height: 1.15)),
                       const SizedBox(height: 6),
-                      Text(
-                          '${formatAmount(meal.servings)} serving · ${recipe.macros.scale(meal.servings).calories.round()} kcal',
-                          style: const TextStyle(
-                              color: NutritionPalette.muted, fontSize: 11)),
+                      Text('${formatAmount(meal.servings)} serving · ${recipe.macros.scale(meal.servings).calories.round()} kcal', style: const TextStyle(color: NutritionPalette.muted, fontSize: 11)),
                       const SizedBox(height: 5),
-                      NutritionMacroLine(
-                          macros: recipe.macros, servings: meal.servings),
+                      NutritionMacroLine(macros: recipe.macros, servings: meal.servings),
                     ],
                   ),
                 ),
@@ -1113,25 +1034,9 @@ class _MealCard extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              Expanded(
-                  child: _MealAction(
-                      icon: Icons.swap_horiz_rounded,
-                      label: 'Swap',
-                      onTap: onSwap)),
-              Expanded(
-                  child: _MealAction(
-                      icon: saved
-                          ? Icons.bookmark_rounded
-                          : Icons.bookmark_border_rounded,
-                      label: saved ? 'Saved' : 'Save',
-                      onTap: onSave)),
-              Expanded(
-                  child: _MealAction(
-                      icon: logged
-                          ? Icons.check_circle_rounded
-                          : Icons.add_task_rounded,
-                      label: logged ? 'Logged' : 'Log',
-                      onTap: logged ? null : onLog)),
+              Expanded(child: _MealAction(icon: Icons.swap_horiz_rounded, label: 'Swap', onTap: onSwap)),
+              Expanded(child: _MealAction(icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, label: saved ? 'Saved' : 'Save', onTap: onSave)),
+              Expanded(child: _MealAction(icon: logged ? Icons.check_circle_rounded : Icons.add_task_rounded, label: logged ? 'Logged' : 'Log', onTap: logged ? null : onLog)),
             ],
           ),
         ],
@@ -1156,19 +1061,9 @@ class _MealAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 9),
         child: Column(
           children: [
-            Icon(icon,
-                size: 18,
-                color: onTap == null
-                    ? NutritionPalette.muted
-                    : NutritionPalette.brand),
+            Icon(icon, size: 18, color: onTap == null ? NutritionPalette.muted : NutritionPalette.brand),
             const SizedBox(height: 3),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: onTap == null
-                        ? NutritionPalette.muted
-                        : NutritionPalette.ink)),
+            Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: onTap == null ? NutritionPalette.muted : NutritionPalette.ink)),
           ],
         ),
       ),
@@ -1217,12 +1112,8 @@ class _HydrationCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Hydration',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w900)),
-                    Text('${_display(currentMl)} / ${_display(goalMl)}',
-                        style: const TextStyle(
-                            color: NutritionPalette.muted, fontSize: 12)),
+                    const Text('Hydration', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+                    Text('${_display(currentMl)} / ${_display(goalMl)}', style: const TextStyle(color: NutritionPalette.muted, fontSize: 12)),
                   ],
                 ),
               ),
@@ -1239,22 +1130,15 @@ class _HydrationCard extends StatelessWidget {
               value: progress,
               minHeight: 8,
               backgroundColor: const Color(0xFFE6F4FF),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(Color(0xFF55A7E4)),
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF55A7E4)),
             ),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                  child: _WaterButton(
-                      label: us ? '+8 oz' : '+250 ml',
-                      onTap: () => _add(us ? 237 : 250))),
+              Expanded(child: _WaterButton(label: us ? '+8 oz' : '+250 ml', onTap: () => _add(us ? 237 : 250))),
               const SizedBox(width: 8),
-              Expanded(
-                  child: _WaterButton(
-                      label: us ? '+16 oz' : '+500 ml',
-                      onTap: () => _add(us ? 473 : 500))),
+              Expanded(child: _WaterButton(label: us ? '+16 oz' : '+500 ml', onTap: () => _add(us ? 473 : 500))),
               const SizedBox(width: 8),
               Expanded(
                 child: _WaterButton(
@@ -1350,22 +1234,18 @@ class _HydrationCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Water entries',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+            const Text('Water entries', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
             const SizedBox(height: 10),
             if (entries.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 28),
-                child: Center(
-                    child: Text('No water logged for this date.',
-                        style: TextStyle(color: NutritionPalette.muted))),
+                child: Center(child: Text('No water logged for this date.', style: TextStyle(color: NutritionPalette.muted))),
               )
             else
               ...entries.map((entry) => ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.water_drop_outlined),
-                    title: Text(_display((entry['ml'] as num?)?.toInt() ?? 0),
-                        style: const TextStyle(fontWeight: FontWeight.w800)),
+                    title: Text(_display((entry['ml'] as num?)?.toInt() ?? 0), style: const TextStyle(fontWeight: FontWeight.w800)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -1416,8 +1296,7 @@ class _WaterButton extends StatelessWidget {
       height: 44,
       child: OutlinedButton(
         onPressed: onTap,
-        child: Text(label,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
+        child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
       ),
     );
   }

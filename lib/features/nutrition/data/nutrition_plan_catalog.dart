@@ -28,8 +28,7 @@ class NutritionPlanCatalog {
   static const _cacheKey = 'nutrition_plan_template_cache_v1';
   static const _syncedAtKey = 'nutrition_plan_template_synced_at_v1';
 
-  static const NutritionMealPlanTemplate balancedWeek =
-      NutritionMealPlanTemplate(
+  static const NutritionMealPlanTemplate balancedWeek = NutritionMealPlanTemplate(
     id: 'balanced-week-sample',
     name: 'Balanced Week',
     description:
@@ -38,80 +37,51 @@ class NutritionPlanCatalog {
     bundled: true,
     days: <int, List<PlannedNutritionMeal>>{
       DateTime.monday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'berry_oats', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'chicken_rice', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'yogurt_berries', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'salmon_greens', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'berry_oats', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'chicken_rice', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'yogurt_berries', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'salmon_greens', time: '19:00'),
       ],
       DateTime.tuesday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'avocado_eggs', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'lentil_bowl', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'apple_peanut', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'beef_quinoa', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'avocado_eggs', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'lentil_bowl', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'apple_peanut', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'beef_quinoa', time: '19:00'),
       ],
       DateTime.wednesday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'banana_chia', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'tuna_wrap', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hummus_veg', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'tofu_stirfry', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'banana_chia', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'tuna_wrap', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hummus_veg', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'tofu_stirfry', time: '19:00'),
       ],
       DateTime.thursday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'berry_oats', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'chicken_rice', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'yogurt_berries', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'salmon_greens', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'berry_oats', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'chicken_rice', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'yogurt_berries', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'salmon_greens', time: '19:00'),
       ],
       DateTime.friday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'avocado_eggs', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'lentil_bowl', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'apple_peanut', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'beef_quinoa', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'avocado_eggs', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'lentil_bowl', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'apple_peanut', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'beef_quinoa', time: '19:00'),
       ],
       DateTime.saturday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'banana_chia', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'tuna_wrap', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hummus_veg', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'tofu_stirfry', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'banana_chia', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'tuna_wrap', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hummus_veg', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'tofu_stirfry', time: '19:00'),
       ],
       DateTime.sunday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'berry_oats', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'chicken_rice', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'yogurt_berries', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'salmon_greens', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'berry_oats', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'chicken_rice', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'yogurt_berries', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'salmon_greens', time: '19:00'),
       ],
     },
   );
 
-  static const NutritionMealPlanTemplate highProteinWeek =
-      NutritionMealPlanTemplate(
+  static const NutritionMealPlanTemplate highProteinWeek = NutritionMealPlanTemplate(
     id: 'high-protein-7-day',
     name: '7-Day High-Protein',
     description:
@@ -120,94 +90,51 @@ class NutritionPlanCatalog {
     bundled: true,
     days: <int, List<PlannedNutritionMeal>>{
       DateTime.monday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast',
-            recipeId: 'hp_eggs_whites_berries',
-            time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'hp_chicken_rice_broccoli', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_yogurt_whey_berries', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_salmon_vegetables', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_eggs_whites_berries', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_chicken_rice_broccoli', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_yogurt_whey_berries', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_salmon_vegetables', time: '19:00'),
       ],
       DateTime.tuesday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast',
-            recipeId: 'hp_protein_oatmeal_yogurt',
-            time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'hp_beef_potatoes_veg', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_cottage_berries_eggs', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_chicken_salad', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_protein_oatmeal_yogurt', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_beef_potatoes_veg', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_cottage_berries_eggs', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_chicken_salad', time: '19:00'),
       ],
       DateTime.wednesday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'hp_eggs_turkey_toast', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'hp_shrimp_rice_veg', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_yogurt_whey_berries', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_steak_vegetables', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_eggs_turkey_toast', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_shrimp_rice_veg', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_yogurt_whey_berries', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_steak_vegetables', time: '19:00'),
       ],
       DateTime.thursday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast',
-            recipeId: 'hp_eggwhite_omelet_turkey',
-            time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch',
-            recipeId: 'hp_chicken_sweetpotato_broccoli',
-            time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_shake_yogurt', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_whitefish_vegetables', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_eggwhite_omelet_turkey', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_chicken_sweetpotato_broccoli', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_shake_yogurt', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_whitefish_vegetables', time: '19:00'),
       ],
       DateTime.friday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast', recipeId: 'hp_pancakes_eggs', time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'hp_beef_rice_veg', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_cottage_whey_berries', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_salmon_salad', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_pancakes_eggs', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_beef_rice_veg', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_cottage_whey_berries', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_salmon_salad', time: '19:00'),
       ],
       DateTime.saturday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast',
-            recipeId: 'hp_eggs_whites_yogurt',
-            time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch', recipeId: 'hp_steak_potatoes_veg', time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_shake_cottage', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_chicken_vegetables', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_eggs_whites_yogurt', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_steak_potatoes_veg', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_shake_cottage', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_chicken_vegetables', time: '19:00'),
       ],
       DateTime.sunday: <PlannedNutritionMeal>[
-        PlannedNutritionMeal(
-            slot: 'Breakfast',
-            recipeId: 'hp_protein_oatmeal_eggs',
-            time: '08:00'),
-        PlannedNutritionMeal(
-            slot: 'Lunch',
-            recipeId: 'hp_chicken_rice_vegetables',
-            time: '13:00'),
-        PlannedNutritionMeal(
-            slot: 'Snack', recipeId: 'hp_yogurt_whey_fruit', time: '16:30'),
-        PlannedNutritionMeal(
-            slot: 'Dinner', recipeId: 'hp_shrimp_vegetables', time: '19:00'),
+        PlannedNutritionMeal(slot: 'Breakfast', recipeId: 'hp_protein_oatmeal_eggs', time: '08:00'),
+        PlannedNutritionMeal(slot: 'Lunch', recipeId: 'hp_chicken_rice_vegetables', time: '13:00'),
+        PlannedNutritionMeal(slot: 'Snack', recipeId: 'hp_yogurt_whey_fruit', time: '16:30'),
+        PlannedNutritionMeal(slot: 'Dinner', recipeId: 'hp_shrimp_vegetables', time: '19:00'),
       ],
     },
   );
 
-  static const List<NutritionMealPlanTemplate> bundledTemplates =
-      <NutritionMealPlanTemplate>[
+  static const List<NutritionMealPlanTemplate> bundledTemplates = <NutritionMealPlanTemplate>[
     highProteinWeek,
     balancedWeek,
   ];
@@ -219,8 +146,7 @@ class NutritionPlanCatalog {
     List<NutritionMealPlanTemplate>.of(bundledTemplates),
   );
   static final ValueNotifier<NutritionPlanCatalogSource> source =
-      ValueNotifier<NutritionPlanCatalogSource>(
-          NutritionPlanCatalogSource.bundled);
+      ValueNotifier<NutritionPlanCatalogSource>(NutritionPlanCatalogSource.bundled);
 
   static String? lastError;
   static DateTime? lastSyncedAt;
@@ -244,13 +170,11 @@ class NutritionPlanCatalog {
       }
       final remote = decoded
           .whereType<Map>()
-          .map((item) => NutritionMealPlanTemplate.fromApi(
-              Map<String, dynamic>.from(item)))
+          .map((item) => NutritionMealPlanTemplate.fromApi(Map<String, dynamic>.from(item)))
           .where((template) => template.id.isNotEmpty)
           .toList(growable: false);
       if (remote.isNotEmpty) {
-        _setTemplates(
-            _mergeRemoteWithBundled(remote), NutritionPlanCatalogSource.cached);
+        _setTemplates(_mergeRemoteWithBundled(remote), NutritionPlanCatalogSource.cached);
       }
     } catch (_) {
       // Corrupt template cache must never block the bundled plans.
@@ -270,11 +194,9 @@ class NutritionPlanCatalog {
 
     final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
     try {
-      final request =
-          await client.getUrl(Uri.parse('$normalized/api/meal-plan-templates'));
+      final request = await client.getUrl(Uri.parse('$normalized/api/meal-plan-templates'));
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
-      final response =
-          await request.close().timeout(const Duration(seconds: 12));
+      final response = await request.close().timeout(const Duration(seconds: 12));
       final body = await utf8.decoder.bind(response).join();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         lastError = 'Meal-plan server returned HTTP ${response.statusCode}.';
@@ -287,18 +209,15 @@ class NutritionPlanCatalog {
       final decoded = jsonDecode(body);
       final list = decoded is Map ? decoded['data'] : decoded;
       if (list is! List) {
-        throw const FormatException(
-            'Meal-plan API did not return a data list.');
+        throw const FormatException('Meal-plan API did not return a data list.');
       }
       final remote = list
           .whereType<Map>()
-          .map((item) => NutritionMealPlanTemplate.fromApi(
-              Map<String, dynamic>.from(item)))
+          .map((item) => NutritionMealPlanTemplate.fromApi(Map<String, dynamic>.from(item)))
           .where((template) => template.id.isNotEmpty)
           .toList(growable: false);
       if (remote.isEmpty) {
-        throw const FormatException(
-            'Meal-plan API returned no published templates.');
+        throw const FormatException('Meal-plan API returned no published templates.');
       }
 
       final prefs = await SharedPreferences.getInstance();
@@ -310,13 +229,11 @@ class NutritionPlanCatalog {
       await prefs.setString(_syncedAtKey, now.toIso8601String());
       lastSyncedAt = now;
       lastError = null;
-      _setTemplates(
-          _mergeRemoteWithBundled(remote), NutritionPlanCatalogSource.live);
+      _setTemplates(_mergeRemoteWithBundled(remote), NutritionPlanCatalogSource.live);
       return NutritionPlanCatalogSyncResult(
         success: true,
         count: remote.length,
-        message:
-            'Synced ${remote.length} published meal plans from the server.',
+        message: 'Synced ${remote.length} published meal plans from the server.',
       );
     } on TimeoutException {
       lastError = 'The meal-plan server took too long to respond.';

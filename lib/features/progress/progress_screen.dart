@@ -6,10 +6,12 @@ import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_program_catalog.dart';
+import '../goals/weekly_goals_summary_card.dart';
 import '../workout/active_program_screen.dart';
 import '../recovery/readiness_summary_card.dart';
 import '../recovery/recovery_insights_summary_card.dart';
 import '../recovery/training_balance_summary_card.dart';
+import '../review/weekly_review_summary_card.dart';
 import '../more/achievements_screen.dart';
 import 'history_screen.dart';
 import 'weight_tracker_screen.dart';
@@ -70,15 +72,15 @@ class _ProgressContent extends StatelessWidget {
     }).toList();
     final minutes = thisWeek.fold<int>(
       0,
-      (sum, item) => sum + ((item['durationMinutes'] as num?)?.toInt() ?? 0),
+      (sum, item) => sum + _nonNegativeInt(item['durationMinutes']),
     );
     final sets = thisWeek.fold<int>(
       0,
-      (sum, item) => sum + ((item['completedSets'] as num?)?.toInt() ?? 0),
+      (sum, item) => sum + _sessionSetCount(item),
     );
     final weeklyVolume = thisWeek.fold<double>(
       0,
-      (sum, item) => sum + ((item['totalVolume'] as num?)?.toDouble() ?? 0),
+      (sum, item) => sum + _sessionVolume(item),
     );
     final streak = _streak(history);
 
@@ -120,6 +122,20 @@ class _ProgressContent extends StatelessWidget {
               eyebrow: '7-DAY LOAD VS BASELINE',
             ),
           ),
+          const SizedBox(height: 12),
+          const MotionReveal(
+            delay: Duration(milliseconds: 60),
+            child: WeeklyGoalsSummaryCard(
+              eyebrow: 'WEEKLY CONSISTENCY',
+            ),
+          ),
+          const SizedBox(height: 12),
+          const MotionReveal(
+            delay: Duration(milliseconds: 70),
+            child: WeeklyReviewSummaryCard(
+              eyebrow: 'WEEKLY REVIEW & STREAK',
+            ),
+          ),
           const SizedBox(height: 16),
           if (activeProgram != null) ...[
             _ProgramProgressCard(
@@ -147,8 +163,7 @@ class _ProgressContent extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  Text('Mon – Sun',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  Text('Mon – Sun', style: TextStyle(fontWeight: FontWeight.w700)),
                 ],
               ),
             ),
@@ -286,7 +301,7 @@ class _ProgressContent extends StatelessWidget {
               title: 'Body weight',
               subtitle: weights.isEmpty
                   ? 'Add your first weight entry'
-                  : 'Latest: ${(weights.first['value'] as num).toStringAsFixed(1)} KG',
+                  : 'Latest: ${_weightLabel(weights.first['value'])} KG',
             ),
           ),
           const SizedBox(height: 12),
@@ -354,6 +369,49 @@ class _ProgressContent extends StatelessWidget {
     }
     return result;
   }
+
+  static int _nonNegativeInt(dynamic value) {
+    final parsed = value is num
+        ? value.toInt()
+        : int.tryParse(value?.toString() ?? '') ?? 0;
+    return parsed < 0 ? 0 : parsed;
+  }
+
+  static double _sessionVolume(Map<String, dynamic> session) {
+    final stored = _nonNegativeDouble(session['totalVolume']);
+    if (stored != null) {
+      return stored;
+    }
+    return LocalStore.sessionSets(session).fold<double>(0, (sum, set) {
+      final direct = _nonNegativeDouble(set['volume']);
+      if (direct != null) {
+        return sum + direct;
+      }
+      final weight = _nonNegativeDouble(set['weight']) ?? 0;
+      final reps = _nonNegativeInt(set['reps']);
+      return sum + (weight * reps);
+    });
+  }
+
+  static int _sessionSetCount(Map<String, dynamic> session) {
+    final stored = _nonNegativeInt(session['completedSets']);
+    return stored > 0 ? stored : LocalStore.sessionSets(session).length;
+  }
+
+  static double? _nonNegativeDouble(dynamic value) {
+    final parsed = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '');
+    if (parsed == null || !parsed.isFinite || parsed < 0) {
+      return null;
+    }
+    return parsed;
+  }
+
+  static String _weightLabel(dynamic value) {
+    final parsed = _nonNegativeDouble(value);
+    return parsed == null ? '—' : parsed.toStringAsFixed(1);
+  }
 }
 
 class _WeeklyBars extends StatelessWidget {
@@ -371,14 +429,12 @@ class _WeeklyBars extends StatelessWidget {
       if (date == null || date.isBefore(start)) {
         continue;
       }
-      final diff =
-          DateTime(date.year, date.month, date.day).difference(start).inDays;
+      final diff = DateTime(date.year, date.month, date.day).difference(start).inDays;
       if (diff >= 0 && diff < 7) {
-        values[diff] += (item['durationMinutes'] as num?)?.toInt() ?? 0;
+        values[diff] += _ProgressContent._nonNegativeInt(item['durationMinutes']);
       }
     }
-    final maxValue =
-        values.fold<int>(1, (max, value) => value > max ? value : max);
+    final maxValue = values.fold<int>(1, (max, value) => value > max ? value : max);
     const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -439,7 +495,7 @@ class _WeeklyVolumeBars extends StatelessWidget {
       final diff =
           DateTime(date.year, date.month, date.day).difference(start).inDays;
       if (diff >= 0 && diff < 7) {
-        values[diff] += (item['totalVolume'] as num?)?.toDouble() ?? 0;
+        values[diff] += _ProgressContent._sessionVolume(item);
       }
     }
 
@@ -573,8 +629,7 @@ class _ProgramProgressCard extends StatelessWidget {
                   ),
                   Text(
                     '${(progress.completion * 100).round()}%',
-                    style: const TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.w900),
+                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900),
                   ),
                 ],
               ),
@@ -595,14 +650,12 @@ class _ProgramProgressCard extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     activeProgram['name']?.toString() ?? 'Workout Program',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w900),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     'Week ${progress.currentWeek}/${progress.durationWeeks} • ${progress.completedSessions}/${progress.totalSessions} sessions',
-                    style:
-                        const TextStyle(color: AppColors.muted, fontSize: 11),
+                    style: const TextStyle(color: AppColors.muted, fontSize: 11),
                   ),
                 ],
               ),

@@ -2,8 +2,7 @@ import 'package:fitwithsaju/data/demo_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('user-provided exercise catalog has 30 unique media-backed exercises',
-      () {
+  test('user-provided exercise catalog has 30 unique media-backed exercises', () {
     final exercises = DemoRepository.exercises;
     final ids = exercises.map((exercise) => exercise.id).toSet();
 

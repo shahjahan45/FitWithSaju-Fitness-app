@@ -1,4 +1,4 @@
-# FitWithSaju Development Status — v27
+# FitWithSaju Development Status — v29
 
 ## Core mobile app
 - [x] Professional light design system and reusable motion system
@@ -63,3 +63,28 @@ Personal workout, body and nutrition-log data remains local to the device by des
 - [x] Next 7-day plan preview from active program calendar or weekly planner
 - [x] Rest, deload and rescheduled-session context preserved
 - [x] Guidance remains user-controlled and never changes workouts automatically
+
+## Weekly goals & consistency — v28
+- [x] Editable weekly workout target
+- [x] Editable weekly training-minute target
+- [x] Hydration target-day consistency
+- [x] Readiness check-in consistency
+- [x] Live Monday-Sunday goal progress
+- [x] Previous-week goal context
+- [x] Home, Workout, Progress and More integration
+- [x] Backup/Restore support
+- [x] Reduced-motion-safe goal UI
+- [x] User-controlled, non-medical coaching only
+
+
+## Weekly Review & consistency streaks — v29
+- [x] Monday-to-today weekly review
+- [x] Fair same-point-last-week comparison
+- [x] Workouts, training minutes, volume, sets and PR summary
+- [x] Hydration/readiness support-habit context
+- [x] Fitness-readiness guidance average (non-medical)
+- [x] Current and best consecutive active-training-week streaks
+- [x] Strongest training day of the current week
+- [x] Home, Progress and More integration
+- [x] Reduced-motion-safe review UI
+- [x] Legacy numeric-string safety for Progress metrics

@@ -43,17 +43,10 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian'],
       allergens: ['Dairy', 'Gluten'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Rolled oats', quantity: 60, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 120, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 100,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Chia seeds', quantity: 12, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Rolled oats', quantity: 60, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 120, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Chia seeds', quantity: 12, unit: 'g', category: 'Pantry'),
       ],
       instructions: [
         'Mix oats, yogurt, chia seeds, and a splash of water in a jar.',
@@ -74,17 +67,10 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian'],
       allergens: ['Eggs', 'Gluten'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Whole-grain bread',
-            quantity: 2,
-            unit: 'slices',
-            category: 'Bakery'),
-        NutritionIngredient(
-            name: 'Avocado', quantity: 0.5, unit: 'pcs', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Tomato', quantity: 80, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Whole-grain bread', quantity: 2, unit: 'slices', category: 'Bakery'),
+        NutritionIngredient(name: 'Avocado', quantity: 0.5, unit: 'pcs', category: 'Produce'),
+        NutritionIngredient(name: 'Tomato', quantity: 80, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Toast the bread and mash avocado over the slices.',
@@ -105,14 +91,10 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Banana', quantity: 1, unit: 'pcs', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 150, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Chia seeds', quantity: 18, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Honey', quantity: 8, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Banana', quantity: 1, unit: 'pcs', category: 'Produce'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 150, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Chia seeds', quantity: 18, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Honey', quantity: 8, unit: 'g', category: 'Pantry'),
       ],
       instructions: [
         'Slice half the banana and mash the rest.',
@@ -134,19 +116,11 @@ class NutritionCatalog {
       dietaryTags: ['Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Chicken breast',
-            quantity: 300,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Basmati rice', quantity: 160, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Cucumber', quantity: 140, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Tomato', quantity: 140, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 16, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Chicken breast', quantity: 300, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Basmati rice', quantity: 160, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Cucumber', quantity: 140, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Tomato', quantity: 140, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 16, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Season and grill chicken until fully cooked, then rest and slice.',
@@ -168,19 +142,11 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian', 'Vegan', 'Gluten-free'],
       allergens: ['Sesame'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Cooked lentils',
-            quantity: 320,
-            unit: 'g',
-            category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Quinoa', quantity: 120, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Spinach', quantity: 120, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Tahini', quantity: 32, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Carrot', quantity: 140, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Cooked lentils', quantity: 320, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Quinoa', quantity: 120, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Spinach', quantity: 120, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Tahini', quantity: 32, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Carrot', quantity: 140, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook quinoa and allow it to cool slightly.',
@@ -201,19 +167,11 @@ class NutritionCatalog {
       dietaryTags: ['Halal'],
       allergens: ['Fish', 'Gluten', 'Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Tuna', quantity: 120, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Whole-grain wrap',
-            quantity: 1,
-            unit: 'pcs',
-            category: 'Bakery'),
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 35, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Lettuce', quantity: 50, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Cucumber', quantity: 60, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Tuna', quantity: 120, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Whole-grain wrap', quantity: 1, unit: 'pcs', category: 'Bakery'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 35, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Lettuce', quantity: 50, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Cucumber', quantity: 60, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Mix tuna with yogurt and seasoning.',
@@ -235,20 +193,10 @@ class NutritionCatalog {
       dietaryTags: ['Gluten-free'],
       allergens: ['Fish'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Salmon fillet',
-            quantity: 300,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Baby potatoes',
-            quantity: 360,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Green beans', quantity: 240, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 18, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Salmon fillet', quantity: 300, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Baby potatoes', quantity: 360, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Green beans', quantity: 240, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 18, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Roast potatoes until golden and tender.',
@@ -269,14 +217,10 @@ class NutritionCatalog {
       dietaryTags: ['Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Lean beef', quantity: 300, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Quinoa', quantity: 150, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Bell pepper', quantity: 180, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Broccoli', quantity: 220, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Lean beef', quantity: 300, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Quinoa', quantity: 150, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Bell pepper', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Broccoli', quantity: 220, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook quinoa according to package instructions.',
@@ -297,16 +241,11 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian', 'Vegan'],
       allergens: ['Soy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Firm tofu', quantity: 320, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Jasmine rice', quantity: 150, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Broccoli', quantity: 220, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Bell pepper', quantity: 160, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Soy sauce', quantity: 24, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Firm tofu', quantity: 320, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Jasmine rice', quantity: 150, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Broccoli', quantity: 220, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Bell pepper', quantity: 160, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Soy sauce', quantity: 24, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Press and cube tofu, then sear until golden.',
@@ -328,19 +267,11 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 100,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Honey', quantity: 8, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Honey', quantity: 8, unit: 'g', category: 'Pantry'),
       ],
-      instructions: [
-        'Add yogurt to a bowl, top with berries, and drizzle with honey.'
-      ],
+      instructions: ['Add yogurt to a bowl, top with berries, and drizzle with honey.'],
     ),
     NutritionRecipe(
       id: 'apple_peanut',
@@ -355,10 +286,8 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian', 'Vegan', 'Gluten-free'],
       allergens: ['Peanuts'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Apple', quantity: 1, unit: 'pcs', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Peanut butter', quantity: 24, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Apple', quantity: 1, unit: 'pcs', category: 'Produce'),
+        NutritionIngredient(name: 'Peanut butter', quantity: 24, unit: 'g', category: 'Pantry'),
       ],
       instructions: ['Slice the apple and serve with measured peanut butter.'],
     ),
@@ -375,12 +304,9 @@ class NutritionCatalog {
       dietaryTags: ['Vegetarian', 'Vegan', 'Gluten-free'],
       allergens: ['Sesame'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Hummus', quantity: 65, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Carrot', quantity: 100, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Cucumber', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Hummus', quantity: 65, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Carrot', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Cucumber', quantity: 100, unit: 'g', category: 'Produce'),
       ],
       instructions: ['Cut vegetables into sticks and serve with hummus.'],
     ),
@@ -397,22 +323,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Gluten-free'],
       allergens: ['Eggs'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 120,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 120, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Scramble the eggs and egg whites until fully cooked.',
         'Serve with fresh berries.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -428,25 +347,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Chicken breast',
-            quantity: 170,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Broccoli', quantity: 180, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Chicken breast', quantity: 170, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Broccoli', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Season and cook the chicken thoroughly.',
         'Cook rice and steam broccoli.',
         'Serve together with measured olive oil.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -462,22 +373,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 250, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 30, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 100,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 250, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Whey protein', quantity: 30, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 100, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Stir whey into yogurt until smooth.',
         'Top with berries.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -493,26 +397,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Gluten-free'],
       allergens: ['Fish'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Salmon fillet',
-            quantity: 200,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 250,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Salmon fillet', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 250, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Season salmon and bake or pan-sear until cooked.',
         'Cook vegetables until tender-crisp.',
         'Serve together.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -528,22 +422,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian'],
       allergens: ['Dairy', 'Gluten'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Rolled oats', quantity: 70, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 45, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Banana', quantity: 0.5, unit: 'pcs', category: 'Produce'),
+        NutritionIngredient(name: 'Rolled oats', quantity: 70, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Whey protein', quantity: 45, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Banana', quantity: 0.5, unit: 'pcs', category: 'Produce'),
       ],
       instructions: [
         'Cook oats with water or milk.',
         'Stir in whey after removing from heat.',
         'Serve with Greek yogurt and banana.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -559,26 +448,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Lean ground beef',
-            quantity: 170,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Potatoes', quantity: 280, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Lean ground beef', quantity: 170, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Potatoes', quantity: 280, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 180, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook lean beef thoroughly.',
         'Roast or boil potatoes.',
         'Cook vegetables and serve together.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -594,25 +473,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Dairy', 'Eggs'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Cottage cheese',
-            quantity: 220,
-            unit: 'g',
-            category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 100,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Cottage cheese', quantity: 220, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
       ],
       instructions: [
         'Cook eggs to preference.',
         'Serve with cottage cheese and berries.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -628,28 +497,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Chicken breast',
-            quantity: 200,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed salad greens',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Tomato', quantity: 100, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 10, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Chicken breast', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed salad greens', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Tomato', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 10, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Grill chicken until fully cooked.',
         'Toss salad vegetables with olive oil and seasoning.',
         'Slice chicken and serve over salad.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -665,28 +523,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal'],
       allergens: ['Eggs', 'Gluten'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Turkey breast slices',
-            quantity: 100,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Whole-grain bread',
-            quantity: 2,
-            unit: 'slices',
-            category: 'Bakery'),
+        NutritionIngredient(name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(name: 'Turkey breast slices', quantity: 100, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Whole-grain bread', quantity: 2, unit: 'slices', category: 'Bakery'),
       ],
       instructions: [
         'Cook eggs and egg whites.',
         'Warm turkey slices.',
         'Serve with toasted bread.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -702,23 +549,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Gluten-free'],
       allergens: ['Shellfish'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Shrimp', quantity: 200, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Shrimp', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 180, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook rice.',
         'Sauté shrimp until opaque and fully cooked.',
         'Add vegetables and serve with rice.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -734,23 +574,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Lean steak', quantity: 200, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 250,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Lean steak', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 250, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Season and cook steak to a safe internal temperature.',
         'Cook vegetables until tender.',
         'Rest steak before slicing.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -766,25 +599,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: ['Eggs'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Egg whites', quantity: 250, unit: 'ml', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Turkey breast slices',
-            quantity: 100,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Spinach', quantity: 80, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Egg whites', quantity: 250, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Turkey breast slices', quantity: 100, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Spinach', quantity: 80, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook spinach briefly.',
         'Add egg whites and eggs to form an omelet.',
         'Fill with warmed turkey and fold.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -800,28 +625,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Chicken breast',
-            quantity: 200,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Sweet potato',
-            quantity: 300,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Broccoli', quantity: 180, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Chicken breast', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Sweet potato', quantity: 300, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Broccoli', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Roast sweet potato.',
         'Cook chicken thoroughly.',
         'Steam broccoli and serve together.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -837,19 +651,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 40, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 200, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Water', quantity: 300, unit: 'ml', category: 'Beverages'),
+        NutritionIngredient(name: 'Whey protein', quantity: 40, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 200, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Water', quantity: 300, unit: 'ml', category: 'Beverages'),
       ],
       instructions: [
         'Shake whey with cold water.',
         'Serve with Greek yogurt.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -865,25 +675,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Gluten-free'],
       allergens: ['Fish'],
       ingredients: [
-        NutritionIngredient(
-            name: 'White fish fillet',
-            quantity: 210,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 250,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 10, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'White fish fillet', quantity: 210, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 250, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 10, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Season and bake fish until opaque and flaky.',
         'Cook vegetables and serve alongside.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -899,28 +699,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian'],
       allergens: ['Eggs', 'Dairy', 'Gluten'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Protein pancake mix',
-            quantity: 90,
-            unit: 'g',
-            category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 25, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 80,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Protein pancake mix', quantity: 90, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Whey protein', quantity: 25, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 80, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Prepare pancake batter with protein powder.',
         'Cook pancakes on a non-stick pan.',
         'Serve with cooked eggs and berries.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -936,26 +725,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Lean ground beef',
-            quantity: 190,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Lean ground beef', quantity: 190, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Basmati rice', quantity: 180, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 180, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook rice.',
         'Cook beef thoroughly and drain excess fat.',
         'Serve with vegetables and rice.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -971,25 +750,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Cottage cheese',
-            quantity: 220,
-            unit: 'g',
-            category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 25, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed berries',
-            quantity: 100,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Cottage cheese', quantity: 220, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Whey protein', quantity: 25, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed berries', quantity: 100, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Stir whey into cottage cheese.',
         'Top with berries.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1005,28 +774,17 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Gluten-free'],
       allergens: ['Fish'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Salmon fillet',
-            quantity: 200,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed salad greens',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Cucumber', quantity: 100, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Salmon fillet', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed salad greens', quantity: 180, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Cucumber', quantity: 100, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Cook salmon until done.',
         'Toss salad with vegetables and olive oil.',
         'Serve salmon over salad.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1042,19 +800,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Eggs', 'Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Eggs', quantity: 3, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Egg whites', quantity: 240, unit: 'ml', category: 'Protein'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 180, unit: 'g', category: 'Dairy'),
       ],
       instructions: [
         'Cook eggs and egg whites.',
         'Serve with Greek yogurt.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1070,23 +824,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Lean steak', quantity: 200, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Potatoes', quantity: 260, unit: 'g', category: 'Produce'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Lean steak', quantity: 200, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Potatoes', quantity: 260, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 180, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook steak to a safe internal temperature.',
         'Roast potatoes and vegetables.',
         'Rest and slice steak before serving.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1102,22 +849,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 35, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Cottage cheese',
-            quantity: 200,
-            unit: 'g',
-            category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Water', quantity: 300, unit: 'ml', category: 'Beverages'),
+        NutritionIngredient(name: 'Whey protein', quantity: 35, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Cottage cheese', quantity: 200, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Water', quantity: 300, unit: 'ml', category: 'Beverages'),
       ],
       instructions: [
         'Shake whey with water.',
         'Serve with cottage cheese.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1133,25 +873,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Chicken breast',
-            quantity: 210,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 280,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Chicken breast', quantity: 210, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 280, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Cook chicken thoroughly.',
         'Cook vegetables and serve alongside.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1167,20 +897,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein'],
       allergens: ['Eggs', 'Dairy', 'Gluten'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Rolled oats', quantity: 65, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 40, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
+        NutritionIngredient(name: 'Rolled oats', quantity: 65, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Whey protein', quantity: 40, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Eggs', quantity: 2, unit: 'pcs', category: 'Protein'),
       ],
       instructions: [
         'Cook oats.',
         'Stir in whey after removing from heat.',
         'Serve with cooked eggs.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1196,26 +922,16 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Halal', 'Gluten-free'],
       allergens: [],
       ingredients: [
-        NutritionIngredient(
-            name: 'Chicken breast',
-            quantity: 210,
-            unit: 'g',
-            category: 'Protein'),
-        NutritionIngredient(
-            name: 'Basmati rice', quantity: 190, unit: 'g', category: 'Pantry'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 180,
-            unit: 'g',
-            category: 'Produce'),
+        NutritionIngredient(name: 'Chicken breast', quantity: 210, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Basmati rice', quantity: 190, unit: 'g', category: 'Pantry'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 180, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Cook rice.',
         'Cook chicken thoroughly.',
         'Cook vegetables and serve together.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1231,19 +947,15 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Vegetarian', 'Gluten-free'],
       allergens: ['Dairy'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Greek yogurt', quantity: 250, unit: 'g', category: 'Dairy'),
-        NutritionIngredient(
-            name: 'Whey protein', quantity: 30, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Fresh fruit', quantity: 120, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Greek yogurt', quantity: 250, unit: 'g', category: 'Dairy'),
+        NutritionIngredient(name: 'Whey protein', quantity: 30, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Fresh fruit', quantity: 120, unit: 'g', category: 'Produce'),
       ],
       instructions: [
         'Stir whey into yogurt.',
         'Top with chopped fruit.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
     NutritionRecipe(
@@ -1259,31 +971,22 @@ class NutritionCatalog {
       dietaryTags: ['High-protein', 'Gluten-free'],
       allergens: ['Shellfish'],
       ingredients: [
-        NutritionIngredient(
-            name: 'Shrimp', quantity: 210, unit: 'g', category: 'Protein'),
-        NutritionIngredient(
-            name: 'Mixed vegetables',
-            quantity: 280,
-            unit: 'g',
-            category: 'Produce'),
-        NutritionIngredient(
-            name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
+        NutritionIngredient(name: 'Shrimp', quantity: 210, unit: 'g', category: 'Protein'),
+        NutritionIngredient(name: 'Mixed vegetables', quantity: 280, unit: 'g', category: 'Produce'),
+        NutritionIngredient(name: 'Olive oil', quantity: 8, unit: 'ml', category: 'Pantry'),
       ],
       instructions: [
         'Sauté shrimp until opaque and fully cooked.',
         'Cook vegetables and serve together.',
       ],
-      nutritionProvenance:
-          'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
+      nutritionProvenance: 'High-protein reference plan: protein value follows the supplied plan; calories, carbs, and fats are FitWithSaju estimates pending nutrition review.',
       reviewStatus: 'unreviewed',
     ),
   ];
 
-  static List<NutritionRecipe> _recipes =
-      List<NutritionRecipe>.of(bundledRecipes);
+  static List<NutritionRecipe> _recipes = List<NutritionRecipe>.of(bundledRecipes);
   static final ValueNotifier<List<NutritionRecipe>> listenable =
-      ValueNotifier<List<NutritionRecipe>>(
-          List<NutritionRecipe>.of(bundledRecipes));
+      ValueNotifier<List<NutritionRecipe>>(List<NutritionRecipe>.of(bundledRecipes));
   static final ValueNotifier<NutritionCatalogSource> source =
       ValueNotifier<NutritionCatalogSource>(NutritionCatalogSource.bundled);
 
@@ -1309,13 +1012,11 @@ class NutritionCatalog {
       }
       final remote = decoded
           .whereType<Map>()
-          .map((item) =>
-              NutritionRecipe.fromApi(Map<String, dynamic>.from(item)))
+          .map((item) => NutritionRecipe.fromApi(Map<String, dynamic>.from(item)))
           .where((recipe) => recipe.id.isNotEmpty)
           .toList(growable: false);
       if (remote.isNotEmpty) {
-        _setRecipes(
-            _mergeRemoteWithBundled(remote), NutritionCatalogSource.cached);
+        _setRecipes(_mergeRemoteWithBundled(remote), NutritionCatalogSource.cached);
       }
     } catch (_) {
       // Corrupt cache must never block the bundled nutrition catalog.
@@ -1343,8 +1044,7 @@ class NutritionCatalog {
       final uri = Uri.parse('$normalized/api/recipes?per_page=200');
       final request = await client.getUrl(uri);
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
-      final response =
-          await request.close().timeout(const Duration(seconds: 12));
+      final response = await request.close().timeout(const Duration(seconds: 12));
       final body = await utf8.decoder.bind(response).join();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         lastError = 'Recipe server returned HTTP ${response.statusCode}.';
@@ -1362,13 +1062,11 @@ class NutritionCatalog {
       }
       final remote = list
           .whereType<Map>()
-          .map((item) =>
-              NutritionRecipe.fromApi(Map<String, dynamic>.from(item)))
+          .map((item) => NutritionRecipe.fromApi(Map<String, dynamic>.from(item)))
           .where((recipe) => recipe.id.isNotEmpty)
           .toList(growable: false);
       if (remote.isEmpty) {
-        throw const FormatException(
-            'Recipe API returned no published recipes.');
+        throw const FormatException('Recipe API returned no published recipes.');
       }
 
       final prefs = await SharedPreferences.getInstance();
@@ -1393,8 +1091,7 @@ class NutritionCatalog {
     } on FormatException catch (error) {
       lastError = error.message;
     } catch (_) {
-      lastError =
-          'Recipe sync failed. Your offline meal catalog is still available.';
+      lastError = 'Recipe sync failed. Your offline meal catalog is still available.';
     } finally {
       client.close(force: true);
     }
@@ -1412,8 +1109,7 @@ class NutritionCatalog {
     await prefs.remove(_syncedAtKey);
     lastSyncedAt = null;
     lastError = null;
-    _setRecipes(List<NutritionRecipe>.of(bundledRecipes),
-        NutritionCatalogSource.bundled);
+    _setRecipes(List<NutritionRecipe>.of(bundledRecipes), NutritionCatalogSource.bundled);
   }
 
   static NutritionRecipe? byId(String id) {

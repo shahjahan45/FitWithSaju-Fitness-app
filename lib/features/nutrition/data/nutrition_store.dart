@@ -148,16 +148,14 @@ class NutritionStore {
     if (missing.isNotEmpty) {
       return NutritionTemplateApplyResult(
         success: false,
-        message:
-            'This plan needs ${missing.length} meal${missing.length == 1 ? '' : 's'} that are not available in the current recipe catalog.',
+        message: 'This plan needs ${missing.length} meal${missing.length == 1 ? '' : 's'} that are not available in the current recipe catalog.',
         blockedMeals: missing,
       );
     }
     if (blocked.isNotEmpty) {
       return NutritionTemplateApplyResult(
         success: false,
-        message:
-            'This plan conflicts with your dietary preferences or allergy exclusions. FitWithSaju will not relax those restrictions automatically.',
+        message: 'This plan conflicts with your dietary preferences or allergy exclusions. FitWithSaju will not relax those restrictions automatically.',
         blockedMeals: blocked.toSet().toList(),
       );
     }
@@ -179,8 +177,7 @@ class NutritionStore {
 
     return NutritionTemplateApplyResult(
       success: true,
-      message:
-          '${template.name} applied to the week of ${dateKey(monday)}. Existing food and hydration logs were preserved.',
+      message: '${template.name} applied to the week of ${dateKey(monday)}. Existing food and hydration logs were preserved.',
     );
   }
 
@@ -325,8 +322,34 @@ class NutritionStore {
     final entries = await waterEntries(date);
     return entries.fold<int>(
       0,
-      (sum, item) => sum + ((item['ml'] as num?)?.toInt() ?? 0),
+      (sum, item) => sum + _safeWaterMl(item['ml']),
     );
+  }
+
+  static Future<Map<String, int>> waterTotalsBetween({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final all = _decodeList(prefs.getString(_waterKey));
+    final startKey = dateKey(start);
+    final endKey = dateKey(end);
+    final totals = <String, int>{};
+    for (final item in all) {
+      final key = item['dateKey']?.toString() ?? '';
+      if (key.isEmpty || key.compareTo(startKey) < 0 || key.compareTo(endKey) > 0) {
+        continue;
+      }
+      totals[key] = (totals[key] ?? 0) + _safeWaterMl(item['ml']);
+    }
+    return totals;
+  }
+
+  static int _safeWaterMl(dynamic value) {
+    final parsed = value is num
+        ? value.toInt()
+        : int.tryParse(value?.toString() ?? '') ?? 0;
+    return parsed > 0 ? parsed : 0;
   }
 
   static Future<void> addWater(DateTime date, int ml) async {
@@ -461,16 +484,13 @@ class NutritionStore {
     required NutritionRecipe current,
     required NutritionPreferences preferences,
   }) {
-    final allergySet =
-        preferences.allergies.map((item) => item.toLowerCase()).toSet();
-    final dietary =
-        preferences.dietary.map((item) => item.toLowerCase()).toSet();
+    final allergySet = preferences.allergies.map((item) => item.toLowerCase()).toSet();
+    final dietary = preferences.dietary.map((item) => item.toLowerCase()).toSet();
     final candidates = NutritionCatalog.forSlot(current.slot).where((recipe) {
       if (recipe.id == current.id) {
         return false;
       }
-      final recipeAllergens =
-          recipe.allergens.map((item) => item.toLowerCase()).toSet();
+      final recipeAllergens = recipe.allergens.map((item) => item.toLowerCase()).toSet();
       if (recipeAllergens.any(allergySet.contains)) {
         return false;
       }
@@ -518,11 +538,9 @@ class NutritionStore {
       'waterLogs': jsonDecode(prefs.getString(_waterKey) ?? '[]'),
       'savedMeals': prefs.getStringList(_savedKey) ?? <String>[],
       'selectedDate': prefs.getString(_selectedDateKey),
-      'shoppingChecked':
-          jsonDecode(prefs.getString(_shoppingCheckedKey) ?? '{}'),
+      'shoppingChecked': jsonDecode(prefs.getString(_shoppingCheckedKey) ?? '{}'),
       'shoppingManual': jsonDecode(prefs.getString(_shoppingManualKey) ?? '[]'),
-      'activeTemplates':
-          jsonDecode(prefs.getString(_activeTemplateKey) ?? '{}'),
+      'activeTemplates': jsonDecode(prefs.getString(_activeTemplateKey) ?? '{}'),
     };
   }
 
@@ -577,15 +595,12 @@ class NutritionStore {
     NutritionRecipe recipe,
     NutritionPreferences preferences,
   ) {
-    final allergySet =
-        preferences.allergies.map((item) => item.toLowerCase()).toSet();
-    final recipeAllergens =
-        recipe.allergens.map((item) => item.toLowerCase()).toSet();
+    final allergySet = preferences.allergies.map((item) => item.toLowerCase()).toSet();
+    final recipeAllergens = recipe.allergens.map((item) => item.toLowerCase()).toSet();
     if (recipeAllergens.any(allergySet.contains)) {
       return false;
     }
-    final dietary =
-        preferences.dietary.map((item) => item.toLowerCase()).toSet();
+    final dietary = preferences.dietary.map((item) => item.toLowerCase()).toSet();
     final tags = recipe.dietaryTags.map((item) => item.toLowerCase()).toSet();
     if (dietary.contains('vegan') && !tags.contains('vegan')) {
       return false;
@@ -608,8 +623,7 @@ class NutritionStore {
     final dinner = ['salmon_greens', 'beef_quinoa', 'tofu_stirfry'][rotation];
     final snack = ['yogurt_berries', 'apple_peanut', 'hummus_veg'][rotation];
     return <PlannedNutritionMeal>[
-      PlannedNutritionMeal(
-          slot: 'Breakfast', recipeId: breakfast, time: '08:00'),
+      PlannedNutritionMeal(slot: 'Breakfast', recipeId: breakfast, time: '08:00'),
       PlannedNutritionMeal(slot: 'Lunch', recipeId: lunch, time: '13:00'),
       PlannedNutritionMeal(slot: 'Dinner', recipeId: dinner, time: '19:00'),
       PlannedNutritionMeal(slot: 'Snack', recipeId: snack, time: '16:30'),

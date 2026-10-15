@@ -25,18 +25,8 @@ String nutritionDayLabel(DateTime date) {
 
 String nutritionLongDate(DateTime date) {
   const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
   ];
   return '${nutritionDayLabel(date)}, ${months[date.month - 1]} ${date.day}';
 }
@@ -97,6 +87,7 @@ class NutritionArtwork extends StatelessWidget {
     );
   }
 }
+
 
 class _NutritionImage extends StatelessWidget {
   final String artwork;

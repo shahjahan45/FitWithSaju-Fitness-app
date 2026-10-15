@@ -83,10 +83,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   Future<void> _quickReschedule(ReadinessSnapshot data) async {
     final session = data.programSession;
-    if (session == null ||
-        session.isRest ||
-        session.isCompleted ||
-        session.isSkipped) {
+    if (session == null || session.isRest || session.isCompleted || session.isSkipped) {
       return;
     }
     final today = DateTime.now();
@@ -171,8 +168,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Recovery & Readiness')),
       body: AnimatedBuilder(
-        animation:
-            Listenable.merge([LocalStore.changes, NutritionStore.changes]),
+        animation: Listenable.merge([LocalStore.changes, NutritionStore.changes]),
         builder: (context, _) => FutureBuilder<ReadinessSnapshot>(
           future: _future,
           builder: (context, snapshot) {
@@ -420,11 +416,8 @@ class _HeroReadinessCard extends StatelessWidget {
             child: FilledButton.icon(
               key: const Key('readiness-check-in-button'),
               onPressed: onCheckIn,
-              icon: Icon(
-                  hasCheckIn ? Icons.edit_rounded : Icons.add_task_rounded),
-              label: Text(hasCheckIn
-                  ? 'Edit today’s check-in'
-                  : 'Start daily check-in'),
+              icon: Icon(hasCheckIn ? Icons.edit_rounded : Icons.add_task_rounded),
+              label: Text(hasCheckIn ? 'Edit today’s check-in' : 'Start daily check-in'),
             ),
           ),
         ],
@@ -449,8 +442,7 @@ class _ReadinessRing extends StatelessWidget {
       child: TweenAnimationBuilder<double>(
         key: const Key('readiness-score-ring'),
         tween: Tween<double>(begin: reduceMotion ? end : 0, end: end),
-        duration:
-            reduceMotion ? Duration.zero : const Duration(milliseconds: 760),
+        duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 760),
         curve: Curves.easeOutCubic,
         builder: (context, value, _) => Stack(
           alignment: Alignment.center,
@@ -469,8 +461,7 @@ class _ReadinessRing extends StatelessWidget {
               children: [
                 Text(
                   enabled ? '${(value * 100).round()}' : '—',
-                  style: const TextStyle(
-                      fontSize: 28, fontWeight: FontWeight.w900),
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
                 ),
                 const Text(
                   '/ 100',
@@ -496,10 +487,8 @@ class _SignalGrid extends StatelessWidget {
     final items = <_SignalData>[
       _SignalData('Sleep', '${checkIn.sleepQuality}/5', Icons.bedtime_outlined),
       _SignalData('Energy', '${checkIn.energy}/5', Icons.bolt_rounded),
-      _SignalData(
-          'Soreness', '${checkIn.soreness}/5', Icons.accessibility_new_rounded),
-      _SignalData(
-          'Stress', '${checkIn.stress}/5', Icons.psychology_alt_outlined),
+      _SignalData('Soreness', '${checkIn.soreness}/5', Icons.accessibility_new_rounded),
+      _SignalData('Stress', '${checkIn.stress}/5', Icons.psychology_alt_outlined),
       _SignalData(
         'Hydration',
         '${(data.hydrationProgress * 100).round()}%',
@@ -537,8 +526,7 @@ class _SignalGrid extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 item.value,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
               ),
               const SizedBox(height: 3),
               Text(
@@ -676,8 +664,7 @@ class _GuidanceMetric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(color: AppColors.muted, fontSize: 9.5)),
+          Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 9.5)),
           const SizedBox(height: 3),
           Text(
             value,
@@ -797,8 +784,7 @@ class _LoadMetric extends StatelessWidget {
   final String label;
   final String value;
   final String subtitle;
-  const _LoadMetric(
-      {required this.label, required this.value, required this.subtitle});
+  const _LoadMetric({required this.label, required this.value, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -811,14 +797,10 @@ class _LoadMetric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(color: AppColors.muted, fontSize: 10)),
+          Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 10)),
           const SizedBox(height: 5),
-          Text(value,
-              style:
-                  const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-          Text(subtitle,
-              style: const TextStyle(color: AppColors.muted, fontSize: 10)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+          Text(subtitle, style: const TextStyle(color: AppColors.muted, fontSize: 10)),
         ],
       ),
     );
@@ -855,9 +837,7 @@ class _ProgramSessionCard extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: AppColors.secondarySoft,
                 foregroundColor: AppColors.secondary,
-                child: Icon(session.isRest
-                    ? Icons.bedtime_outlined
-                    : Icons.event_available_rounded),
+                child: Icon(session.isRest ? Icons.bedtime_outlined : Icons.event_available_rounded),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -866,18 +846,11 @@ class _ProgramSessionCard extends StatelessWidget {
                   children: [
                     const Text(
                       'TODAY’S PROGRAM',
-                      style: TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900),
+                      style: TextStyle(color: AppColors.muted, fontSize: 10, fontWeight: FontWeight.w900),
                     ),
                     const SizedBox(height: 3),
-                    Text(session.title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w900, fontSize: 17)),
-                    Text(status,
-                        style: const TextStyle(
-                            color: AppColors.muted, fontSize: 11)),
+                    Text(session.title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17)),
+                    Text(status, style: const TextStyle(color: AppColors.muted, fontSize: 11)),
                   ],
                 ),
               ),
@@ -895,9 +868,7 @@ class _ProgramSessionCard extends StatelessWidget {
               ),
             ],
           ),
-          if (onReschedule != null &&
-              !session.isRest &&
-              !session.isCompleted) ...[
+          if (onReschedule != null && !session.isRest && !session.isCompleted) ...[
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
@@ -937,10 +908,7 @@ class _ReadinessHistoryCard extends StatelessWidget {
               if (data.averageScore != null)
                 Text(
                   'Avg ${data.averageScore}',
-                  style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12),
+                  style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 12),
                 ),
             ],
           ),
@@ -954,8 +922,7 @@ class _ReadinessHistoryCard extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 18),
               child: Center(
-                child: Text('No readiness history yet.',
-                    style: TextStyle(color: AppColors.muted)),
+                child: Text('No readiness history yet.', style: TextStyle(color: AppColors.muted)),
               ),
             )
           else ...[
@@ -983,25 +950,24 @@ class _ReadinessHistoryCard extends StatelessWidget {
               ),
             const SizedBox(height: 12),
             ...history.reversed.take(4).map(
-                  (point) => Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${_shortWeekday(point.date)} • ${_dateLabel(point.date)}',
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                        Text(
-                          '${point.score}/100',
-                          style: const TextStyle(fontWeight: FontWeight.w900),
-                        ),
-                      ],
+              (point) => Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${_shortWeekday(point.date)} • ${_dateLabel(point.date)}',
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
+                    Text(
+                      '${point.score}/100',
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                  ],
                 ),
+              ),
+            ),
           ],
           const SizedBox(height: 14),
           SizedBox(
@@ -1032,14 +998,12 @@ class _TrendBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final byDate = <String, int>{
-      for (final point in history)
-        LocalStore.localDateKey(point.date): point.score,
+      for (final point in history) LocalStore.localDateKey(point.date): point.score,
     };
     final now = DateTime.now();
     final days = List<DateTime>.generate(
       7,
-      (index) => DateTime(now.year, now.month, now.day)
-          .subtract(Duration(days: 6 - index)),
+      (index) => DateTime(now.year, now.month, now.day).subtract(Duration(days: 6 - index)),
     );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -1062,15 +1026,12 @@ class _TrendBars extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: score == null
                         ? AppColors.border
-                        : AppColors.primary
-                            .withValues(alpha: .28 + ((score / 100) * .55)),
+                        : AppColors.primary.withValues(alpha: .28 + ((score / 100) * .55)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(_shortWeekday(day).substring(0, 1),
-                    style:
-                        const TextStyle(fontSize: 10, color: AppColors.muted)),
+                Text(_shortWeekday(day).substring(0, 1), style: const TextStyle(fontSize: 10, color: AppColors.muted)),
               ],
             ),
           ),
@@ -1084,24 +1045,19 @@ class _HistoryHighlight extends StatelessWidget {
   final String label;
   final String value;
   final String date;
-  const _HistoryHighlight(
-      {required this.label, required this.value, required this.date});
+  const _HistoryHighlight({required this.label, required this.value, required this.date});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: AppColors.surfaceAlt, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: AppColors.surfaceAlt, borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(color: AppColors.muted, fontSize: 10)),
+          Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 10)),
           const SizedBox(height: 4),
-          Text(value,
-              style:
-                  const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
           Text(date, style: const TextStyle(fontSize: 10)),
         ],
       ),
@@ -1114,11 +1070,7 @@ class _CheckInValues {
   final int energy;
   final int soreness;
   final int stress;
-  const _CheckInValues(
-      {required this.sleep,
-      required this.energy,
-      required this.soreness,
-      required this.stress});
+  const _CheckInValues({required this.sleep, required this.energy, required this.soreness, required this.stress});
 }
 
 class _CheckInSheet extends StatefulWidget {
@@ -1156,9 +1108,7 @@ class _CheckInSheetState extends State<_CheckInSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.existing == null
-                  ? 'Daily readiness check-in'
-                  : 'Edit today’s check-in',
+              widget.existing == null ? 'Daily readiness check-in' : 'Edit today’s check-in',
               style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 5),
@@ -1250,18 +1200,13 @@ class _RatingSlider extends StatelessWidget {
               children: [
                 Icon(icon, size: 20, color: AppColors.primary),
                 const SizedBox(width: 9),
-                Expanded(
-                    child: Text(label,
-                        style: const TextStyle(fontWeight: FontWeight.w800))),
+                Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.w800))),
                 Container(
                   width: 34,
                   height: 30,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Text('${value.round()}',
-                      style: const TextStyle(fontWeight: FontWeight.w900)),
+                  decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(10)),
+                  child: Text('${value.round()}', style: const TextStyle(fontWeight: FontWeight.w900)),
                 ),
               ],
             ),
@@ -1282,11 +1227,9 @@ class _RatingSlider extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
-                  Text('1',
-                      style: TextStyle(color: AppColors.muted, fontSize: 10)),
+                  Text('1', style: TextStyle(color: AppColors.muted, fontSize: 10)),
                   Spacer(),
-                  Text('5',
-                      style: TextStyle(color: AppColors.muted, fontSize: 10)),
+                  Text('5', style: TextStyle(color: AppColors.muted, fontSize: 10)),
                 ],
               ),
             ),
@@ -1298,15 +1241,7 @@ class _RatingSlider extends StatelessWidget {
 }
 
 String _weekday(int weekday) {
-  const labels = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ];
+  const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   return labels[(weekday - 1).clamp(0, 6)];
 }
 
@@ -1316,19 +1251,6 @@ String _shortWeekday(DateTime date) {
 }
 
 String _dateLabel(DateTime date) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return '${months[date.month - 1]} ${date.day}';
 }

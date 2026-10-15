@@ -24,8 +24,7 @@ class WorkoutProgramDefinition {
       final copy = Map<String, dynamic>.from(day);
       copy['programId'] = id;
       copy['programName'] = name;
-      copy['programDayKey'] =
-          '${id}_${(day['day'] ?? '').toString().toLowerCase()}';
+      copy['programDayKey'] = '${id}_${(day['day'] ?? '').toString().toLowerCase()}';
       return copy;
     }).toList();
   }
@@ -259,19 +258,13 @@ class WorkoutProgramProgress {
     final current = now ?? DateTime.now();
     final programId = activeProgram['programId']?.toString() ?? '';
     final durationWeeks =
-        ((activeProgram['durationWeeks'] as num?)?.toInt() ?? 1)
-            .clamp(1, 52)
-            .toInt();
-    final trainingDays = ((activeProgram['trainingDays'] as num?)?.toInt() ?? 1)
-        .clamp(1, 7)
-        .toInt();
-    final startedAt =
-        DateTime.tryParse(activeProgram['startedAt']?.toString() ?? '') ??
-            current;
+        ((activeProgram['durationWeeks'] as num?)?.toInt() ?? 1).clamp(1, 52).toInt();
+    final trainingDays =
+        ((activeProgram['trainingDays'] as num?)?.toInt() ?? 1).clamp(1, 7).toInt();
+    final startedAt = DateTime.tryParse(activeProgram['startedAt']?.toString() ?? '') ?? current;
     final startDay = DateTime(startedAt.year, startedAt.month, startedAt.day);
     final today = DateTime(current.year, current.month, current.day);
-    final elapsedDays =
-        today.difference(startDay).inDays.clamp(0, 9999).toInt();
+    final elapsedDays = today.difference(startDay).inDays.clamp(0, 9999).toInt();
     final currentWeek = (elapsedDays ~/ 7 + 1).clamp(1, durationWeeks).toInt();
     final rawWeekdays = activeProgram['trainingWeekdays'];
     final trainingWeekdays = rawWeekdays is List

@@ -60,8 +60,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
               TextField(
                 controller: controller,
                 autofocus: true,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Weight',
                   suffixText: 'KG',
@@ -126,8 +125,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
                   ),
                 ...List.generate(_entries.length, (index) {
                   final entry = _entries[index];
-                  final date =
-                      DateTime.tryParse(entry['date']?.toString() ?? '');
+                  final date = DateTime.tryParse(entry['date']?.toString() ?? '');
                   return Dismissible(
                     key: ValueKey('${entry['date']}-$index'),
                     direction: DismissDirection.endToStart,
@@ -139,8 +137,7 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
                         color: AppColors.danger,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child:
-                          const Icon(Icons.delete_rounded, color: Colors.white),
+                      child: const Icon(Icons.delete_rounded, color: Colors.white),
                     ),
                     onDismissed: (_) async {
                       await LocalStore.deleteWeightAt(index);
@@ -156,20 +153,19 @@ class _WeightTrackerScreenState extends State<WeightTrackerScreen> {
                           side: const BorderSide(color: AppColors.border),
                         ),
                         child: ListTile(
-                          leading: const CircleAvatar(
-                            backgroundColor: AppColors.primarySoft,
-                            child: Icon(Icons.monitor_weight_rounded,
-                                color: AppColors.primary),
-                          ),
-                          title: Text(
-                            '${(entry['value'] as num).toStringAsFixed(1)} KG',
-                            style: const TextStyle(fontWeight: FontWeight.w900),
-                          ),
-                          subtitle: Text(
-                            date == null
-                                ? 'Saved entry'
-                                : '${date.day}/${date.month}/${date.year}',
-                          ),
+                        leading: const CircleAvatar(
+                          backgroundColor: AppColors.primarySoft,
+                          child: Icon(Icons.monitor_weight_rounded, color: AppColors.primary),
+                        ),
+                        title: Text(
+                          '${(entry['value'] as num).toStringAsFixed(1)} KG',
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                        subtitle: Text(
+                          date == null
+                              ? 'Saved entry'
+                              : '${date.day}/${date.month}/${date.year}',
+                        ),
                         ),
                       ),
                     ),

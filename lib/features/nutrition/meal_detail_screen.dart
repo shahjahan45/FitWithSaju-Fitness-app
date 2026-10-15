@@ -58,8 +58,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     }
     setState(() => _saved = value);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(value ? 'Meal saved.' : 'Removed from saved meals.')),
+      SnackBar(content: Text(value ? 'Meal saved.' : 'Removed from saved meals.')),
     );
   }
 
@@ -173,12 +172,10 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                       children: [
                         Text(
                           '${formatAmount(servings)} serving${servings == 1 ? '' : 's'}',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w900),
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                         ),
                         const SizedBox(height: 3),
-                        NutritionMacroLine(
-                            macros: _recipe.macros, servings: servings),
+                        NutritionMacroLine(macros: _recipe.macros, servings: servings),
                       ],
                     ),
                   ),
@@ -195,11 +192,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                 width: double.infinity,
                 height: 52,
                 child: FilledButton(
-                  style: FilledButton.styleFrom(
-                      backgroundColor: NutritionPalette.brand),
+                  style: FilledButton.styleFrom(backgroundColor: NutritionPalette.brand),
                   onPressed: () => Navigator.of(sheetContext).pop(servings),
-                  child: const Text('Log eaten',
-                      style: TextStyle(fontWeight: FontWeight.w900)),
+                  child: const Text('Log eaten', style: TextStyle(fontWeight: FontWeight.w900)),
                 ),
               ),
             ],
@@ -261,8 +256,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
           children: [
             MotionReveal(
               child: Hero(
-                tag:
-                    'nutrition-meal-${NutritionStore.dateKey(widget.date)}-${_meal.slot}',
+                tag: 'nutrition-meal-${NutritionStore.dateKey(widget.date)}-${_meal.slot}',
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -306,12 +300,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                NutritionInfoPill(
-                    text: '${recipe.prepMinutes} min',
-                    icon: Icons.schedule_rounded),
+                NutritionInfoPill(text: '${recipe.prepMinutes} min', icon: Icons.schedule_rounded),
                 NutritionInfoPill(text: recipe.cuisine),
-                ...recipe.dietaryTags
-                    .map((tag) => NutritionInfoPill(text: tag)),
+                ...recipe.dietaryTags.map((tag) => NutritionInfoPill(text: tag)),
               ],
             ),
             if (recipe.allergens.isNotEmpty) ...[
@@ -336,15 +327,13 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Estimated nutrition per serving',
-                      style: TextStyle(fontWeight: FontWeight.w900)),
+                  const Text('Estimated nutrition per serving', style: TextStyle(fontWeight: FontWeight.w900)),
                   const SizedBox(height: 9),
                   NutritionMacroLine(macros: recipe.macros),
                   const SizedBox(height: 8),
                   Text(
                     recipe.servingLabel,
-                    style: const TextStyle(
-                        color: NutritionPalette.muted, fontSize: 12),
+                    style: const TextStyle(color: NutritionPalette.muted, fontSize: 12),
                   ),
                 ],
               ),
@@ -362,28 +351,23 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed:
-                        _yield > 1 ? () => setState(() => _yield--) : null,
+                    onPressed: _yield > 1 ? () => setState(() => _yield--) : null,
                     icon: const Icon(Icons.remove_circle_outline_rounded),
                   ),
                   Expanded(
                     child: Column(
                       children: [
-                        Text('$_yield servings',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w900)),
+                        Text('$_yield servings', style: const TextStyle(fontWeight: FontWeight.w900)),
                         const Text(
                           'Ingredient quantities scale; nutrition per serving stays the same.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: NutritionPalette.muted, fontSize: 11),
+                          style: TextStyle(color: NutritionPalette.muted, fontSize: 11),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
-                    onPressed:
-                        _yield < 12 ? () => setState(() => _yield++) : null,
+                    onPressed: _yield < 12 ? () => setState(() => _yield++) : null,
                     icon: const Icon(Icons.add_circle_outline_rounded),
                   ),
                 ],
@@ -397,18 +381,14 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 7),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle_rounded,
-                        size: 18, color: NutritionPalette.accent),
+                    const Icon(Icons.check_circle_rounded, size: 18, color: NutritionPalette.accent),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(ingredient.name,
-                          style: const TextStyle(fontWeight: FontWeight.w700)),
+                      child: Text(ingredient.name, style: const TextStyle(fontWeight: FontWeight.w700)),
                     ),
                     Text(
                       '${formatAmount(ingredient.quantity * yieldFactor)} ${ingredient.unit}',
-                      style: const TextStyle(
-                          color: NutritionPalette.muted,
-                          fontWeight: FontWeight.w700),
+                      style: const TextStyle(color: NutritionPalette.muted, fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
@@ -450,30 +430,20 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
             Row(
               children: [
                 if (widget.planned) ...[
-                  Expanded(
-                      child: NutritionSoftButton(
-                          label: 'Swap meal',
-                          icon: Icons.swap_horiz_rounded,
-                          onTap: _swap)),
+                  Expanded(child: NutritionSoftButton(label: 'Swap meal', icon: Icons.swap_horiz_rounded, onTap: _swap)),
                   const SizedBox(width: 10),
                 ],
-                Expanded(
-                    child: NutritionSoftButton(
-                        label: _saved ? 'Saved' : 'Save',
-                        icon: Icons.bookmark_rounded,
-                        onTap: _toggleSaved)),
+                Expanded(child: NutritionSoftButton(label: _saved ? 'Saved' : 'Save', icon: Icons.bookmark_rounded, onTap: _toggleSaved)),
               ],
             ),
             const SizedBox(height: 10),
             SizedBox(
               height: 54,
               child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                    backgroundColor: NutritionPalette.brand),
+                style: FilledButton.styleFrom(backgroundColor: NutritionPalette.brand),
                 onPressed: _logMeal,
                 icon: const Icon(Icons.check_rounded),
-                label: const Text('Log this meal',
-                    style: TextStyle(fontWeight: FontWeight.w900)),
+                label: const Text('Log this meal', style: TextStyle(fontWeight: FontWeight.w900)),
               ),
             ),
           ],
@@ -497,8 +467,7 @@ class _SwapSheet extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Swap meal',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+            const Text('Swap meal', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
             const SizedBox(height: 4),
             Text(
               'Alternatives respect your stored allergies and dietary exclusions.',
@@ -513,8 +482,7 @@ class _SwapSheet extends StatelessWidget {
                     child: Text(
                       'No suitable alternatives match your current restrictions. Edit preferences if you want to broaden non-allergy preferences.',
                       textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: NutritionPalette.muted, height: 1.5),
+                      style: TextStyle(color: NutritionPalette.muted, height: 1.5),
                     ),
                   ),
                 ),
@@ -526,10 +494,8 @@ class _SwapSheet extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final recipe = alternatives[index];
-                    final kcalDiff =
-                        recipe.macros.calories - current.macros.calories;
-                    final proteinDiff =
-                        recipe.macros.protein - current.macros.protein;
+                    final kcalDiff = recipe.macros.calories - current.macros.calories;
+                    final proteinDiff = recipe.macros.protein - current.macros.protein;
                     return Material(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
@@ -544,39 +510,27 @@ class _SwapSheet extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              NutritionArtwork(
-                                  artwork: recipe.artwork,
-                                  assetPath: recipe.artworkAsset,
-                                  networkUrl: recipe.imageUrl,
-                                  size: 72),
+                              NutritionArtwork(artwork: recipe.artwork, assetPath: recipe.artworkAsset, networkUrl: recipe.imageUrl, size: 72),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(recipe.name,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w900)),
+                                    Text(recipe.name, style: const TextStyle(fontWeight: FontWeight.w900)),
                                     const SizedBox(height: 4),
                                     Text(
                                       '${recipe.prepMinutes} min · ${recipe.macros.calories.round()} kcal · ${recipe.macros.protein.round()}g protein',
-                                      style: const TextStyle(
-                                          color: NutritionPalette.muted,
-                                          fontSize: 12),
+                                      style: const TextStyle(color: NutritionPalette.muted, fontSize: 12),
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       '${kcalDiff >= 0 ? '+' : ''}${kcalDiff.round()} kcal · ${proteinDiff >= 0 ? '+' : ''}${proteinDiff.round()}g protein',
-                                      style: const TextStyle(
-                                          color: NutritionPalette.brand,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 11),
+                                      style: const TextStyle(color: NutritionPalette.brand, fontWeight: FontWeight.w700, fontSize: 11),
                                     ),
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.chevron_right_rounded,
-                                  color: NutritionPalette.muted),
+                              const Icon(Icons.chevron_right_rounded, color: NutritionPalette.muted),
                             ],
                           ),
                         ),

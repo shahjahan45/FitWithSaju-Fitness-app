@@ -62,8 +62,7 @@ class NutritionWeekScreen extends StatelessWidget {
                             FutureBuilder<NutritionMacros>(
                               future: NutritionStore.plannedTotals(date),
                               builder: (context, totalSnapshot) {
-                                final totals = totalSnapshot.data ??
-                                    const NutritionMacros.zero();
+                                final totals = totalSnapshot.data ?? const NutritionMacros.zero();
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
@@ -97,8 +96,7 @@ class NutritionWeekScreen extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Material(
-                              color:
-                                  NutritionPalette.tint.withValues(alpha: .55),
+                              color: NutritionPalette.tint.withValues(alpha: .55),
                               borderRadius: BorderRadius.circular(14),
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(14),
@@ -106,13 +104,11 @@ class NutritionWeekScreen extends StatelessWidget {
                                   FitRoutes.route(
                                     context,
                                     motion: FitRouteMotion.detail,
-                                    builder: (_) => MealDetailScreen(
-                                        date: date, meal: meal),
+                                    builder: (_) => MealDetailScreen(date: date, meal: meal),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                   child: Row(
                                     children: [
                                       NutritionArtwork(
@@ -124,8 +120,7 @@ class NutritionWeekScreen extends StatelessWidget {
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               '${meal.slot} · ${meal.time}',
@@ -139,8 +134,7 @@ class NutritionWeekScreen extends StatelessWidget {
                                               recipe.name,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w800),
+                                              style: const TextStyle(fontWeight: FontWeight.w800),
                                             ),
                                           ],
                                         ),

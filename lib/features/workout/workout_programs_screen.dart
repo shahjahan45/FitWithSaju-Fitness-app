@@ -38,16 +38,13 @@ class _WorkoutProgramsScreenState extends State<WorkoutProgramsScreen> {
     if (!mounted) {
       return;
     }
-    final switching =
-        existing != null && existing['programId']?.toString() != program.id;
+    final switching = existing != null && existing['programId']?.toString() != program.id;
     final sameProgram = existing?['programId']?.toString() == program.id;
 
     final confirmed = await showSettledDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(sameProgram
-            ? 'Restart ${program.name}?'
-            : 'Apply ${program.name}?'),
+        title: Text(sameProgram ? 'Restart ${program.name}?' : 'Apply ${program.name}?'),
         content: Text(
           sameProgram
               ? 'This restarts the program from week 1 and refreshes your Monday–Sunday plan. Existing workout history and personal records stay intact.'
@@ -62,11 +59,7 @@ class _WorkoutProgramsScreenState extends State<WorkoutProgramsScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(switching
-                ? 'Switch program'
-                : sameProgram
-                    ? 'Restart'
-                    : 'Start program'),
+            child: Text(switching ? 'Switch program' : sameProgram ? 'Restart' : 'Start program'),
           ),
         ],
       ),
@@ -92,8 +85,7 @@ class _WorkoutProgramsScreenState extends State<WorkoutProgramsScreen> {
       _activeProgramId = program.id;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text('${program.name} is now active. Week 1 starts today.')),
+      SnackBar(content: Text('${program.name} is now active. Week 1 starts today.')),
     );
     Navigator.of(context).pop(true);
   }
@@ -219,14 +211,12 @@ class _ProgramCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             program.name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w900),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                           ),
                         ),
                         if (active)
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 9, vertical: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                             decoration: BoxDecoration(
                               color: AppColors.primarySoft,
                               borderRadius: BorderRadius.circular(999),
@@ -245,8 +235,7 @@ class _ProgramCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       '${program.level} • ${program.trainingDays} days/week • ${program.durationWeeks} weeks',
-                      style:
-                          const TextStyle(color: AppColors.muted, fontSize: 12),
+                      style: const TextStyle(color: AppColors.muted, fontSize: 12),
                     ),
                   ],
                 ),
@@ -262,8 +251,7 @@ class _ProgramCard extends StatelessWidget {
             children: program.tags
                 .map(
                   (tag) => Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(999),
@@ -271,8 +259,7 @@ class _ProgramCard extends StatelessWidget {
                     ),
                     child: Text(
                       tag,
-                      style: const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.w700),
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
                     ),
                   ),
                 )
@@ -281,8 +268,7 @@ class _ProgramCard extends StatelessWidget {
           const SizedBox(height: 16),
           ...program.weeklyPlan.map((day) {
             final rest = day['isRest'] == true;
-            final count =
-                ((day['exerciseIds'] as Iterable?) ?? const []).length;
+            final count = ((day['exerciseIds'] as Iterable?) ?? const []).length;
             return Padding(
               padding: const EdgeInsets.only(bottom: 7),
               child: Row(
@@ -291,8 +277,7 @@ class _ProgramCard extends StatelessWidget {
                     width: 74,
                     child: Text(
                       day['day'].toString().substring(0, 3),
-                      style:
-                          const TextStyle(color: AppColors.muted, fontSize: 12),
+                      style: const TextStyle(color: AppColors.muted, fontSize: 12),
                     ),
                   ),
                   Expanded(
@@ -321,9 +306,7 @@ class _ProgramCard extends StatelessWidget {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Icon(active
-                      ? Icons.restart_alt_rounded
-                      : Icons.play_arrow_rounded),
+                  : Icon(active ? Icons.restart_alt_rounded : Icons.play_arrow_rounded),
               label: Text(
                 applying
                     ? 'Applying...'

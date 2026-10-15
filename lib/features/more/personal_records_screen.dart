@@ -23,7 +23,8 @@ class PersonalRecordsScreen extends StatelessWidget {
               ? snapshot.data![0] as List<Map<String, dynamic>>
               : <Map<String, dynamic>>[];
           final records = snapshot.hasData
-              ? snapshot.data![1] as Map<String, Map<String, dynamic>>
+              ? snapshot.data![1]
+                  as Map<String, Map<String, dynamic>>
               : <String, Map<String, dynamic>>{};
 
           if (history.isEmpty) {

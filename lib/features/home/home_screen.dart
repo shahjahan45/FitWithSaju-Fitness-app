@@ -6,8 +6,10 @@ import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/fit_card.dart';
 import '../../data/workout_factory.dart';
+import '../goals/weekly_goals_summary_card.dart';
 import '../nutrition/nutrition_home_shortcut.dart';
 import '../recovery/readiness_summary_card.dart';
+import '../review/weekly_review_summary_card.dart';
 import '../workout/active_workout_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -103,6 +105,18 @@ class _HomeContent extends StatelessWidget {
             const MotionReveal(
               delay: Duration(milliseconds: 75),
               child: ReadinessSummaryCard(),
+            ),
+            const SizedBox(height: 14),
+            const MotionReveal(
+              delay: Duration(milliseconds: 82),
+              child: WeeklyGoalsSummaryCard(),
+            ),
+            const SizedBox(height: 14),
+            const MotionReveal(
+              delay: Duration(milliseconds: 86),
+              child: WeeklyReviewSummaryCard(
+                eyebrow: 'THIS WEEK AT A GLANCE',
+              ),
             ),
             const SizedBox(height: 14),
             MotionReveal(
@@ -477,6 +491,7 @@ class _TodayWorkoutCard extends StatelessWidget {
     );
   }
 }
+
 
 class _WorkoutMetaItem extends StatelessWidget {
   final IconData icon;

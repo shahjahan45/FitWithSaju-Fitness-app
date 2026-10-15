@@ -120,8 +120,7 @@ class ExerciseCatalog {
       final uri = Uri.parse('$normalized/api/exercises?per_page=200');
       final request = await client.getUrl(uri);
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
-      final response =
-          await request.close().timeout(const Duration(seconds: 12));
+      final response = await request.close().timeout(const Duration(seconds: 12));
       final body = await utf8.decoder.bind(response).join();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         lastError = 'Server returned HTTP ${response.statusCode}.';
@@ -143,8 +142,7 @@ class ExerciseCatalog {
           .where((exercise) => exercise.id.isNotEmpty)
           .toList(growable: false);
       if (remote.isEmpty) {
-        throw const FormatException(
-            'Exercise API returned no active exercises.');
+        throw const FormatException('Exercise API returned no active exercises.');
       }
 
       final merged = _mergeRemoteWithBundled(remote);
@@ -172,8 +170,7 @@ class ExerciseCatalog {
     } on FormatException catch (error) {
       lastError = error.message;
     } catch (_) {
-      lastError =
-          'Exercise sync failed. Your offline catalog is still available.';
+      lastError = 'Exercise sync failed. Your offline catalog is still available.';
     } finally {
       client.close(force: true);
     }
@@ -224,10 +221,7 @@ class ExerciseCatalog {
   }
 
   static List<String> _uniqueSorted(Iterable<String> values) {
-    final result = values
-        .where((value) => value.trim().isNotEmpty)
-        .toSet()
-        .toList()
+    final result = values.where((value) => value.trim().isNotEmpty).toSet().toList()
       ..sort();
     return result;
   }

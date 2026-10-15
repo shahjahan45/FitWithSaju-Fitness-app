@@ -68,7 +68,9 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     exerciseIndex = ((draft['exerciseIndex'] as num?)?.toInt() ?? 0)
         .clamp(0, widget.workout.exercises.length - 1)
         .toInt();
-    setIndex = ((draft['setIndex'] as num?)?.toInt() ?? 1).clamp(1, 99).toInt();
+    setIndex = ((draft['setIndex'] as num?)?.toInt() ?? 1)
+        .clamp(1, 99)
+        .toInt();
     _sessionSets.addAll(_mapList(draft['sets']));
     completedSets = _sessionSets.length;
     weightController.text = draft['weight']?.toString() ?? '';
@@ -77,8 +79,11 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     final restEndAt = DateTime.tryParse(draft['restEndAt']?.toString() ?? '');
     if (restEndAt != null && restEndAt.isAfter(DateTime.now())) {
       _restEndAt = restEndAt;
-      rest =
-          restEndAt.difference(DateTime.now()).inSeconds.clamp(1, 3600).toInt();
+      rest = restEndAt
+          .difference(DateTime.now())
+          .inSeconds
+          .clamp(1, 3600)
+          .toInt();
     }
   }
 
@@ -163,8 +168,9 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
         final suggestedWeight = previous == null
             ? _defaultWeight(exercise)
             : ((previous['weight'] as num?)?.toDouble() ?? 0);
-        final adjustedWeight =
-            widget.workout.isDeload ? suggestedWeight * .85 : suggestedWeight;
+        final adjustedWeight = widget.workout.isDeload
+            ? suggestedWeight * .85
+            : suggestedWeight;
         weightController.text = _formatNumber(adjustedWeight);
         repsController.text = previous == null
             ? _targetReps(exercise).toString()
@@ -188,8 +194,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
     if (weight == null || weight < 0 || reps == null || reps <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Enter a valid weight and reps before completing the set.'),
+          content: Text('Enter a valid weight and reps before completing the set.'),
         ),
       );
       return;
@@ -295,9 +300,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
       final weight = (set['weight'] as num?)?.toDouble() ?? 0;
       final reps = (set['reps'] as num?)?.toInt() ?? 0;
       final volume = weight * reps;
-      final completedAt =
-          DateTime.tryParse(set['completedAt']?.toString() ?? '') ??
-              DateTime.now();
+      final completedAt = DateTime.tryParse(set['completedAt']?.toString() ?? '') ??
+          DateTime.now();
       final isPr = _isNewRecord(exerciseId, weight, reps);
       set['volume'] = volume;
       set['estimated1RM'] = LocalStore.estimatedOneRepMax(weight, reps);
@@ -354,8 +358,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                 Expanded(
                   child: TextField(
                     controller: weightController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: const InputDecoration(labelText: 'Weight (KG)'),
                   ),
                 ),
@@ -378,10 +381,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                     weightController.text.trim().replaceAll(',', '.'),
                   );
                   final reps = int.tryParse(repsController.text.trim());
-                  if (weight == null ||
-                      weight < 0 ||
-                      reps == null ||
-                      reps <= 0) {
+                  if (weight == null || weight < 0 || reps == null || reps <= 0) {
                     return;
                   }
                   Navigator.of(sheetContext).pop(<String, num>{
@@ -548,8 +548,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
   }
 
   Future<void> _finishWorkout() async {
-    final duration =
-        DateTime.now().difference(startedAt).inMinutes.clamp(1, 999);
+    final duration = DateTime.now().difference(startedAt).inMinutes.clamp(1, 999);
     final totalVolume = _sessionSets.fold<double>(
       0,
       (sum, set) => sum + ((set['volume'] as num?)?.toDouble() ?? 0),
@@ -694,14 +693,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
               child: const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.self_improvement_rounded,
-                      color: AppColors.primary),
+                  Icon(Icons.self_improvement_rounded, color: AppColors.primary),
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Deload session • one fewer set per exercise and a 15% lighter starting load. Keep every rep controlled and stop well before failure.',
-                      style:
-                          TextStyle(height: 1.4, fontWeight: FontWeight.w700),
+                      style: TextStyle(height: 1.4, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ],
@@ -760,8 +757,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
           ),
           const SizedBox(height: 20),
           AnimatedSwitcher(
-            duration:
-                AppMotion.duration(context, const Duration(milliseconds: 260)),
+            duration: AppMotion.duration(context, const Duration(milliseconds: 260)),
             switchInCurve: Curves.easeOutCubic,
             switchOutCurve: Curves.easeInCubic,
             transitionBuilder: (child, animation) {
@@ -789,8 +785,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                     onAdd: () {
                       setState(() {
                         rest += 15;
-                        _restEndAt =
-                            DateTime.now().add(Duration(seconds: rest));
+                        _restEndAt = DateTime.now().add(Duration(seconds: rest));
                       });
                       _persistDraft();
                     },
@@ -840,8 +835,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color:
-                                      AppColors.primary.withValues(alpha: .18),
+                                  color: AppColors.primary.withValues(alpha: .18),
                                   blurRadius: 18,
                                   offset: const Offset(0, 9),
                                 ),
@@ -860,8 +854,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen>
                                     ),
                                   )
                                 else
-                                  const Icon(Icons.check_rounded,
-                                      color: Colors.white),
+                                  const Icon(Icons.check_rounded, color: Colors.white),
                                 const SizedBox(width: 9),
                                 const Text(
                                   'Complete Set',
@@ -1115,8 +1108,7 @@ class _WorkoutSuccessSheet extends StatelessWidget {
               const SizedBox(height: 14),
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppColors.primarySoft,
                   borderRadius: BorderRadius.circular(16),
@@ -1314,8 +1306,7 @@ class _EditableMetric extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
-                  keyboardType:
-                      TextInputType.numberWithOptions(decimal: decimal),
+                  keyboardType: TextInputType.numberWithOptions(decimal: decimal),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,

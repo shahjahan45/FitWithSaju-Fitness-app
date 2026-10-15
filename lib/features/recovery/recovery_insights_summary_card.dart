@@ -46,8 +46,7 @@ class RecoveryInsightsSummaryCard extends StatelessWidget {
                     data == null || data.checkInDays == 0
                         ? '—'
                         : '${data.averageScore}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w900, fontSize: 17),
+                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -67,16 +66,14 @@ class RecoveryInsightsSummaryCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         data?.trendLabel ?? 'Loading recovery pattern',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w900, fontSize: 16),
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         data == null
                             ? 'Loading your local data…'
                             : '$deltaLabel • ${data.checkInDays}/28 check-ins',
-                        style: const TextStyle(
-                            color: AppColors.muted, fontSize: 11),
+                        style: const TextStyle(color: AppColors.muted, fontSize: 11),
                       ),
                     ],
                   ),

@@ -30,8 +30,8 @@ class AchievementsScreen extends StatelessWidget {
             final history = snapshot.data![0] as List<Map<String, dynamic>>;
             final favorites = snapshot.data![1] as Set<String>;
             final weights = snapshot.data![2] as List<Map<String, dynamic>>;
-            final records =
-                snapshot.data![3] as Map<String, Map<String, dynamic>>;
+            final records = snapshot.data![3]
+                as Map<String, Map<String, dynamic>>;
             final totalVolume = snapshot.data![4] as double;
 
             final totalSets = history.fold<int>(
@@ -338,8 +338,7 @@ class _Achievement {
   });
 
   bool get unlocked => value >= target;
-  double get progress =>
-      target <= 0 ? 1.0 : (value / target).clamp(0.0, 1.0).toDouble();
+  double get progress => target <= 0 ? 1.0 : (value / target).clamp(0.0, 1.0).toDouble();
 
   String get progressLabel {
     final current = value >= target ? target : value;

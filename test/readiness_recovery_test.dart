@@ -75,8 +75,7 @@ void main() {
     expect(items.single['sleepQuality'], 5);
   });
 
-  test('editing a check-in preserves its createdAt and updates values',
-      () async {
+  test('editing a check-in preserves its createdAt and updates values', () async {
     final date = DateTime(2026, 9, 30);
     await LocalStore.saveReadinessCheckIn(
       date: date,
@@ -101,8 +100,7 @@ void main() {
     expect(after?['soreness'], 2);
   });
 
-  test('readiness history remains date ordered and backup restores it',
-      () async {
+  test('readiness history remains date ordered and backup restores it', () async {
     await LocalStore.saveReadinessCheckIn(
       date: DateTime(2026, 9, 29),
       sleepQuality: 4,
@@ -119,7 +117,7 @@ void main() {
     );
 
     final backup = await LocalStore.exportData();
-    expect(backup['formatVersion'], 6);
+    expect(backup['formatVersion'], 7);
     expect(backup['readinessCheckIns'], hasLength(2));
 
     SharedPreferences.setMockInitialValues({});
@@ -190,8 +188,7 @@ void main() {
     expect(load.previous7DaysWorkouts, 1);
   });
 
-  test('program recovery context affects only its transparent context points',
-      () {
+  test('program recovery context affects only its transparent context points', () {
     final trainingDay = ReadinessCalculator.calculate(
       checkIn: checkIn(),
       hydrationMl: 2000,

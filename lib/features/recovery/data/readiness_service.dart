@@ -26,8 +26,9 @@ class ReadinessService {
       overrides: overrides,
     );
 
-    final checkIn =
-        checkInMap == null ? null : ReadinessCheckIn.fromJson(checkInMap);
+    final checkIn = checkInMap == null
+        ? null
+        : ReadinessCheckIn.fromJson(checkInMap);
     final assessment = checkIn == null
         ? null
         : ReadinessCalculator.calculate(
@@ -36,10 +37,9 @@ class ReadinessService {
             hydrationTargetMl: nutritionPreferences.waterTargetMl,
             trainingLoad: load,
             hasActiveProgram: activeProgram != null,
-            hasProgramSessionToday:
-                programSession != null && !programSession.isRest,
-            isRestOrDeloadDay: programSession?.isRest == true ||
-                programSession?.isDeload == true,
+            hasProgramSessionToday: programSession != null && !programSession.isRest,
+            isRestOrDeloadDay:
+                programSession?.isRest == true || programSession?.isDeload == true,
           );
 
     final recentHistory = await _history(
@@ -136,8 +136,7 @@ class ReadinessService {
     final start = anchor.subtract(Duration(days: days - 1));
     final points = <ReadinessHistoryPoint>[];
     for (final item in all) {
-      final date =
-          LocalStore.dateFromLocalKey(item['dateKey']?.toString() ?? '');
+      final date = LocalStore.dateFromLocalKey(item['dateKey']?.toString() ?? '');
       if (date == null || date.isBefore(start) || date.isAfter(anchor)) {
         continue;
       }

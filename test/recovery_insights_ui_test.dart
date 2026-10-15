@@ -24,8 +24,7 @@ void main() {
     );
   });
 
-  testWidgets('recovery insights renders safely with reduced motion',
-      (tester) async {
+  testWidgets('recovery insights renders safely with reduced motion', (tester) async {
     await tester.pumpWidget(
       MediaQuery(
         data: const MediaQueryData(disableAnimations: true),
@@ -38,8 +37,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('recovery-insights-overview')), findsOneWidget);
-    expect(
-        find.byKey(const Key('weekly-recovery-review-card')), findsOneWidget);
+    expect(find.byKey(const Key('weekly-recovery-review-card')), findsOneWidget);
     expect(find.textContaining('fitness guidance'), findsWidgets);
     expect(tester.takeException(), isNull);
 

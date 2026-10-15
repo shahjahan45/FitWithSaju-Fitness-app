@@ -104,8 +104,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: LayoutBuilder(
                           builder: (context, constraints) {
                             final available = constraints.maxWidth * .70;
-                            final logoWidth =
-                                available.clamp(220.0, 310.0).toDouble();
+                            final logoWidth = available.clamp(220.0, 310.0).toDouble();
                             return Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [

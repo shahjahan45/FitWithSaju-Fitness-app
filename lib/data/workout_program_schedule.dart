@@ -51,8 +51,10 @@ class ProgramCalendarEntry {
               : int.tryParse(rawDuration?.toString() ?? '') ?? 45)
           .clamp(1, 600)
           .toInt();
-      copy['durationMinutes'] =
-          (duration * .75).round().clamp(1, duration).toInt();
+      copy['durationMinutes'] = (duration * .75)
+          .round()
+          .clamp(1, duration)
+          .toInt();
     }
     return copy;
   }
@@ -68,9 +70,8 @@ class WorkoutProgramSchedule {
   WorkoutProgramSchedule._();
 
   static DateTime startMonday(Map<String, dynamic> activeProgram) {
-    final started =
-        DateTime.tryParse(activeProgram['startedAt']?.toString() ?? '') ??
-            DateTime.now();
+    final started = DateTime.tryParse(activeProgram['startedAt']?.toString() ?? '') ??
+        DateTime.now();
     final date = DateTime(started.year, started.month, started.day);
     return date.subtract(Duration(days: date.weekday - 1));
   }
@@ -137,9 +138,7 @@ class WorkoutProgramSchedule {
     final entries = <ProgramCalendarEntry>[];
     for (var week = 1; week <= durationWeeks; week++) {
       final weekStart = start.add(Duration(days: (week - 1) * 7));
-      for (var dayIndex = 0;
-          dayIndex < LocalStore.weekDays.length;
-          dayIndex++) {
+      for (var dayIndex = 0; dayIndex < LocalStore.weekDays.length; dayIndex++) {
         final day = LocalStore.weekDays[dayIndex];
         final plan = Map<String, dynamic>.from(
           planByDay[day] ??
@@ -154,23 +153,20 @@ class WorkoutProgramSchedule {
         final originalDate = weekStart.add(Duration(days: dayIndex));
         final sessionKey = '${programId}_w${week}_${day.toLowerCase()}';
         final override = overrideByKey[sessionKey];
-        final scheduledDate =
-            _parseDateOnly(override?['scheduledDate']) ?? originalDate;
+        final scheduledDate = _parseDateOnly(override?['scheduledDate']) ?? originalDate;
         final skipped = override?['status']?.toString() == 'skipped';
         final isRest = plan['isRest'] == true;
         final workoutId = 'program_${programId}_${day.toLowerCase()}';
-        final completed = !isRest &&
-            _sessionCompleted(
-              history: history,
-              sessionKey: sessionKey,
-              workoutId: workoutId,
-              scheduledDate: scheduledDate,
-              originalWeekStart: weekStart,
-            );
+        final completed = !isRest && _sessionCompleted(
+          history: history,
+          sessionKey: sessionKey,
+          workoutId: workoutId,
+          scheduledDate: scheduledDate,
+          originalWeekStart: weekStart,
+        );
 
         String status;
-        final startedAt =
-            DateTime.tryParse(activeProgram['startedAt']?.toString() ?? '');
+        final startedAt = DateTime.tryParse(activeProgram['startedAt']?.toString() ?? '');
         final startedDay = startedAt == null
             ? null
             : DateTime(startedAt.year, startedAt.month, startedAt.day);

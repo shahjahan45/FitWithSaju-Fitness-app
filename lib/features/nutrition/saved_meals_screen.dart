@@ -73,26 +73,15 @@ class SavedMealsScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          NutritionArtwork(
-                              artwork: recipe.artwork,
-                              assetPath: recipe.artworkAsset,
-                              networkUrl: recipe.imageUrl,
-                              size: 78),
+                          NutritionArtwork(artwork: recipe.artwork, assetPath: recipe.artworkAsset, networkUrl: recipe.imageUrl, size: 78),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(recipe.slot.toUpperCase(),
-                                    style: const TextStyle(
-                                        color: NutritionPalette.brand,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w900)),
+                                Text(recipe.slot.toUpperCase(), style: const TextStyle(color: NutritionPalette.brand, fontSize: 10, fontWeight: FontWeight.w900)),
                                 const SizedBox(height: 3),
-                                Text(recipe.name,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 16)),
+                                Text(recipe.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
                                 const SizedBox(height: 5),
                                 NutritionMacroLine(macros: recipe.macros),
                               ],
@@ -100,10 +89,8 @@ class SavedMealsScreen extends StatelessWidget {
                           ),
                           IconButton(
                             tooltip: 'Remove saved meal',
-                            onPressed: () =>
-                                NutritionStore.toggleSavedMeal(recipe.id),
-                            icon: const Icon(Icons.bookmark_remove_rounded,
-                                color: NutritionPalette.brand),
+                            onPressed: () => NutritionStore.toggleSavedMeal(recipe.id),
+                            icon: const Icon(Icons.bookmark_remove_rounded, color: NutritionPalette.brand),
                           ),
                         ],
                       ),

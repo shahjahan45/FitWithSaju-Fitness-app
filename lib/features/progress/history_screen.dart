@@ -49,18 +49,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           final totalMinutes = items.fold<int>(
             0,
-            (sum, item) =>
-                sum + ((item['durationMinutes'] as num?)?.toInt() ?? 0),
+            (sum, item) => sum + ((item['durationMinutes'] as num?)?.toInt() ?? 0),
           );
           final totalSets = items.fold<int>(
             0,
-            (sum, item) =>
-                sum + ((item['completedSets'] as num?)?.toInt() ?? 0),
+            (sum, item) => sum + ((item['completedSets'] as num?)?.toInt() ?? 0),
           );
           final totalVolume = items.fold<double>(
             0,
-            (sum, item) =>
-                sum + ((item['totalVolume'] as num?)?.toDouble() ?? 0),
+            (sum, item) => sum + ((item['totalVolume'] as num?)?.toDouble() ?? 0),
           );
 
           return ListView.builder(
@@ -183,6 +180,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 }
 
+
 class _HistorySummary extends StatelessWidget {
   final int workouts;
   final int minutes;
@@ -198,8 +196,9 @@ class _HistorySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time =
-        minutes < 60 ? '${minutes}m' : '${minutes ~/ 60}h ${minutes % 60}m';
+    final time = minutes < 60
+        ? '${minutes}m'
+        : '${minutes ~/ 60}h ${minutes % 60}m';
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -221,8 +220,7 @@ class _HistorySummary extends StatelessWidget {
           const SizedBox(height: 15),
           Row(
             children: [
-              Expanded(
-                  child: _SummaryMetric(value: '$workouts', label: 'Workouts')),
+              Expanded(child: _SummaryMetric(value: '$workouts', label: 'Workouts')),
               Expanded(child: _SummaryMetric(value: time, label: 'Training')),
               Expanded(child: _SummaryMetric(value: '$sets', label: 'Sets')),
               Expanded(

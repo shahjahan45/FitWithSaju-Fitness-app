@@ -89,12 +89,10 @@ void main() {
     await NutritionStore.addWater(date, 250);
     await NutritionStore.addWater(date, 500);
     expect(await NutritionStore.waterTotalMl(date), 750);
-    expect(await NutritionStore.waterTotalMl(date.add(const Duration(days: 1))),
-        0);
+    expect(await NutritionStore.waterTotalMl(date.add(const Duration(days: 1))), 0);
   });
 
-  test('food log portions can be corrected without losing snapshot basis',
-      () async {
+  test('food log portions can be corrected without losing snapshot basis', () async {
     final date = DateTime(2026, 9, 28);
     final recipe = NutritionCatalog.byId('berry_oats')!;
     await NutritionStore.logMeal(
@@ -134,9 +132,7 @@ void main() {
       'Mineral water',
     );
   });
-  test(
-      'high-protein weekly template applies all seven days and preserves protein structure',
-      () async {
+  test('high-protein weekly template applies all seven days and preserves protein structure', () async {
     final anchor = DateTime(2026, 9, 28); // Monday
     const preferences = NutritionPreferences(
       goal: 'Muscle gain',
@@ -174,8 +170,7 @@ void main() {
     );
   });
 
-  test('meal plan template refuses allergy conflicts instead of relaxing them',
-      () async {
+  test('meal plan template refuses allergy conflicts instead of relaxing them', () async {
     final anchor = DateTime(2026, 9, 28);
     const preferences = NutritionPreferences(
       goal: 'Muscle gain',
@@ -201,4 +196,5 @@ void main() {
     expect(result.blockedMeals, isNotEmpty);
     expect(await NutritionStore.activeTemplateIdForWeek(anchor), isNull);
   });
+
 }

@@ -53,8 +53,7 @@ class _CustomWorkoutScreenState extends State<CustomWorkoutScreen> {
       return ExerciseCatalog.instance.exercises;
     }
     return ExerciseCatalog.instance.exercises.where((exercise) {
-      final text = '${exercise.name} ${exercise.muscle} ${exercise.equipment}'
-          .toLowerCase();
+      final text = '${exercise.name} ${exercise.muscle} ${exercise.equipment}'.toLowerCase();
       return text.contains(query);
     }).toList();
   }
@@ -167,34 +166,34 @@ class _CustomWorkoutScreenState extends State<CustomWorkoutScreen> {
                   ),
                 ),
                 child: CheckboxListTile(
-                  value: _selected.contains(exercise.id),
-                  activeColor: AppColors.primary,
-                  checkColor: Colors.white,
-                  secondary: const Icon(
-                    Icons.fitness_center_rounded,
-                    color: AppColors.primary,
-                  ),
-                  title: Text(
-                    exercise.name,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  subtitle: Text(
-                    '${exercise.muscle} • ${exercise.equipment}',
-                    style: const TextStyle(color: AppColors.muted),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == true) {
-                        _selected.add(exercise.id);
-                      } else {
-                        _selected.remove(exercise.id);
-                      }
-                    });
-                  },
+                value: _selected.contains(exercise.id),
+                activeColor: AppColors.primary,
+                checkColor: Colors.white,
+                secondary: const Icon(
+                  Icons.fitness_center_rounded,
+                  color: AppColors.primary,
+                ),
+                title: Text(
+                  exercise.name,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                subtitle: Text(
+                  '${exercise.muscle} • ${exercise.equipment}',
+                  style: const TextStyle(color: AppColors.muted),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+                onChanged: (value) {
+                  setState(() {
+                    if (value == true) {
+                      _selected.add(exercise.id);
+                    } else {
+                      _selected.remove(exercise.id);
+                    }
+                  });
+                },
                 ),
               ),
             ),

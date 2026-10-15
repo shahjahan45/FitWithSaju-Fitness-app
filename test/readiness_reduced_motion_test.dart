@@ -22,8 +22,7 @@ void main() {
     );
   });
 
-  testWidgets('recovery score ring renders with reduced motion enabled',
-      (tester) async {
+  testWidgets('recovery score ring renders with reduced motion enabled', (tester) async {
     await tester.pumpWidget(
       MediaQuery(
         data: const MediaQueryData(disableAnimations: true),

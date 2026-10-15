@@ -14,8 +14,7 @@ ReadinessHistoryPoint point(
     date: date,
     score: score,
     checkIn: ReadinessCheckIn(
-      dateKey:
-          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
+      dateKey: '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
       sleepQuality: sleep,
       energy: energy,
       soreness: soreness,
@@ -133,8 +132,7 @@ void main() {
     expect(result.weeklyReviewLabel, contains('improving'));
   });
 
-  test('smart guidance never mutates a workout and scales suggestions by score',
-      () {
+  test('smart guidance never mutates a workout and scales suggestions by score', () {
     final high = RecoveryInsightsCalculator.guidance(
       assessment: assessment(90),
       hasProgramSessionToday: true,
@@ -157,8 +155,7 @@ void main() {
     expect(low.subtitle, contains('will not cancel or change'));
   });
 
-  test('rest or deload guidance protects recovery intent regardless of score',
-      () {
+  test('rest or deload guidance protects recovery intent regardless of score', () {
     final result = RecoveryInsightsCalculator.guidance(
       assessment: assessment(92),
       hasProgramSessionToday: true,
@@ -170,8 +167,7 @@ void main() {
     expect(result.considerReschedule, isFalse);
   });
 
-  test('insights call out sustained high soreness and training-load increase',
-      () {
+  test('insights call out sustained high soreness and training-load increase', () {
     final anchor = DateTime(2026, 9, 30);
     final readiness = List<ReadinessHistoryPoint>.generate(
       7,

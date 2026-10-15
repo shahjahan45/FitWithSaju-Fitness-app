@@ -4,7 +4,9 @@ import '../../core/motion/app_motion.dart';
 import '../../core/motion/motion_widgets.dart';
 import '../../core/storage/local_store.dart';
 import '../../core/theme/app_colors.dart';
+import '../goals/weekly_goals_screen.dart';
 import '../nutrition/nutrition_plan_screen.dart';
+import '../review/weekly_review_screen.dart';
 import 'achievements_screen.dart';
 import 'content_sync_screen.dart';
 import 'data_export_screen.dart';
@@ -59,33 +61,43 @@ class MoreScreen extends StatelessWidget {
           MotionReveal(
             delay: const Duration(milliseconds: 80),
             child: _Group(
-              children: [
-                _ActionTile(
-                  icon: Icons.restaurant_menu_rounded,
-                  title: 'Diet & Meal Plan',
-                  onTap: () => _open(context, const NutritionPlanScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.favorite_rounded,
-                  title: 'Favorites',
-                  onTap: () => _open(context, const FavoritesScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.straighten_rounded,
-                  title: 'Measurements',
-                  onTap: () => _open(context, const MeasurementsScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.emoji_events_rounded,
-                  title: 'Personal Records',
-                  onTap: () => _open(context, const PersonalRecordsScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.workspace_premium_rounded,
-                  title: 'Achievements',
-                  onTap: () => _open(context, const AchievementsScreen()),
-                ),
-              ],
+            children: [
+              _ActionTile(
+                icon: Icons.restaurant_menu_rounded,
+                title: 'Diet & Meal Plan',
+                onTap: () => _open(context, const NutritionPlanScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.flag_rounded,
+                title: 'Weekly Goals',
+                onTap: () => _open(context, const WeeklyGoalsScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.insights_rounded,
+                title: 'Weekly Review',
+                onTap: () => _open(context, const WeeklyReviewScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.favorite_rounded,
+                title: 'Favorites',
+                onTap: () => _open(context, const FavoritesScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.straighten_rounded,
+                title: 'Measurements',
+                onTap: () => _open(context, const MeasurementsScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.emoji_events_rounded,
+                title: 'Personal Records',
+                onTap: () => _open(context, const PersonalRecordsScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.workspace_premium_rounded,
+                title: 'Achievements',
+                onTap: () => _open(context, const AchievementsScreen()),
+              ),
+            ],
             ),
           ),
           const SizedBox(height: 20),
@@ -97,21 +109,21 @@ class MoreScreen extends StatelessWidget {
             delay: const Duration(milliseconds: 145),
             child: _Group(
               children: [
-                _ActionTile(
-                  icon: Icons.settings_rounded,
-                  title: 'Settings',
-                  onTap: () => _open(context, const SettingsScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.cloud_sync_outlined,
-                  title: 'Content Sync',
-                  onTap: () => _open(context, const ContentSyncScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.file_download_outlined,
-                  title: 'Backup & Restore',
-                  onTap: () => _open(context, const DataExportScreen()),
-                ),
+              _ActionTile(
+                icon: Icons.settings_rounded,
+                title: 'Settings',
+                onTap: () => _open(context, const SettingsScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.cloud_sync_outlined,
+                title: 'Content Sync',
+                onTap: () => _open(context, const ContentSyncScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.file_download_outlined,
+                title: 'Backup & Restore',
+                onTap: () => _open(context, const DataExportScreen()),
+              ),
               ],
             ),
           ),
@@ -124,21 +136,21 @@ class MoreScreen extends StatelessWidget {
             delay: const Duration(milliseconds: 210),
             child: _Group(
               children: [
-                _ActionTile(
-                  icon: Icons.menu_book_rounded,
-                  title: 'App Guide',
-                  onTap: () => _open(context, const AppGuideScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.info_outline_rounded,
-                  title: 'About FitWithSaju',
-                  onTap: () => _open(context, const AboutFitWithSajuScreen()),
-                ),
-                _ActionTile(
-                  icon: Icons.privacy_tip_outlined,
-                  title: 'Privacy & Data',
-                  onTap: () => _open(context, const PrivacyScreen()),
-                ),
+              _ActionTile(
+                icon: Icons.menu_book_rounded,
+                title: 'App Guide',
+                onTap: () => _open(context, const AppGuideScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.info_outline_rounded,
+                title: 'About FitWithSaju',
+                onTap: () => _open(context, const AboutFitWithSajuScreen()),
+              ),
+              _ActionTile(
+                icon: Icons.privacy_tip_outlined,
+                title: 'Privacy & Data',
+                onTap: () => _open(context, const PrivacyScreen()),
+              ),
               ],
             ),
           ),
@@ -146,24 +158,24 @@ class MoreScreen extends StatelessWidget {
           const MotionReveal(
             delay: Duration(milliseconds: 250),
             child: Center(
-              child: Column(
-                children: [
-                  Text(
-                    'FitWithSaju',
-                    style: TextStyle(
-                      color: AppColors.muted,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12,
-                    ),
+            child: Column(
+              children: [
+                Text(
+                  'FitWithSaju',
+                  style: TextStyle(
+                    color: AppColors.muted,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12,
                   ),
-                  SizedBox(height: 3),
-                  Text(
-                    'Move. Train. Progress.',
-                    style: TextStyle(color: AppColors.muted, fontSize: 10),
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(height: 3),
+                Text(
+                  'Move. Train. Progress.',
+                  style: TextStyle(color: AppColors.muted, fontSize: 10),
+                ),
+              ],
             ),
+          ),
           ),
         ],
       ),
@@ -179,6 +191,7 @@ class MoreScreen extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class _ProfileSummary extends StatelessWidget {
@@ -206,61 +219,61 @@ class _ProfileSummary extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF173D25), Color(0xFF285D2E)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF173D25), Color(0xFF285D2E)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: .12),
+              borderRadius: BorderRadius.circular(17),
             ),
-            borderRadius: BorderRadius.circular(24),
+            child: const Icon(
+              Icons.person_rounded,
+              color: Color(0xFFA5D83F),
+              size: 28,
+            ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 54,
-                height: 54,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .12),
-                  borderRadius: BorderRadius.circular(17),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  goal,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 17,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.person_rounded,
-                  color: Color(0xFFA5D83F),
-                  size: 28,
+                const SizedBox(height: 5),
+                Text(
+                  '$level • $place',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: .72),
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      goal,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 17,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '$level • $place',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: .72),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.tune_rounded, color: Color(0xFFA5D83F)),
-            ],
+              ],
+            ),
           ),
+          const Icon(Icons.tune_rounded, color: Color(0xFFA5D83F)),
+        ],
+      ),
         ),
       ),
     );
@@ -333,8 +346,7 @@ class _ActionTile extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
         leading: Icon(icon, color: AppColors.primary, size: 21),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-        trailing:
-            const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
+        trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.muted),
         onTap: onTap,
       ),
     );

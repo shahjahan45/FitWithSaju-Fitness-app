@@ -142,10 +142,7 @@ class NutritionRecipe {
 
   factory NutritionRecipe.fromApi(Map<String, dynamic> map) {
     List<String> strings(dynamic value) => value is List
-        ? value
-            .map((item) => item.toString())
-            .where((item) => item.isNotEmpty)
-            .toList()
+        ? value.map((item) => item.toString()).where((item) => item.isNotEmpty).toList()
         : <String>[];
 
     final nutrition = map['nutrition'] is Map
@@ -213,6 +210,7 @@ class PlannedNutritionMeal {
   }
 }
 
+
 class NutritionMealPlanTemplate {
   final String id;
   final String name;
@@ -231,8 +229,7 @@ class NutritionMealPlanTemplate {
   });
 
   List<PlannedNutritionMeal> mealsForWeekday(int weekday) =>
-      List<PlannedNutritionMeal>.of(
-          days[weekday] ?? const <PlannedNutritionMeal>[]);
+      List<PlannedNutritionMeal>.of(days[weekday] ?? const <PlannedNutritionMeal>[]);
 
   Map<String, dynamic> toCacheJson() => <String, dynamic>{
         'id': id,
@@ -241,14 +238,12 @@ class NutritionMealPlanTemplate {
         'goal': goal,
         'days': <String, dynamic>{
           for (final entry in days.entries)
-            _weekdayKey(entry.key): entry.value
-                .map((meal) => <String, dynamic>{
-                      'slot': meal.slot,
-                      'recipe_id': meal.recipeId,
-                      'time': meal.time,
-                      'servings': meal.servings,
-                    })
-                .toList(),
+            _weekdayKey(entry.key): entry.value.map((meal) => <String, dynamic>{
+                  'slot': meal.slot,
+                  'recipe_id': meal.recipeId,
+                  'time': meal.time,
+                  'servings': meal.servings,
+                }).toList(),
         },
       };
 
@@ -380,9 +375,7 @@ class NutritionPreferences {
     final map = value is Map ? value : const <String, dynamic>{};
     List<String> strings(String key) {
       final raw = map[key];
-      return raw is List
-          ? raw.map((item) => item.toString()).toList()
-          : <String>[];
+      return raw is List ? raw.map((item) => item.toString()).toList() : <String>[];
     }
 
     return NutritionPreferences(

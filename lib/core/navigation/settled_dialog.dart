@@ -25,6 +25,7 @@ Future<T?> showSettledDialog<T>({
   return result;
 }
 
+
 /// Shows a Material modal bottom sheet and waits until its reverse transition
 /// has completed and all overlay entries are removed before returning.
 ///
@@ -57,8 +58,7 @@ Future<T?> showSettledModalBottomSheet<T>({
     ),
     isScrollControlled: isScrollControlled,
     barrierLabel: localizations.scrimLabel,
-    barrierOnTapHint:
-        localizations.scrimOnTapHint(localizations.bottomSheetLabel),
+    barrierOnTapHint: localizations.scrimOnTapHint(localizations.bottomSheetLabel),
     backgroundColor: backgroundColor,
     elevation: elevation,
     shape: shape,
